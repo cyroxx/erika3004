@@ -36,5 +36,3 @@ with Erika("COM3") as meine_erika:
 #%%
 # with open("charTranslation.json", encoding="UTF-8") as f:
 #            test = json.load(f)
-
-#%%

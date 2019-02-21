@@ -14,7 +14,7 @@ class Erika:
         self.connection = serial.Serial(com_port, 1200)  # , timeout=0, parity=serial.PARITY_EVEN, rtscts=1)
         self.ascii_2_ddr = {}
         self.ddr_2_ascii = {}
-        self.readConversionTable()
+        self.read_conversion_table()
 
     def __enter__(self):
         return self
@@ -24,7 +24,7 @@ class Erika:
     def __exit__(self, *args):
         self.connection.close()
 
-    def readConversionTable(self):
+    def read_conversion_table(self):
         """read conversion table from file and populate 2 dicts"""
         with open(self.conversion_table_path, encoding="UTF-8") as f:
             self.ascii_2_ddr = json.load(f)
@@ -52,8 +52,8 @@ class Erika:
         self.print_smiley()
         self.advance_paper()
 
-    # TODO: use time parameter instead of fixed value
-    def alarm(self, time):
+    # TODO: use duration parameter instead of fixed value
+    def alarm(self, duration):
         self.connection.write(b"\xaa\xff")
 
     def read(self):
