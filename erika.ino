@@ -2,48 +2,50 @@
 #include "ddr2ascii.h"
 #include "ascii2ddr.h"
 
-SoftwareSerial mySerial(10, 11); // RX, TX
-int inPin = 3;
+#define PC_BAUD 9600
 
+#define RTS_PIN 3
+#define ERIKA_RX 10
+#define ERIKA_TX 11
+#define ERIKA_BAUD 1200
 
-void setup() {
-  // Open serial communications and wait for port to open:
-  pinMode(inPin, INPUT);
-  Serial.begin(9600);
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
-  }
-
-
-  Serial.println('Goodnight moon!');
-
-  // set the data rate for the SoftwareSerial port
-  mySerial.begin(1200);
-}
+SoftwareSerial erika(ERIKA_RX, ERIKA_TX); // RX, TX
 bool wait = false;
 
-
-
-
-
-void loop() { // run over and over
-   int val = digitalRead(inPin);
-   //Serial.println(val);
-    if(val == LOW && wait == false)
-     {
-          if (Serial.available()) {
-            int result = ascii2ddr[Serial.read()];
-            mySerial.write(result);
-            Serial.println(result,HEX);
-            wait = true;
-           } 
-     }
-     else if (val == HIGH){
-        wait = false;
-     }
-     if(mySerial.available()){
-      Serial.write(ddr2ascii[mySerial.read()]);
-     }
-
+void setup()
+{
+	pinMode(RTS_PIN, INPUT);
+	Serial.begin(PC_BAUD);
+	erika.begin(ERIKA_BAUD);
 }
 
+void loop()
+{ // run over and over
+	int rtsState = digitalRead(RTS_PIN);
+
+	//continue on falling edge
+	if (rtsState == LOW && wait == false)
+	{
+		//data from pc in serial buffer ?
+		if (Serial.available())
+		{
+			//convert to raw (ddr-ascii)
+			int result = ascii2ddr[Serial.read()];
+			erika.write(result);
+			//Serial.println(result,HEX);
+			//wait until rts went high
+			wait = true;
+		}
+	}
+	else if (val == HIGH)
+	{
+		//rts was high, which means erika is ready for the next byte, when rts goes low again
+		wait = false;
+	}
+	//erika has data to send
+	if (erika.available())
+	{
+		//convert ddr-ascci to ascii and send to pc
+		Serial.write(ddr2ascii[erika.read()]);
+	}
+}
