@@ -7,6 +7,8 @@ import json
 
 # replace with the USB port that you are connecting on
 
+DEFAULT_DELAY = 0.5
+
 class Erika:
 	conversion_table_path = "charTranslation.json"
 
@@ -31,10 +33,10 @@ class Erika:
 			self.ascii_2_ddr = json.load(f)
 		self.ddr_2_ascii = {value: key for key, value in self.ascii_2_ddr.items()}
 
-	def write_delay(self, data, delay=0.5):
+	def write_delay(self, data, delay=DEFAULT_DELAY):
 		self.write_byte_delay(data.encode("ASCII"), delay)
 
-	def write_byte_delay(self, data, delay=0.5):
+	def write_byte_delay(self, data, delay=DEFAULT_DELAY):
 		self.connection.write(bytes.fromhex(data))
 		time.sleep(delay)
 
@@ -46,7 +48,7 @@ class Erika:
 		# move paper up / cursor down
 		for i in range(0, 10):
 			self.connection.write(b'\x75')
-			time.sleep(0.5)
+			time.sleep(DEFAULT_DELAY)
 
 	def demo(self):
 		self.advance_paper()
