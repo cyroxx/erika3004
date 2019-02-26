@@ -15,8 +15,8 @@ Description of the Erica connector:
 
 More infos can be found here (German): [http://hc-ddr.hucki.net/wiki/doku.php/z9001/erweiterungen/s3004](http://hc-ddr.hucki.net/wiki/doku.php/z9001/erweiterungen/s3004)
 
-A schematic of our Arduino based interface can be found [here](https://easyeda.com/editor#id=708dfbb12ec9406986608b1bfc6e0a6b).
-![Schematic](Schematic_ErikaArduinoInterface_Sheet-1_20190224110903.png)
+A schematic of our Arduino based interface can be found [on EasyEDA](https://easyeda.com/sirexeclp/erikaarduinointerface).
+![Schematic](Schematic_ErikaArduinoInterface.png)
 
 ## Software
 
