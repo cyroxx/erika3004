@@ -4,6 +4,10 @@ from erika.connect_to_erika import Erika
 # TODO make parameter dynamic
 
 # e.g. Linux
+# (determine port by observing output of
+#   dmesg
+# on the command line after connecting USB)
+#
 # COM_PORT = "/dev/ttyACM0"
 # COM_PORT = "/dev/ttyUSB0"
 
