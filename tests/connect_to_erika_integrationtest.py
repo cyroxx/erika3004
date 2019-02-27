@@ -2,6 +2,12 @@ import unittest
 from erika.connect_to_erika import Erika
 
 # TODO make parameter dynamic
+
+# e.g. Linux
+# COM_PORT = "/dev/ttyACM0"
+# COM_PORT = "/dev/ttyUSB0"
+
+# e.g. Windows
 COM_PORT = "COM3"
 
 

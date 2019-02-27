@@ -1,11 +1,11 @@
 from string import ascii_lowercase
 import json
-
+import serial
 
 # replace with the USB port that you are connecting on
 
 class Erika:
-	conversion_table_path = "charTranslation.json"
+	conversion_table_path = "erika/charTranslation.json"
 
 	def __init__(self, com_port, *args, **kwargs):
 		self.com_port = com_port
@@ -87,10 +87,10 @@ class Erika:
 		self.print_raw("9F")
 
 
-from erika import Erika
-
-with Erika("COM3") as meine_erika:
-	meine_erika.print_ascii("Hallo")
+# from erika import Erika
+#
+# with Erika("COM3") as meine_erika:
+# 	meine_erika.print_ascii("Hallo")
 	# meine_erika.print_ascii("#")
 	# meine_erika.move_up()
 	# meine_erika.move_up()
