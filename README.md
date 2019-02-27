@@ -22,6 +22,8 @@ A schematic of our Arduino based interface can be found [on EasyEDA](https://eas
 
 ### Arduino Sketch
 
+Located in `arduino` directory.
+
 The arduino sketch should be compilable for any Arduino that has at least one hardware UART (hardware serial).
 TODO: Test on Mini, Nano
 The arduino will comunicate with your pc using the default hardware serial, which is usually connected to a usb to serial converter.
