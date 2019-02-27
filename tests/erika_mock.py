@@ -12,14 +12,18 @@ y ||
 This way, rendering algorithms can be tested.
 """
 
-"""ASSUMPTIONS: page dimensions for Erika"""
-ERIKA_PAGE_WIDTH = 65
+"""page dimensions for Erika"""
+# tested manually - the cursor will no longer move if a key is pressed
+ERIKA_PAGE_WIDTH_HARD_LIMIT_AT_12_CHARS_PER_INCH = 74
+# tested manually - thee will be a warning "beep" on the next pressed key
+ERIKA_PAGE_WIDTH_SOFT_LIMIT_AT_12_CHARS_PER_INCH = 65
+
 ERIKA_PAGE_HEIGHT = 150
 
 
 # class ErikaMock(Erika):
-class ErikaMock():
-    def __init__(self, width=ERIKA_PAGE_WIDTH, height=ERIKA_PAGE_HEIGHT):
+class ErikaMock:
+    def __init__(self, width=ERIKA_PAGE_WIDTH_SOFT_LIMIT_AT_12_CHARS_PER_INCH, height=ERIKA_PAGE_HEIGHT):
         self.canvas = []
         for y in range(height):
             new_list = []
@@ -35,7 +39,7 @@ class ErikaMock():
     def __exit__(self, *args):
         pass
 
-    def readConversionTable(self):
+    def read_conversion_table(self):
         pass
 
     def write_delay(self, data, delay=0.5):
@@ -47,7 +51,7 @@ class ErikaMock():
     def advance_paper(self):
         self.canvas_y += 10
 
-    def alarm(self, time):
+    def alarm(self, duration):
         pass
 
     def read(self):
