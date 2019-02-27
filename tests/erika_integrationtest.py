@@ -21,7 +21,6 @@ class ConnectTest(unittest.TestCase):
         """simple test that there is no exception when connecting"""
         with Erika(COM_PORT) as ignored:
             pass
-        self.assertTrue(True)
 
     def test_movement(self):
         """simple test to test cursor movement - validation is manual check of cursor movement"""
@@ -39,6 +38,13 @@ class ConnectTest(unittest.TestCase):
             for i in range(10):
                 my_erika.move_down()
                 time.sleep(delay)
+
+    def test_write(self):
+        """simple test that there is no exception when connecting"""
+        with Erika(COM_PORT) as my_erika:
+            my_erika.crlf()
+            my_erika.print_ascii("Hello, World!")
+            my_erika.crlf()
 
 
 def main():
