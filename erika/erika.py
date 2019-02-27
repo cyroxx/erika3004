@@ -1,13 +1,13 @@
-import serial
-import time
 import json
+import time
 
+import serial
 
 DEFAULT_DELAY = 0.5
 
 
 class Erika:
-    conversion_table_path = "charTranslation.json"
+    conversion_table_path = "erika/charTranslation.json"
 
     def __init__(self, com_port, *args, **kwargs):
         self.com_port = com_port
@@ -18,8 +18,6 @@ class Erika:
 
     def __enter__(self):
         return self
-
-    # self.connection.open()
 
     def __exit__(self, *args):
         self.connection.close()
@@ -70,12 +68,20 @@ class Erika:
 
     def move_up(self):
         self.print_raw("76")
+        self.print_raw("76")
 
     def move_down(self):
+        self.print_raw("75")
         self.print_raw("75")
 
     def move_left(self):
         self.print_raw("74")
+        self.print_raw("74")
 
     def move_right(self):
         self.print_raw("73")
+        self.print_raw("73")
+
+    def crlf(self):
+        self.print_raw("78")
+        self.print_raw("9F")

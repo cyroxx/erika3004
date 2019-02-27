@@ -1,5 +1,6 @@
 import unittest
-from erika.connect_to_erika import Erika
+
+from erika.erika import Erika
 
 # TODO make parameter dynamic
 
@@ -34,6 +35,7 @@ class ConnectTest(unittest.TestCase):
 
 def main():
     unittest.main()
+
 
 if __name__ == '__main__':
     main()
