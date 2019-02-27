@@ -86,8 +86,8 @@ TODO
 * Rendering strategies:
   * LineByLine
     * render the given image line by line 
-  * Interlaced (TODO)
-    * render the given image, every odd line first, every even line later
+  * Interlaced 
+    * render the given image, every even line first (starting count at 0), every odd line later
   * PerpendicularSpiralOutward (TODO)
     * render the given image, spiralling outward from the middle while going parallel to X or Y axis all the time
   * PerpendicularSpiralInward (TODO)
