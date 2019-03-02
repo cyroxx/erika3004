@@ -1,5 +1,6 @@
 import time
 import unittest
+import pytest
 
 from erika.erika import Erika
 
@@ -15,7 +16,7 @@ from erika.erika import Erika
 # e.g. Windows
 COM_PORT = "COM3"
 
-
+@pytest.mark.hardware
 class ConnectTest(unittest.TestCase):
     def test_connect(self):
         """simple test that there is no exception when connecting"""
