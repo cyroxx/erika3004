@@ -37,7 +37,7 @@ void loop()
 			wait = true;
 		}
 	}
-	else if (val == HIGH)
+	else //if (val == HIGH)
 	{
 		//rts was high, which means erika is ready for the next byte, when rts goes low again
 		wait = false;
