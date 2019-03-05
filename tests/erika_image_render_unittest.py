@@ -46,6 +46,13 @@ class RendererTest(unittest.TestCase):
         self.helper_test_ErikaImageRenderingStrategy_high(strategy)
         self.helper_test_ErikaImageRenderingStrategy_wide(strategy)
 
+    def testPerpendicularSpiralInwardErikaImageRenderingStrategy(self):
+        """simple test that printing as a perpendicular spiral inward works"""
+        strategy = PerpendicularSpiralInwardErikaImageRenderingStrategy()
+        self.helper_test_ErikaImageRenderingStrategy_square(strategy)
+        self.helper_test_ErikaImageRenderingStrategy_high(strategy)
+        self.helper_test_ErikaImageRenderingStrategy_wide(strategy)
+
 
 def main():
     unittest.main()

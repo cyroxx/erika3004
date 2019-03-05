@@ -20,6 +20,16 @@ class ErikaImageRenderingStrategy:
     def render_ascii_art_file(self, file_path):
         raise Exception('Not implemented')
 
+    def remove_trailing_newline(self, line):
+        return line.replace('\n', "")
+
+    def read_lines_without_trailing_newlines(self, open_file):
+        lines = open_file.readlines()
+        lines_without_newlines = []
+        for line in lines:
+            lines_without_newlines.append(self.remove_trailing_newline(line))
+        return lines_without_newlines
+
 
 class LineByLineErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
 
@@ -65,3 +75,82 @@ class InterlacedErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
                 self.output_device.print_ascii(line_without_newline)
                 self.output_device.crlf()
                 self.output_device.crlf()
+
+
+class PerpendicularSpiralInwardErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
+
+    def __init__(self):
+        ErikaImageRenderingStrategy.__init__(self)
+
+    def render_ascii_art_file(self, file_path):
+        with open(file_path, "r") as open_file:
+            lines = self.read_lines_without_trailing_newlines(open_file)
+            line_count = len(lines)
+            max_line_length = self.calculate_max_line_length(lines)
+            self.print_spiral_recursively(lines, 0, 0, max_line_length - 1, line_count - 1)
+
+    def calculate_max_line_length(self, lines):
+        max_length = 0
+        for line in lines:
+            if len(line) > max_length:
+                max_length = len(line)
+        return max_length
+
+    def print_spiral_recursively(self, lines, upper_left_x, upper_left_y, lower_right_x, lower_right_y):
+        """ASSUMPTION: current position is at (upper_left_x, upper_left_y)"""
+        if upper_left_x > lower_right_x or upper_left_y > lower_right_y:
+            return
+
+        # render one round of the spiral, clockwise
+
+        #
+        # =====>
+        #
+        for x in range(upper_left_x, lower_right_x + 1):
+            self.output_device.print_ascii(lines[upper_left_y][x])
+
+        # self.output_device.test_debug_helper_print_canvas()
+
+        # reset to last cursor position
+        self.output_device.move_left()
+
+        # go down - do not print a character twice
+        self.output_device.move_down()
+
+        # ||
+        # ||
+        # \/
+        for y in range(upper_left_y + 1, lower_right_y + 1):
+            self.output_device.print_ascii(lines[y][lower_right_x])
+            self.output_device.move_down()
+            self.output_device.move_left()
+
+        # back to last printed character
+        self.output_device.move_up()
+        self.output_device.move_left()
+
+        #
+        # <=====
+        #
+        for x in range(lower_right_x - 1, upper_left_x - 1, -1):
+            self.output_device.print_ascii(lines[lower_right_y][x])
+            self.output_device.move_left()
+            self.output_device.move_left()
+
+        self.output_device.move_right()
+        self.output_device.move_up()
+
+        # /\
+        # ||
+        # ||
+        for y in range(lower_right_y - 1, upper_left_y, -1):
+            self.output_device.print_ascii(lines[y][upper_left_x])
+            self.output_device.move_up()
+            self.output_device.move_left()
+
+        # move to smaller spiral
+        self.output_device.move_down()
+        self.output_device.move_right()
+
+        # restart recursion
+        self.print_spiral_recursively(lines, upper_left_x + 1, upper_left_y + 1, lower_right_x - 1, lower_right_y - 1)
