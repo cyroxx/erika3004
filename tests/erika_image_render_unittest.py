@@ -30,7 +30,7 @@ class RendererTest(unittest.TestCase):
         with ErikaMock(9, 4) as my_erika:
             renderer = ErikaImageRenderer(my_erika, strategy)
             renderer.render_ascii_art_file('tests/test_resources/test_ascii_art_small_wide.txt')
-            assert_print_output(self, my_erika, ["abcdefghi", "jklmnopqr", "stuvwxyzä", "öüß!?#'\"/"])
+            assert_print_output(self, my_erika, ["abcdefghi", "jklmnopqr", "stuvwxyzä"])
 
     def testLineByLineErikaImageRenderingStrategy(self):
         """simple test that printing line by line works"""
@@ -57,7 +57,7 @@ class RendererTest(unittest.TestCase):
         """simple test that printing as a perpendicular spiral inward works"""
         strategy = PerpendicularSpiralInwardErikaImageRenderingStrategy()
         self.helper_test_ErikaImageRenderingStrategy_square(strategy)
-        # self.helper_test_ErikaImageRenderingStrategy_high(strategy)
+        self.helper_test_ErikaImageRenderingStrategy_high(strategy)
         self.helper_test_ErikaImageRenderingStrategy_wide(strategy)
 
 

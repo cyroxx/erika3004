@@ -66,7 +66,7 @@ class ErikaMock:
         for c in text:
             if not self.canvas[self.canvas_y][self.canvas_x] == " ":
                 if self.exception_if_overprinted:
-                    raise Exception('Not supposed to print a letter twice: \n{} at ({}, {}).'.format(c, self.canvas_x, self.canvas_y))
+                    raise Exception('Not supposed to print a letter twice: "{}" at ({}, {}).'.format(c, self.canvas_x, self.canvas_y))
 
             self.canvas[self.canvas_y][self.canvas_x] = c
             self.canvas_x += 1

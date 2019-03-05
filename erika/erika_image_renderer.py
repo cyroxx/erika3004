@@ -109,7 +109,9 @@ class PerpendicularSpiralInwardErikaImageRenderingStrategy(ErikaImageRenderingSt
         for x in range(upper_left_x, lower_right_x + 1):
             self.output_device.print_ascii(lines[upper_left_y][x])
 
-        # self.output_device.test_debug_helper_print_canvas()
+        # edge case: this was the only last row
+        if upper_left_y == lower_right_y:
+            return
 
         # reset to last cursor position
         self.output_device.move_left()
@@ -124,6 +126,10 @@ class PerpendicularSpiralInwardErikaImageRenderingStrategy(ErikaImageRenderingSt
             self.output_device.print_ascii(lines[y][lower_right_x])
             self.output_device.move_down()
             self.output_device.move_left()
+
+        # edge case: this was the only last column
+        if upper_left_x == lower_right_x:
+            return
 
         # back to last printed character
         self.output_device.move_up()
