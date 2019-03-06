@@ -7,8 +7,8 @@ class ErikaImageRenderer:
         self.rendering_strategy = rendering_strategy
         self.rendering_strategy.set_output_device(some_erika)
 
-    def render_ascii_art_file(self, filePath):
-        self.rendering_strategy.render_ascii_art_file(filePath)
+    def render_ascii_art_file(self, file_path):
+        self.rendering_strategy.render_ascii_art_file(file_path)
 
 
 class ErikaImageRenderingStrategy:
@@ -192,6 +192,10 @@ class RandomDotFillErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
             self.render_random_dots_naive(line_count, max_line_length, lines)
 
     # naive approach: generate random position, render if not yet printed there
+    # * this results in about 100 additional re-generation attempts for random numbers for the small test images
+    # * improvement idea:
+    # ** define a cut-off point (e.g. "if 100 letters left")
+    # ** add remaining dots to a list + use random.choice(list) on those instead of continuing to guess blindly
     def render_random_dots_naive(self, line_count, max_line_length, lines):
         # once more, assuming a squere image
         number_of_characters = line_count * max_line_length
@@ -213,7 +217,6 @@ class RandomDotFillErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
             # repeat
 
     def generate_random_position(self, exclusive_max_x, exclusive_max_y):
-        # consider random.choice(list)
         random1 = random.randint(0, exclusive_max_x - 1)
         random2 = random.randint(0, exclusive_max_y - 1)
         return (random1, random2)
