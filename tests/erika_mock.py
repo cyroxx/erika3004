@@ -23,7 +23,10 @@ ERIKA_PAGE_HEIGHT = 150
 
 # class ErikaMock(Erika):
 class ErikaMock:
-    def __init__(self, width=ERIKA_PAGE_WIDTH_SOFT_LIMIT_AT_12_CHARS_PER_INCH, height=ERIKA_PAGE_HEIGHT):
+    def __init__(self,
+                 width=ERIKA_PAGE_WIDTH_SOFT_LIMIT_AT_12_CHARS_PER_INCH,
+                 height=ERIKA_PAGE_HEIGHT,
+                 exception_if_overprinted=True):
         self.canvas = []
         for y in range(height):
             new_list = []
@@ -32,6 +35,7 @@ class ErikaMock:
             self.canvas.append(new_list)
         self.canvas_x = 0
         self.canvas_y = 0
+        self.exception_if_overprinted = exception_if_overprinted
 
     def __enter__(self):
         return self
@@ -60,6 +64,10 @@ class ErikaMock:
 
     def print_ascii(self, text):
         for c in text:
+            if not self.canvas[self.canvas_y][self.canvas_x] == " ":
+                if self.exception_if_overprinted:
+                    raise Exception('Not supposed to print a letter twice: "{}" at ({}, {}).'.format(c, self.canvas_x, self.canvas_y))
+
             self.canvas[self.canvas_y][self.canvas_x] = c
             self.canvas_x += 1
 

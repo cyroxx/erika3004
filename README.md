@@ -107,16 +107,17 @@ TODO
     * render the given image line by line 
   * Interlaced 
     * render the given image, every even line first (starting count at 0), every odd line later
+  * PerpendicularSpiralInward 
+    * render the given image, spiralling inward to the middle while going parallel to X or Y axis all the time
+    * implementation goes clockwise, starting at the upper left corner
   * PerpendicularSpiralOutward (TODO)
     * render the given image, spiralling outward from the middle while going parallel to X or Y axis all the time
-  * PerpendicularSpiralInward (TODO)
-    * render the given image, spiralling inward to the middle while going parallel to X or Y axis all the time
-  * RandomDotFill (TODO)
+  * RandomDotFill
     * render the given image, printing one random letter at a time
-  * NaturalSpiralOutward (TODO)
-    * render the given image, starting from the middle, following as close a natural spiral as possible
   * NaturalSpiralInward (TODO)
     * render the given image, towards the middle, following as close a natural spiral as possible
+  * NaturalSpiralOutward (TODO)
+    * render the given image, starting from the middle, following as close a natural spiral as possible
 
 
 ## Testing
