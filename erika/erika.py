@@ -1,6 +1,6 @@
 import json
 import time
-
+from erika.erica_encoder_decoder import DDR_ASCII
 import serial
 
 DEFAULT_DELAY = 0.5
@@ -12,21 +12,13 @@ class Erika:
     def __init__(self, com_port, *args, **kwargs):
         self.com_port = com_port
         self.connection = serial.Serial(com_port, 1200)  # , timeout=0, parity=serial.PARITY_EVEN, rtscts=1)
-        self.ascii_2_ddr = {}
-        self.ddr_2_ascii = {}
-        self.read_conversion_table()
+        self.ddr_ascii = DDR_ASCII()
 
     def __enter__(self):
         return self
 
     def __exit__(self, *args):
         self.connection.close()
-
-    def read_conversion_table(self):
-        """read conversion table from file and populate 2 dicts"""
-        with open(self.conversion_table_path, encoding="UTF-8") as f:
-            self.ascii_2_ddr = json.load(f)
-        self.ddr_2_ascii = {value: key for key, value in self.ascii_2_ddr.items()}
 
     def write_delay(self, data, delay=DEFAULT_DELAY):
         self.write_byte_delay(data.encode("ASCII"), delay)
@@ -56,11 +48,11 @@ class Erika:
 
     def read(self):
         key_id = self.connection.read()
-        return self.ddr_2_ascii.get(key_id.hex().upper(), key_id.hex())
+        return self.ddr_ascii.try_decode(key_id.hex().upper())
 
     def print_ascii(self, text):
         for c in text:
-            key_id = self.ascii_2_ddr[c]
+            key_id = self.ddr_ascii.encode(c)
             self.write_byte_delay(key_id)
 
     def print_raw(self, data):
