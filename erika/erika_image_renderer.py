@@ -157,6 +157,8 @@ class PerpendicularSpiralInwardErikaImageRenderingStrategy(ErikaImageRenderingSt
             self.output_device.move_up()
             self.output_device.move_left()
 
+
+        # special handling of last character - smoothen transition
         if lower_right_y - 1 >= upper_left_y + 1:
             self.output_device.print_ascii(lines[upper_left_y + 1][upper_left_x])
 
