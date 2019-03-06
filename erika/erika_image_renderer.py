@@ -122,17 +122,20 @@ class PerpendicularSpiralInwardErikaImageRenderingStrategy(ErikaImageRenderingSt
         # ||
         # ||
         # \/
-        for y in range(upper_left_y + 1, lower_right_y + 1):
+        for y in range(upper_left_y + 1, lower_right_y):
             self.output_device.print_ascii(lines[y][lower_right_x])
             self.output_device.move_down()
             self.output_device.move_left()
+
+        # special handling of last character - smoothen transition
+        self.output_device.print_ascii(lines[lower_right_y][lower_right_x])
 
         # edge case: this was the only last column
         if upper_left_x == lower_right_x:
             return
 
         # back to last printed character
-        self.output_device.move_up()
+        self.output_device.move_left()
         self.output_device.move_left()
 
         #
@@ -149,14 +152,13 @@ class PerpendicularSpiralInwardErikaImageRenderingStrategy(ErikaImageRenderingSt
         # /\
         # ||
         # ||
-        for y in range(lower_right_y - 1, upper_left_y, -1):
+        for y in range(lower_right_y - 1, upper_left_y + 1, -1):
             self.output_device.print_ascii(lines[y][upper_left_x])
             self.output_device.move_up()
             self.output_device.move_left()
 
-        # move to smaller spiral
-        self.output_device.move_down()
-        self.output_device.move_right()
+        if lower_right_y - 1 >= upper_left_y + 1:
+            self.output_device.print_ascii(lines[upper_left_y + 1][upper_left_x])
 
-        # restart recursion
+        # continue with smaller spiral - restart recursion
         self.print_spiral_recursively(lines, upper_left_x + 1, upper_left_y + 1, lower_right_x - 1, lower_right_y - 1)
