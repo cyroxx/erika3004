@@ -112,7 +112,7 @@ TODO
     * implementation goes clockwise, starting at the upper left corner
   * PerpendicularSpiralOutward (TODO)
     * render the given image, spiralling outward from the middle while going parallel to X or Y axis all the time
-  * RandomDotFill (TODO)
+  * RandomDotFill
     * render the given image, printing one random letter at a time
   * NaturalSpiralInward (TODO)
     * render the given image, towards the middle, following as close a natural spiral as possible

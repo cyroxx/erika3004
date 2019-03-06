@@ -53,6 +53,14 @@ class RendererTest(unittest.TestCase):
         self.helper_test_ErikaImageRenderingStrategy_high(strategy)
         self.helper_test_ErikaImageRenderingStrategy_wide(strategy)
 
+    def testRandomDotFillErikaImageRenderingStrategy(self):
+        """simple test that printing as one random dot at a time works"""
+        strategy = RandomDotFillErikaImageRenderingStrategy()
+        self.helper_test_ErikaImageRenderingStrategy_square(strategy)
+        self.helper_test_ErikaImageRenderingStrategy_high(strategy)
+        self.helper_test_ErikaImageRenderingStrategy_wide(strategy)
+
+
 
 def main():
     unittest.main()

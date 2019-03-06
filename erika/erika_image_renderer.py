@@ -1,3 +1,6 @@
+import random
+
+
 class ErikaImageRenderer:
     def __init__(self, some_erika, rendering_strategy):
         self.output_device = some_erika
@@ -29,6 +32,13 @@ class ErikaImageRenderingStrategy:
         for line in lines:
             lines_without_newlines.append(self.remove_trailing_newline(line))
         return lines_without_newlines
+
+    def calculate_max_line_length(self, lines):
+        max_length = 0
+        for line in lines:
+            if len(line) > max_length:
+                max_length = len(line)
+        return max_length
 
 
 class LineByLineErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
@@ -88,13 +98,6 @@ class PerpendicularSpiralInwardErikaImageRenderingStrategy(ErikaImageRenderingSt
             line_count = len(lines)
             max_line_length = self.calculate_max_line_length(lines)
             self.print_spiral_recursively(lines, 0, 0, max_line_length - 1, line_count - 1)
-
-    def calculate_max_line_length(self, lines):
-        max_length = 0
-        for line in lines:
-            if len(line) > max_length:
-                max_length = len(line)
-        return max_length
 
     def print_spiral_recursively(self, lines, upper_left_x, upper_left_y, lower_right_x, lower_right_y):
         """ASSUMPTION: current position is at (upper_left_x, upper_left_y)"""
@@ -157,10 +160,78 @@ class PerpendicularSpiralInwardErikaImageRenderingStrategy(ErikaImageRenderingSt
             self.output_device.move_up()
             self.output_device.move_left()
 
-
         # special handling of last character - smoothen transition
         if lower_right_y - 1 >= upper_left_y + 1:
             self.output_device.print_ascii(lines[upper_left_y + 1][upper_left_x])
 
         # continue with smaller spiral - restart recursion
         self.print_spiral_recursively(lines, upper_left_x + 1, upper_left_y + 1, lower_right_x - 1, lower_right_y - 1)
+
+
+class RandomDotFillErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
+
+    def __init__(self):
+        ErikaImageRenderingStrategy.__init__(self)
+
+    def render_ascii_art_file(self, file_path):
+        self.current_x = 0
+        self.current_y = 0
+        self.printed = []
+
+        with open(file_path, "r") as open_file:
+            lines = self.read_lines_without_trailing_newlines(open_file)
+            line_count = len(lines)
+            max_line_length = self.calculate_max_line_length(lines)
+
+            for y in range(line_count):
+                new_row = []
+                for x in range(max_line_length):
+                    new_row.append(False)
+                self.printed.append(new_row)
+
+            self.render_random_dots_naive(line_count, max_line_length, lines)
+
+    # naive approach: generate random position, render if not yet printed there
+    def render_random_dots_naive(self, line_count, max_line_length, lines):
+        # once more, assuming a squere image
+        number_of_characters = line_count * max_line_length
+
+        for i in range(0, number_of_characters):
+            # generate random position
+            # look up if already printed - re-generate until empty space was found
+            position_x, position_y = self.generate_random_position(max_line_length, line_count)
+            while self.printed[position_y][position_x]:
+                position_x, position_y = self.generate_random_position(max_line_length, line_count)
+
+            # move there + print
+            self.move_to(position_x, position_y)
+
+            self.output_device.print_ascii(lines[position_y][position_x])
+            self.current_x += 1
+
+            self.printed[position_y][position_x] = True
+            # repeat
+
+    def generate_random_position(self, exclusive_max_x, exclusive_max_y):
+        # consider random.choice(list)
+        random1 = random.randint(0, exclusive_max_x - 1)
+        random2 = random.randint(0, exclusive_max_y - 1)
+        return (random1, random2)
+
+    def move_to(self, position_x, position_y):
+        # naive: adjust X position first, then Y position
+        while self.current_x < position_x:
+            self.output_device.move_right()
+            self.current_x += 1
+
+        while (position_x < self.current_x):
+            self.output_device.move_left()
+            self.current_x -= 1
+
+        while self.current_y < position_y:
+            self.output_device.move_down()
+            self.current_y += 1
+
+        while (position_y < self.current_y):
+            self.output_device.move_up()
+            self.current_y -= 1
