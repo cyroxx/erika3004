@@ -14,38 +14,39 @@ bool wait = false;
 
 void setup()
 {
-	pinMode(RTS_PIN, INPUT);
-	Serial.begin(PC_BAUD);
-	erika.begin(ERIKA_BAUD);
+  pinMode(RTS_PIN, INPUT);
+  Serial.begin(PC_BAUD);
+  erika.begin(ERIKA_BAUD);
 }
 
 void loop()
 { // run over and over
-	int rtsState = digitalRead(RTS_PIN);
+  int rtsState = digitalRead(RTS_PIN);
 
-	//continue on falling edge
-	if (rtsState == LOW && wait == false)
-	{
-		//data from pc in serial buffer ?
-		if (Serial.available())
-		{
-			//convert to raw (ddr-ascii)
-			int result = ascii2ddr[Serial.read()];
-			erika.write(result);
-			//Serial.println(result,HEX);
-			//wait until rts went high
-			wait = true;
-		}
-	}
-	else //if (val == HIGH)
-	{
-		//rts was high, which means erika is ready for the next byte, when rts goes low again
-		wait = false;
-	}
-	//erika has data to send
-	if (erika.available())
-	{
-		//convert ddr-ascci to ascii and send to pc
-		Serial.write(ddr2ascii[erika.read()]);
-	}
+  //continue on falling edge
+  if (rtsState == LOW && wait == false)
+  {
+    //data from pc in serial buffer ?
+    if (Serial.available())
+    {
+      //convert to raw (ddr-ascii)
+      int result = ascii2ddr[Serial.read()];
+      erika.write(result);
+      //Serial.println(result,HEX);
+      //wait until rts went high
+      wait = true;
+      delay(100);
+    }
+  }
+  else //if (val == HIGH)
+  {
+    //rts was high, which means erika is ready for the next byte, when rts goes low again
+    wait = false;
+  }
+  //erika has data to send
+  if (erika.available())
+  {
+    //convert ddr-ascci to ascii and send to pc
+    Serial.write(ddr2ascii[erika.read()]);
+  }
 }
