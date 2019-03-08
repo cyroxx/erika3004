@@ -1,5 +1,7 @@
 # Erika3004
 
+[![Build Status](https://travis-ci.org/Chaostreff-Potsdam/erika3004.svg?branch=master)](https://travis-ci.org/Chaostreff-Potsdam/erika3004)
+
 ## Encoding
 
 The Erika3004 Typewriter uses a proprietary encoding NOT compatible with ASCII, Unicode, etc.  
