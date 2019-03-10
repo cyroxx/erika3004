@@ -1,5 +1,7 @@
 # Erika3004
 
+[![Build Status](https://travis-ci.org/Chaostreff-Potsdam/erika3004.svg?branch=master)](https://travis-ci.org/Chaostreff-Potsdam/erika3004)
+
 ## Encoding
 
 The Erika3004 Typewriter uses a proprietary encoding NOT compatible with ASCII, Unicode, etc.  
@@ -114,10 +116,10 @@ TODO
     * render the given image, spiralling outward from the middle while going parallel to X or Y axis all the time
   * RandomDotFill
     * render the given image, printing one random letter at a time
-  * NaturalSpiralInward (TODO)
-    * render the given image, towards the middle, following as close a natural spiral as possible
-  * NaturalSpiralOutward (TODO)
-    * render the given image, starting from the middle, following as close a natural spiral as possible
+  * ArchimedeanSpiralInward (TODO)
+    * render the given image, towards the middle, following an Archimedean spiral as closely as possible
+  * ArchimedeanSpiralOutward (TODO)
+    * render the given image, starting from the middle, following an Archimedean spiral as closely as possible
 
 
 ## Testing
