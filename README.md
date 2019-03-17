@@ -32,6 +32,7 @@ More information can be found here (German):
 A schematic of our Arduino based interface can be found [on EasyEDA](https://easyeda.com/sirexeclp/erikaarduinointerface).
 ![Schematic](docs/Schematic_ErikaArduinoInterface.png)
 
+[DDR-Halbleiter - Kurzdatenblätter und Vergleichsliste](https://www-user.tu-chemnitz.de/~heha/basteln/Konsumg%C3%BCter/DDR-Halbleiter/)
 ## Software
 
 ### Arduino Sketch
