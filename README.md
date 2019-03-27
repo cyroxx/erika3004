@@ -119,7 +119,7 @@ TODO
     * render the given image, printing one random letter at a time
   * ArchimedeanSpiralInward (TODO)
     * render the given image, towards the middle, following an Archimedean spiral as closely as possible
-  * ArchimedeanSpiralOutward (TODO)
+  * ArchimedeanSpiralOutward
     * render the given image, starting from the middle, following an Archimedean spiral as closely as possible
 
 
