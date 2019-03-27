@@ -1,5 +1,12 @@
 import random
+import math
+from enum import Enum
 
+class Direction(Enum):
+    NORTHEAST = 1
+    NORTHWEST = 2
+    SOUTHEAST = 3
+    SOUTHWEST = 4
 
 class ErikaImageRenderer:
     def __init__(self, some_erika, rendering_strategy):
@@ -238,3 +245,106 @@ class RandomDotFillErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
         while (position_y < self.current_y):
             self.output_device.move_up()
             self.current_y -= 1
+
+
+class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
+
+    def __init__(self):
+        ErikaImageRenderingStrategy.__init__(self)
+        ### PARAMETERS
+
+        # "...with real numbers a and b.
+        # Changing the parameter a turns the spiral,
+        # while b controls the distance between successive turnings."
+        # https://en.wikipedia.org/wiki/Archimedean_spiral
+        self.SPIRAL_PARAM_A = 1
+        self.SPIRAL_PARAM_B = 5
+
+        # round spiral:
+        # 1 / 20 * pi
+        # 1 / 10
+        #
+        # jagged spiral:
+        # 1
+        self.SPIRAL_STEP_SIZE = 1 / 20 * math.pi
+
+        # tolerance around 45° angle (in all directions) to mark as area for cut-off
+        self.CUTOFF_ANGLE_TOLERANCE = 15
+
+    def render_ascii_art_file(self, file_path):
+        self.current_x = 0
+        self.current_y = 0
+        self.printed = []
+
+        with open(file_path, "r") as open_file:
+            lines = self.read_lines_without_trailing_newlines(open_file)
+            self.render_spiral(lines)
+            self.render_remaining(lines)
+
+    # Formula for Archimedean spiral:
+    # https://en.wikipedia.org/wiki/Archimedean_spiral
+    # r = a + b * phi
+    # (with phi replaced later by t = 0, 1, ...)
+    #
+    # from polar coordinates to cartesian coordinates:
+    # x = r * cos(phi)
+    # y = r * sin(phi)
+    #
+    # follows:
+    # r = x / cos(phi)
+    # x / cos(phi) = a + b * phi
+    # x = (a + b * phi) * cos(phi)
+    #
+    # r = y / sin(phi)
+    # y / sin(phi) = a + b * phi
+    # y = (a + b * phi) * sin(phi)
+    #
+    def render_spiral(self, lines):
+
+        max_x = self.calculate_max_line_length(lines)
+        max_y = len(lines) - 1
+        i = 1
+        directions_out_of_bounds = {}
+        while True:
+            t = i * self.SPIRAL_STEP_SIZE
+
+            x = (self.SPIRAL_PARAM_A + self.SPIRAL_PARAM_B * t) * math.cos(t)
+            y = (self.SPIRAL_PARAM_A + self.SPIRAL_PARAM_B * t) * math.sin(t)
+
+            # cut off: cut off if turtle is in the corner (close to 45 degree angle in all directions) + out of bounds
+            current_angle = (math.degrees(t) % 360)
+            if ((45 - self.CUTOFF_ANGLE_TOLERANCE <= current_angle) \
+                    and (current_angle <= 45 + self.CUTOFF_ANGLE_TOLERANCE)):
+                self.note_if_out_of_bounds(directions_out_of_bounds, Direction.NORTHEAST, max_x, max_y, x, y)
+            if ((135 - self.CUTOFF_ANGLE_TOLERANCE <= current_angle) \
+                    and (current_angle <= 135 + self.CUTOFF_ANGLE_TOLERANCE)):
+                self.note_if_out_of_bounds(directions_out_of_bounds, Direction.NORTHWEST, max_x, max_y, x, y)
+            if ((225 - self.CUTOFF_ANGLE_TOLERANCE <= current_angle) \
+                    and (current_angle <= 225 + self.CUTOFF_ANGLE_TOLERANCE)):
+                self.note_if_out_of_bounds(directions_out_of_bounds, Direction.SOUTHEAST, max_x, max_y, x, y)
+            if ((315 - self.CUTOFF_ANGLE_TOLERANCE <= current_angle) \
+                    and (current_angle <= 315 + self.CUTOFF_ANGLE_TOLERANCE)):
+                self.note_if_out_of_bounds(directions_out_of_bounds, Direction.SOUTHWEST, max_x, max_y, x, y)
+
+            # all 4 directions are out of bounds now
+            if len(directions_out_of_bounds) > 3:
+                break
+
+            # move to calculated next point + print
+            self.goto_and_print_if_in_bounds(lines, x, y)
+
+            i += 1
+
+    def note_if_out_of_bounds(self, directions_out_of_bounds, direction, max_x, max_y, x, y):
+        if (x < 0) or (y < 0) or (max_x < x) or (max_y < y):
+            directions_out_of_bounds[direction] = 1
+            # turtle.write("({:.2f}, {:.2f}) - {:.2f}°".format(x, y, current_angle))
+
+    def goto_and_print_if_in_bounds(self, lines, x, y):
+        pass
+
+    def render_remaining(self, lines):
+        # render remaining letters in ascending order of distance to middle point
+        # TODO
+        pass
+

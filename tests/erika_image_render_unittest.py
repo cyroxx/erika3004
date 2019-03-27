@@ -60,6 +60,12 @@ class RendererTest(unittest.TestCase):
         self.helper_test_ErikaImageRenderingStrategy_high(strategy)
         self.helper_test_ErikaImageRenderingStrategy_wide(strategy)
 
+    def testArchimedeanSpiralOutwardErikaImageRenderingStrategy(self):
+        """simple test that printing following along an archimedean spiral works"""
+        strategy = ArchimedeanSpiralOutwardErikaImageRenderingStrategy()
+        self.helper_test_ErikaImageRenderingStrategy_square(strategy)
+        self.helper_test_ErikaImageRenderingStrategy_high(strategy)
+        self.helper_test_ErikaImageRenderingStrategy_wide(strategy)
 
 
 def main():
