@@ -67,6 +67,20 @@ class RendererTest(unittest.TestCase):
         self.helper_test_ErikaImageRenderingStrategy_high(strategy)
         self.helper_test_ErikaImageRenderingStrategy_wide(strategy)
 
+    def testArchimedeanSpiralOutwardErikaImageRenderingStrategy2(self):
+        """test with a bigger file + two spirals"""
+        with ErikaMock(60, 30, False) as my_erika:
+            strategy = ArchimedeanSpiralOutwardErikaImageRenderingStrategy(spiral_param_a=1, render_remaining_characters=False)
+            renderer = ErikaImageRenderer(my_erika, strategy)
+            renderer.render_ascii_art_file('tests/test_resources/test_ascii_art.txt')
+            # my_erika.test_debug_helper_print_canvas()
+
+            strategy2 = ArchimedeanSpiralOutwardErikaImageRenderingStrategy(spiral_param_a=0.5, render_remaining_characters=False)
+            renderer.set_strategy(strategy2)
+            renderer.render_ascii_art_file('tests/test_resources/test_ascii_art.txt')
+            # my_erika.test_debug_helper_print_canvas()
+
+
 
 def main():
     unittest.main()

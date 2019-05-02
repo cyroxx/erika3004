@@ -64,12 +64,14 @@ class ErikaMock:
 
     def print_ascii(self, text):
         for c in text:
+            # print('Trying to print letter "{}" at ({}, {}).'.format(c, self.canvas_x, self.canvas_y))
             if not self.canvas[self.canvas_y][self.canvas_x] == " ":
                 if self.exception_if_overprinted:
                     raise Exception('Not supposed to print a letter twice: "{}" at ({}, {}).'.format(c, self.canvas_x, self.canvas_y))
 
             self.canvas[self.canvas_y][self.canvas_x] = c
             self.canvas_x += 1
+            # self.test_debug_helper_print_canvas()
 
     def print_raw(self, data):
         raise Exception('User is not supposed to call print_raw directly')
@@ -94,3 +96,4 @@ class ErikaMock:
         """for debugging: print the current canvas to stdout"""
         for line in self.canvas:
             print(line)
+        print()

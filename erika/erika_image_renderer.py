@@ -1,6 +1,7 @@
-import random
 import math
+import random
 from enum import Enum
+
 
 class Direction(Enum):
     NORTHEAST = 1
@@ -16,6 +17,10 @@ class ErikaImageRenderer:
 
     def render_ascii_art_file(self, file_path):
         self.rendering_strategy.render_ascii_art_file(file_path)
+
+    def set_strategy(self, new_strategy):
+        self.rendering_strategy = new_strategy
+        self.rendering_strategy.set_output_device(self.output_device)
 
 
 class ErikaImageRenderingStrategy:
@@ -183,20 +188,23 @@ class RandomDotFillErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
     def render_ascii_art_file(self, file_path):
         self.current_x = 0
         self.current_y = 0
-        self.printed = []
 
         with open(file_path, "r") as open_file:
             lines = self.read_lines_without_trailing_newlines(open_file)
             line_count = len(lines)
             max_line_length = self.calculate_max_line_length(lines)
-
-            for y in range(line_count):
-                new_row = []
-                for x in range(max_line_length):
-                    new_row.append(False)
-                self.printed.append(new_row)
-
+            self.initialize_printed_characters_map(lines, max_line_length, line_count)
             self.render_random_dots_naive(line_count, max_line_length, lines)
+
+    # TODO dry
+    def initialize_printed_characters_map(self, lines, max_line_length, line_count):
+        self.printed = []
+        for y in range(line_count):
+            new_row = []
+            for x in range(max_line_length):
+                new_row.append(False)
+            self.printed.append(new_row)
+
 
     # naive approach: generate random position, render if not yet printed there
     # * this results in about 100 additional re-generation attempts for random numbers for the small test images
@@ -219,7 +227,6 @@ class RandomDotFillErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
 
             self.output_device.print_ascii(lines[position_y][position_x])
             self.current_x += 1
-
             self.printed[position_y][position_x] = True
             # repeat
 
@@ -249,16 +256,26 @@ class RandomDotFillErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
 
 class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
 
-    def __init__(self):
-        ErikaImageRenderingStrategy.__init__(self)
-        ### PARAMETERS
+    # TODO mention "This is a reST style." in commit message + link to https://stackoverflow.com/a/24385103/1143126
+    def __init__(self, spiral_param_a=1, spiral_param_b=0.35, spiral_step_size=0.01, render_remaining_characters=True):
+        """
+        "...with real numbers a and b.
 
-        # "...with real numbers a and b.
-        # Changing the parameter a turns the spiral,
-        # while b controls the distance between successive turnings."
-        # https://en.wikipedia.org/wiki/Archimedean_spiral
-        self.SPIRAL_PARAM_A = 1
-        self.SPIRAL_PARAM_B = 5
+        Changing the parameter a turns the spiral,
+
+        while b controls the distance between successive turnings."
+
+        https://en.wikipedia.org/wiki/Archimedean_spiral
+
+        :param spiral_param_a: turns the spiral
+        :param spiral_param_b: controls distance between spiral turns
+        :param spiral_step_size: step size between successive datapoints
+        :param render_remaining_characters: if False, will only render the spiral, not fill remaining gaps later
+        """
+        ErikaImageRenderingStrategy.__init__(self)
+
+        self.spiral_param_a = spiral_param_a
+        self.spiral_param_b = spiral_param_b
 
         # round spiral:
         # 1 / 20 * pi
@@ -266,20 +283,37 @@ class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStr
         #
         # jagged spiral:
         # 1
-        self.SPIRAL_STEP_SIZE = 1 / 20 * math.pi
+        self.spiral_step_size = spiral_step_size
 
         # tolerance around 45° angle (in all directions) to mark as area for cut-off
         self.CUTOFF_ANGLE_TOLERANCE = 15
 
+        self.render_remaining_characters = render_remaining_characters
+
     def render_ascii_art_file(self, file_path):
         self.current_x = 0
         self.current_y = 0
-        self.printed = []
 
         with open(file_path, "r") as open_file:
             lines = self.read_lines_without_trailing_newlines(open_file)
-            self.render_spiral(lines)
-            self.render_remaining(lines)
+            line_count = len(lines)
+            max_line_length = self.calculate_max_line_length(lines)
+            self.initialize_printed_characters_map(lines, max_line_length, line_count)
+
+            self.render_spiral(lines, max_line_length, line_count)
+
+            if(self.render_remaining_characters):
+                self.render_remaining(lines, max_line_length, line_count)
+
+            self.reset_to_upper_left()
+
+    def initialize_printed_characters_map(self, lines, max_line_length, line_count):
+        self.printed = []
+        for y in range(line_count):
+            new_row = []
+            for x in range(max_line_length):
+                new_row.append(False)
+            self.printed.append(new_row)
 
     # Formula for Archimedean spiral:
     # https://en.wikipedia.org/wiki/Archimedean_spiral
@@ -299,17 +333,23 @@ class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStr
     # y / sin(phi) = a + b * phi
     # y = (a + b * phi) * sin(phi)
     #
-    def render_spiral(self, lines):
+    def render_spiral(self, lines, max_line_length, line_count):
 
-        max_x = self.calculate_max_line_length(lines)
-        max_y = len(lines) - 1
+        max_x = max_line_length - 1
+        max_y = line_count - 1
+
+        # print('max_x: {}, max_y: {}'.format(max_x, max_y))
+
         i = 1
         directions_out_of_bounds = {}
+        self.spiral_offset_x = math.floor(max_x / 2)
+        self.spiral_offset_y = math.floor(max_y / 2)
+        self.move_to(self.spiral_offset_x, self.spiral_offset_y)
         while True:
-            t = i * self.SPIRAL_STEP_SIZE
+            t = i * self.spiral_step_size
 
-            x = (self.SPIRAL_PARAM_A + self.SPIRAL_PARAM_B * t) * math.cos(t)
-            y = (self.SPIRAL_PARAM_A + self.SPIRAL_PARAM_B * t) * math.sin(t)
+            x = (self.spiral_param_a + self.spiral_param_b * t) * math.cos(t) + self.spiral_offset_x
+            y = (self.spiral_param_a + self.spiral_param_b * t) * math.sin(t) + self.spiral_offset_y
 
             # cut off: cut off if turtle is in the corner (close to 45 degree angle in all directions) + out of bounds
             current_angle = (math.degrees(t) % 360)
@@ -330,21 +370,81 @@ class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStr
             if len(directions_out_of_bounds) > 3:
                 break
 
+            rounded_x = math.floor(x)
+            rounded_y = math.floor(y)
             # move to calculated next point + print
-            self.goto_and_print_if_in_bounds(lines, x, y)
+            self.goto_and_print_if_in_bounds(lines, max_x, max_y, rounded_x, rounded_y)
 
             i += 1
 
     def note_if_out_of_bounds(self, directions_out_of_bounds, direction, max_x, max_y, x, y):
         if (x < 0) or (y < 0) or (max_x < x) or (max_y < y):
             directions_out_of_bounds[direction] = 1
-            # turtle.write("({:.2f}, {:.2f}) - {:.2f}°".format(x, y, current_angle))
 
-    def goto_and_print_if_in_bounds(self, lines, x, y):
-        pass
+    def goto_and_print_if_in_bounds(self, lines, max_x, max_y, x, y):
+        if (x < 0) or (y < 0) or (max_x < x) or (max_y < y):
+            return
+        self.goto_and_print(lines, x, y)
 
-    def render_remaining(self, lines):
+    def goto_and_print(self, lines, x, y):
+        # print('goto_and_print_if_in_bounds(1) -- x: {}, y: {}, current_x: {}, current_y: {}'.format(x, y, self.current_x, self.current_y))
+        if (self.printed[y][x]):
+            return
+
+        self.printed[y][x] = True
+        self.move_to(x, y)
+        # print('goto_and_print_if_in_bounds(2) -- x: {}, y: {}, current_x: {}, current_y: {}'.format(x, y, self.current_x, self.current_y))
+        self.output_device.print_ascii(lines[y][x])
+        self.current_x += 1
+
+
+    # TODO dry
+    def move_to(self, position_x, position_y):
+        # naive: adjust X position first, then Y position
+        while self.current_x < position_x:
+            self.output_device.move_right()
+            self.current_x += 1
+
+        while (position_x < self.current_x):
+            self.output_device.move_left()
+            self.current_x -= 1
+
+        while self.current_y < position_y:
+            self.output_device.move_down()
+            self.current_y += 1
+
+        while (position_y < self.current_y):
+            self.output_device.move_up()
+            self.current_y -= 1
+
+    def render_remaining(self, lines, max_line_length, line_count):
+        # print('### Render remaining letters ###')
         # render remaining letters in ascending order of distance to middle point
-        # TODO
-        pass
+        found = True
+        while found:
+            found = False
+            min_distance = float("inf")
+            min_position_x = 0
+            min_position_y = 0
+            for x in range(0, max_line_length):
+                for y in range(0, line_count):
+                    is_printed = self.printed[y][x]
+                    is_new_min_distance = self.distance_to_spiral_center(x, y) < min_distance
+                    if is_new_min_distance and not is_printed:
+                        found = True
+                        min_position_x = x
+                        min_position_y = y
+                        min_distance = self.distance_to_spiral_center(x, y)
+            if found:
+                self.goto_and_print(lines, min_position_x, min_position_y)
+
+
+    def distance_to_spiral_center(self, x, y):
+        delta_x = math.fabs(self.spiral_offset_x - x)
+        delta_y = math.fabs(self.spiral_offset_y - y)
+        return math.sqrt(delta_x * delta_x + delta_y * delta_y)
+
+    def reset_to_upper_left(self):
+        # print('### Reset to (0, 0) ###')
+        self.move_to(0, 0)
 
