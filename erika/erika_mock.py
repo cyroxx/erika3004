@@ -21,7 +21,6 @@ ERIKA_PAGE_WIDTH_SOFT_LIMIT_AT_12_CHARS_PER_INCH = 65
 ERIKA_PAGE_HEIGHT = 150
 
 
-# class ErikaMock(Erika):
 class ErikaMock:
     def __init__(self,
                  width=ERIKA_PAGE_WIDTH_SOFT_LIMIT_AT_12_CHARS_PER_INCH,

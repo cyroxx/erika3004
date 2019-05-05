@@ -1,6 +1,6 @@
 import unittest
 
-from tests.erika_mock import ErikaMock
+from erika.erika_mock import ErikaMock
 
 
 def assert_print_output(test_case, my_erika, expected_array_of_joined_lines):

@@ -3,7 +3,7 @@
 import unittest
 
 from erika.erika_image_renderer import *
-from tests.erika_mock import *
+from erika.erika_mock import *
 from tests.erika_mock_unittest import assert_print_output
 
 

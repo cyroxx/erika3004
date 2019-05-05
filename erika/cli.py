@@ -1,23 +1,17 @@
-from enum import Enum
+from argparse import ArgumentParser
+
 from erika.erika import Erika
 from erika.erika_image_renderer import *
-from argparse import ArgumentParser
+from erika.erika_mock import *
+
 # from argparse import RawTextHelpFormatter
 # from argparse import RawDescriptionHelpFormatter
-
-class ErikaCommands(Enum):
-    render_ascii_art_file = 1
-
-class ErikaRenderingStrategies(Enum):
-    LineByLine = 1
-    Interlaced = 2
-    PerpendicularSpiralInward = 3
-    RandomDotFill = 4
-    ArchimedeanSpiralOutward = 5
 
 # TODO support using piped input https://docs.python.org/3/library/fileinput.html
 
 parser = ArgumentParser(prog='erika.sh')
+# TODO rendering of rendering strategy options is still broken, this tip does not help:
+#       https://stackoverflow.com/questions/3853722/python-argparse-how-to-insert-newline-in-the-help-text
 # parser = ArgumentParser(prog='erika.sh', formatter_class=RawTextHelpFormatter)
 # parser = ArgumentParser(prog='erika.sh', formatter_class=RawDescriptionHelpFormatter)
 command_parser = parser.add_subparsers(help='Available commands')
@@ -34,7 +28,7 @@ render_ascii_art_file_parser.add_argument('--strategy', '-s',
                                                    'RandomDotFill', 'ArchimedeanSpiralOutward'],
                                           default='LineByLine',
                                           # metavar='STRAT',
-help="""Rendering strategy to apply. The value must be one of the following: 
+                                          help="""Rendering strategy to apply. The value must be one of the following: 
                 ## LineByLine ##
                     * render the given image line by line
                     * default option
@@ -48,5 +42,29 @@ help="""Rendering strategy to apply. The value must be one of the following:
                     * render the given image, starting from the middle, following an Archimedean spiral as closely as possible""")
 args = parser.parse_args()
 
-# TODO wire up with the actual code
-print ('### DEBUG: Args[{}]'.format(args))
+# print('### DEBUG: Args[{}]'.format(args))
+# print('dry_run: {}'.format(args.dry_run))
+# print('strategy: {}'.format(args.strategy))
+# print('file: {}'.format(args.file))
+
+
+if args.strategy == 'LineByLine':
+    strategy = strategy = LineByLineErikaImageRenderingStrategy()
+elif args.strategy == 'Interlaced':
+    strategy = InterlacedErikaImageRenderingStrategy()
+elif args.strategy == 'PerpendicularSpiralInward':
+    strategy = PerpendicularSpiralInwardErikaImageRenderingStrategy()
+elif args.strategy == 'RandomDotFill':
+    strategy = RandomDotFillErikaImageRenderingStrategy()
+elif args.strategy == 'ArchimedeanSpiralOutward':
+    strategy = ArchimedeanSpiralOutwardErikaImageRenderingStrategy()
+
+if args.dry_run:
+    erika = ErikaMock()
+    renderer = ErikaImageRenderer(erika, strategy)
+    renderer.render_ascii_art_file(args.file)
+    erika.test_debug_helper_print_canvas()
+else:
+    erika = Erika()
+    renderer = ErikaImageRenderer(erika, strategy)
+    renderer.render_ascii_art_file(args.file)
