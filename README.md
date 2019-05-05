@@ -101,11 +101,11 @@ sudo apt install jp2a
 convert ubuntu-logo32.png jpg:- | jp2a - --width=80 --height=80
 ```
 
-### Print ASCII art programmatically 
+### Print ASCII art 
 
-TODO 
+The `erika.sh` command-line utility provides convenience functions to have Erika print a given ASCII art file.
 
-* Rendering strategies:
+It offers the following built-in rendering strategies:
   * LineByLine
     * render the given image line by line 
   * Interlaced 
@@ -113,15 +113,13 @@ TODO
   * PerpendicularSpiralInward 
     * render the given image, spiralling inward to the middle while going parallel to X or Y axis all the time
     * implementation goes clockwise, starting at the upper left corner
-  * PerpendicularSpiralOutward (TODO)
-    * render the given image, spiralling outward from the middle while going parallel to X or Y axis all the time
   * RandomDotFill
     * render the given image, printing one random letter at a time
-  * ArchimedeanSpiralInward (TODO)
-    * render the given image, towards the middle, following an Archimedean spiral as closely as possible
   * ArchimedeanSpiralOutward
     * render the given image, starting from the middle, following an Archimedean spiral as closely as possible
 
+For further information, simply call   
+```./erika.sh -h```
 
 ## Testing
 
