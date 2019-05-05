@@ -9,6 +9,7 @@ class Direction(Enum):
     SOUTHEAST = 3
     SOUTHWEST = 4
 
+
 class ErikaImageRenderer:
     def __init__(self, some_erika, rendering_strategy):
         self.output_device = some_erika
@@ -51,6 +52,19 @@ class ErikaImageRenderingStrategy:
             if len(line) > max_length:
                 max_length = len(line)
         return max_length
+
+    def generate_coordinates(self, range_x_upper, range_y_upper, range_x_lower=0, range_y_lower=0):
+        for x in range(range_x_lower, range_x_upper):
+            for y in range(range_y_lower, range_y_upper):
+                yield (x, y)
+
+    def initialize_printed_characters_map(self, lines, max_line_length, line_count):
+        self.printed = []
+        for y in range(line_count):
+            new_row = []
+            for x in range(max_line_length):
+                new_row.append(False)
+            self.printed.append(new_row)
 
 
 class LineByLineErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
@@ -196,16 +210,6 @@ class RandomDotFillErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
             self.initialize_printed_characters_map(lines, max_line_length, line_count)
             self.render_random_dots_naive(line_count, max_line_length, lines)
 
-    # TODO dry
-    def initialize_printed_characters_map(self, lines, max_line_length, line_count):
-        self.printed = []
-        for y in range(line_count):
-            new_row = []
-            for x in range(max_line_length):
-                new_row.append(False)
-            self.printed.append(new_row)
-
-
     # naive approach: generate random position, render if not yet printed there
     # * this results in about 100 additional re-generation attempts for random numbers for the small test images
     # * improvement idea:
@@ -302,18 +306,10 @@ class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStr
 
             self.render_spiral(lines, max_line_length, line_count)
 
-            if(self.render_remaining_characters):
+            if (self.render_remaining_characters):
                 self.render_remaining(lines, max_line_length, line_count)
 
             self.reset_to_upper_left()
-
-    def initialize_printed_characters_map(self, lines, max_line_length, line_count):
-        self.printed = []
-        for y in range(line_count):
-            new_row = []
-            for x in range(max_line_length):
-                new_row.append(False)
-            self.printed.append(new_row)
 
     # Formula for Archimedean spiral:
     # https://en.wikipedia.org/wiki/Archimedean_spiral
@@ -397,7 +393,6 @@ class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStr
         self.output_device.print_ascii(lines[y][x])
         self.current_x += 1
 
-
     # TODO dry
     def move_to(self, position_x, position_y):
         # naive: adjust X position first, then Y position
@@ -426,18 +421,17 @@ class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStr
             min_distance = float("inf")
             min_position_x = 0
             min_position_y = 0
-            for x in range(0, max_line_length):
-                for y in range(0, line_count):
-                    is_printed = self.printed[y][x]
-                    is_new_min_distance = self.distance_to_spiral_center(x, y) < min_distance
-                    if is_new_min_distance and not is_printed:
-                        found = True
-                        min_position_x = x
-                        min_position_y = y
-                        min_distance = self.distance_to_spiral_center(x, y)
+
+            for x, y in self.generate_coordinates(max_line_length, line_count):
+                is_printed = self.printed[y][x]
+                is_new_min_distance = self.distance_to_spiral_center(x, y) < min_distance
+                if is_new_min_distance and not is_printed:
+                    found = True
+                    min_position_x = x
+                    min_position_y = y
+                    min_distance = self.distance_to_spiral_center(x, y)
             if found:
                 self.goto_and_print(lines, min_position_x, min_position_y)
-
 
     def distance_to_spiral_center(self, x, y):
         delta_x = math.fabs(self.spiral_offset_x - x)
@@ -447,4 +441,3 @@ class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStr
     def reset_to_upper_left(self):
         # print('### Reset to (0, 0) ###')
         self.move_to(0, 0)
-
