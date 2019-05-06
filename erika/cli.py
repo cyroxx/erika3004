@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+from argparse import RawTextHelpFormatter
 
 from erika.erika import Erika
 from erika.erika_image_renderer import *
@@ -6,18 +7,12 @@ from erika.erika_mock import *
 
 
 def create_argument_parser():
-    # from argparse import RawTextHelpFormatter
-    # from argparse import RawDescriptionHelpFormatter
-
     # TODO support using piped input https://docs.python.org/3/library/fileinput.html
 
     parser = ArgumentParser(prog='erika.sh')
-    # TODO rendering of rendering strategy options is still broken, this tip does not help:
-    #       https://stackoverflow.com/questions/3853722/python-argparse-how-to-insert-newline-in-the-help-text
-    # parser = ArgumentParser(prog='erika.sh', formatter_class=RawTextHelpFormatter)
-    # parser = ArgumentParser(prog='erika.sh', formatter_class=RawDescriptionHelpFormatter)
     command_parser = parser.add_subparsers(help='Available commands')
     render_ascii_art_file_parser = command_parser.add_parser('render_ascii_art_file',
+                                                             formatter_class=RawTextHelpFormatter,
                                                              help='Rendering ASCII art in a specified pattern (rendering strategy)')
     render_ascii_art_file_parser.add_argument('--file', '-f', required=True, metavar='FILEPATH',
                                               help='File path to the file to print out, containing a pre-rendered ASCII art image.')
@@ -30,30 +25,23 @@ def create_argument_parser():
                                               choices=['LineByLine', 'Interlaced', 'PerpendicularSpiralInward',
                                                        'RandomDotFill', 'ArchimedeanSpiralOutward'],
                                               default='LineByLine',
-                                              # metavar='STRAT',
                                               help="""Rendering strategy to apply. The value must be one of the following: 
-                        ## LineByLine ##
-                            * render the given image line by line
-                            * default option
-                        ## Interlaced ##
-                            * render the given image, every even line first (starting count at 0), every odd line later
-                        ## PerpendicularSpiralInward ##
-                            * render the given image, spiralling inward to the middle while going parallel to X or Y axis all the time
-                        ## RandomDotFill ##
-                            * render the given image, printing one random letter at a time
-                        ## ArchimedeanSpiralOutward ##
-                            * render the given image, starting from the middle, following an Archimedean spiral as closely as possible""")
+    LineByLine 
+        * render the given image line by line
+        * default option
+    Interlaced
+        * render the given image, every even line first (starting count at 0), every odd line later
+    PerpendicularSpiralInward ##
+        * render the given image, spiralling inward to the middle while going parallel to X or Y axis all the time
+    RandomDotFill
+        * render the given image, printing one random letter at a time
+    ArchimedeanSpiralOutward
+        * render the given image, starting from the middle, following an Archimedean spiral as closely as possible""")
     return parser
 
+
 def main():
-
     args = create_argument_parser().parse_args()
-
-    # print('### DEBUG: Args[{}]'.format(args))
-    # print('dry_run: {}'.format(args.dry_run))
-    # print('strategy: {}'.format(args.strategy))
-    # print('file: {}'.format(args.file))
-    # print('port: {}'.format(args.serial_port))
 
     if args.strategy == 'LineByLine':
         strategy = strategy = LineByLineErikaImageRenderingStrategy()
@@ -75,6 +63,7 @@ def main():
         erika = Erika(args.com_port)
         renderer = ErikaImageRenderer(erika, strategy)
         renderer.render_ascii_art_file(args.file)
+
 
 if __name__ == "__main__":
     main()
