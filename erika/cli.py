@@ -14,6 +14,7 @@ def create_argument_parser():
     render_ascii_art_file_parser = command_parser.add_parser('render_ascii_art_file',
                                                              formatter_class=RawTextHelpFormatter,
                                                              help='Rendering ASCII art in a specified pattern (rendering strategy)')
+    render_ascii_art_file_parser.set_defaults(func=print_ascii_art)
     render_ascii_art_file_parser.add_argument('--file', '-f', required=True, metavar='FILEPATH',
                                               help='File path to the file to print out, containing a pre-rendered ASCII art image.')
     render_ascii_art_file_parser.add_argument('--dry-run', '-d',
@@ -37,33 +38,39 @@ def create_argument_parser():
         * render the given image, printing one random letter at a time
     ArchimedeanSpiralOutward
         * render the given image, starting from the middle, following an Archimedean spiral as closely as possible""")
+
     return parser
 
+def print_ascii_art(args):
+    startegy_string = args.strategy
+    is_dry_run = args.dry_run
+    file_path = args.file
+    com_port = args.serial_port
+
+    if startegy_string == 'LineByLine':
+        strategy = strategy = LineByLineErikaImageRenderingStrategy()
+    elif startegy_string == 'Interlaced':
+        strategy = InterlacedErikaImageRenderingStrategy()
+    elif startegy_string == 'PerpendicularSpiralInward':
+        strategy = PerpendicularSpiralInwardErikaImageRenderingStrategy()
+    elif startegy_string == 'RandomDotFill':
+        strategy = RandomDotFillErikaImageRenderingStrategy()
+    elif startegy_string == 'ArchimedeanSpiralOutward':
+        strategy = ArchimedeanSpiralOutwardErikaImageRenderingStrategy()
+
+    if is_dry_run:
+        erika = ErikaMock()
+        renderer = ErikaImageRenderer(erika, strategy)
+        renderer.render_ascii_art_file(file_path)
+        erika.test_debug_helper_print_canvas()
+    else:
+        erika = Erika(com_port)
+        renderer = ErikaImageRenderer(erika, strategy)
+        renderer.render_ascii_art_file(file_path)
 
 def main():
     args = create_argument_parser().parse_args()
-
-    if args.strategy == 'LineByLine':
-        strategy = strategy = LineByLineErikaImageRenderingStrategy()
-    elif args.strategy == 'Interlaced':
-        strategy = InterlacedErikaImageRenderingStrategy()
-    elif args.strategy == 'PerpendicularSpiralInward':
-        strategy = PerpendicularSpiralInwardErikaImageRenderingStrategy()
-    elif args.strategy == 'RandomDotFill':
-        strategy = RandomDotFillErikaImageRenderingStrategy()
-    elif args.strategy == 'ArchimedeanSpiralOutward':
-        strategy = ArchimedeanSpiralOutwardErikaImageRenderingStrategy()
-
-    if args.dry_run:
-        erika = ErikaMock()
-        renderer = ErikaImageRenderer(erika, strategy)
-        renderer.render_ascii_art_file(args.file)
-        erika.test_debug_helper_print_canvas()
-    else:
-        erika = Erika(args.com_port)
-        renderer = ErikaImageRenderer(erika, strategy)
-        renderer.render_ascii_art_file(args.file)
-
+    args.func(args)
 
 if __name__ == "__main__":
     main()
