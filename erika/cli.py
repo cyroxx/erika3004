@@ -7,10 +7,14 @@ from erika.erika_mock import *
 
 
 def create_argument_parser():
-    # TODO support using piped input https://docs.python.org/3/library/fileinput.html
-
     parser = ArgumentParser(prog='erika.sh')
     command_parser = parser.add_subparsers(help='Available commands')
+    add_render_ascii_art_parser(command_parser)
+    return parser
+
+
+# TODO support using piped input https://docs.python.org/3/library/fileinput.html
+def add_render_ascii_art_parser(command_parser):
     render_ascii_art_file_parser = command_parser.add_parser('render_ascii_art_file',
                                                              formatter_class=RawTextHelpFormatter,
                                                              help='Rendering ASCII art in a specified pattern (rendering strategy)')
@@ -39,7 +43,6 @@ def create_argument_parser():
     ArchimedeanSpiralOutward
         * render the given image, starting from the middle, following an Archimedean spiral as closely as possible""")
 
-    return parser
 
 def print_ascii_art(args):
     startegy_string = args.strategy
@@ -68,9 +71,11 @@ def print_ascii_art(args):
         renderer = ErikaImageRenderer(erika, strategy)
         renderer.render_ascii_art_file(file_path)
 
+
 def main():
     args = create_argument_parser().parse_args()
     args.func(args)
+
 
 if __name__ == "__main__":
     main()
