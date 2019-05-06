@@ -34,6 +34,18 @@ class CliTest(unittest.TestCase):
         self.assertEqual(args.serial_port, "COM3")
         self.assertEqual(args.strategy, "LineByLine")
 
+    def test_argument_parser_prints_help(self):
+        """simple test that ArgumentParser will print help text and exit"""
+        # arrange
+        parser = create_argument_parser()
+        self.assertIsNotNone(parser)
+
+        # act / assert
+        self.assertRaises(SystemExit, parser.parse_args, ["--help"])
+        self.assertRaises(SystemExit, parser.parse_args, ["-h"])
+        self.assertRaises(SystemExit, parser.parse_args, ["render_ascii_art_file", "--help"])
+        self.assertRaises(SystemExit, parser.parse_args, ["render_ascii_art_file", "-h"])
+
 
 def main():
     unittest.main()
