@@ -1,10 +1,12 @@
+import io
 import unittest
+import unittest.mock
 
 from erika.cli import *
 
 
 class CliTest(unittest.TestCase):
-    def test_argument_parser_prints_help(self):
+    def test_argument_parser_parses_arguments(self):
         """simple test that ArgumentParser will parse the given command line"""
         # arrange
         parser = create_argument_parser()
@@ -41,10 +43,54 @@ class CliTest(unittest.TestCase):
         self.assertIsNotNone(parser)
 
         # act / assert
-        self.assertRaises(SystemExit, parser.parse_args, ["--help"])
-        self.assertRaises(SystemExit, parser.parse_args, ["-h"])
-        self.assertRaises(SystemExit, parser.parse_args, ["render_ascii_art_file", "--help"])
-        self.assertRaises(SystemExit, parser.parse_args, ["render_ascii_art_file", "-h"])
+        # https://stackoverflow.com/a/46307456/1143126
+        actual_stdout = self.call_parse_args_and_capture_stdout(parser, ["--help"])
+        self.assertTrue("-h" in actual_stdout)
+        self.assertTrue("--help" in actual_stdout)
+        self.assertTrue("erika.sh" in actual_stdout)
+        self.assertTrue("render_ascii_art_file" in actual_stdout)
+
+        # act / assert
+        actual_stdout = self.call_parse_args_and_capture_stdout(parser, ["-h"])
+        self.assertTrue("-h" in actual_stdout)
+        self.assertTrue("--help" in actual_stdout)
+        self.assertTrue("erika.sh" in actual_stdout)
+        self.assertTrue("render_ascii_art_file" in actual_stdout)
+
+        # act / assert
+        actual_stdout = self.call_parse_args_and_capture_stdout(parser, ["render_ascii_art_file", "--help"])
+        self.assertTrue("-h" in actual_stdout)
+        self.assertTrue("--help" in actual_stdout)
+        self.assertTrue("erika.sh render_ascii_art_file" in actual_stdout)
+        self.assertTrue("--file FILEPATH, -f FILEPATH" in actual_stdout)
+        self.assertTrue("--dry-run, -d" in actual_stdout)
+        self.assertTrue("--serial-port SERIAL_PORT, -p SERIAL_PORT" in actual_stdout)
+        self.assertTrue("--strategy" in actual_stdout)
+        self.assertTrue("LineByLine" in actual_stdout)
+        self.assertTrue("Interlaced" in actual_stdout)
+        self.assertTrue("PerpendicularSpiralInward" in actual_stdout)
+        self.assertTrue("RandomDotFill" in actual_stdout)
+        self.assertTrue("ArchimedeanSpiralOutward" in actual_stdout)
+
+        # act / assert
+        actual_stdout = self.call_parse_args_and_capture_stdout(parser, ["render_ascii_art_file", "-h"])
+        self.assertTrue("-h" in actual_stdout)
+        self.assertTrue("--help" in actual_stdout)
+        self.assertTrue("erika.sh render_ascii_art_file" in actual_stdout)
+        self.assertTrue("--file FILEPATH, -f FILEPATH" in actual_stdout)
+        self.assertTrue("--dry-run, -d" in actual_stdout)
+        self.assertTrue("--serial-port SERIAL_PORT, -p SERIAL_PORT" in actual_stdout)
+        self.assertTrue("--strategy" in actual_stdout)
+        self.assertTrue("LineByLine" in actual_stdout)
+        self.assertTrue("Interlaced" in actual_stdout)
+        self.assertTrue("PerpendicularSpiralInward" in actual_stdout)
+        self.assertTrue("RandomDotFill" in actual_stdout)
+        self.assertTrue("ArchimedeanSpiralOutward" in actual_stdout)
+
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
+    def call_parse_args_and_capture_stdout(self, parser, args, mock_stdout):
+        self.assertRaises(SystemExit, parser.parse_args, args)
+        return mock_stdout.getvalue()
 
 
 def main():
