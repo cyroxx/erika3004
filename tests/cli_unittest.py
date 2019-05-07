@@ -15,6 +15,7 @@ class CliTest(unittest.TestCase):
         #  act / assert - short form of parameters
         args = parser.parse_args(["render_ascii_art_file", "-d", "-p", "/dev/ttyACM0", "-f", "test_file.txt", "-s",
                                   "PerpendicularSpiralInward"])
+        self.assertEqual(args.func, print_ascii_art)
         self.assertTrue(args.dry_run)
         self.assertEqual(args.file, "test_file.txt")
         self.assertEqual(args.serial_port, "/dev/ttyACM0")
@@ -24,6 +25,7 @@ class CliTest(unittest.TestCase):
         args = parser.parse_args(
             ["render_ascii_art_file", "--dry-run", "--serial-port", "/dev/ttyACM0", "--file", "test_file.txt",
              "--strategy", "ArchimedeanSpiralOutward"])
+        self.assertEqual(args.func, print_ascii_art)
         self.assertTrue(args.dry_run)
         self.assertEqual(args.file, "test_file.txt")
         self.assertEqual(args.serial_port, "/dev/ttyACM0")
@@ -31,6 +33,7 @@ class CliTest(unittest.TestCase):
 
         #  act / assert - defaults
         args = parser.parse_args(["render_ascii_art_file", "-p", "COM3", "-f", "test_file2.txt"])
+        self.assertEqual(args.func, print_ascii_art)
         self.assertFalse(args.dry_run)
         self.assertEqual(args.file, "test_file2.txt")
         self.assertEqual(args.serial_port, "COM3")
