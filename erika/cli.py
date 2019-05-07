@@ -64,6 +64,9 @@ def print_ascii_art(args):
     if is_dry_run:
         # using 40x40 just so it fits on the screen well - does not reflect the paper dimensions that Erika supports
         erika = ErikaMock(40, 40, output_after_each_step=True, delay_after_each_step=0.2)
+
+        # when rendering test_ascii_art.txt, use these settings instead:
+        # erika = ErikaMock(60, 40, output_after_each_step=True, delay_after_each_step=0.05)
         renderer = ErikaImageRenderer(erika, strategy)
         renderer.render_ascii_art_file(file_path)
     else:
