@@ -1,7 +1,5 @@
-# from erika.connect_to_erika import Erika
-
 """
-Record any printing and movement calls to Erika in a 2D array for testing purposes: 
+Record any printing and movement calls to Erika in a 2D array for testing purposes:
 
     x
     ===>
@@ -11,6 +9,7 @@ y ||
 
 This way, rendering algorithms can be tested.
 """
+from time import sleep
 
 """page dimensions for Erika"""
 # tested manually - the cursor will no longer move if a key is pressed
@@ -25,7 +24,9 @@ class ErikaMock:
     def __init__(self,
                  width=ERIKA_PAGE_WIDTH_SOFT_LIMIT_AT_12_CHARS_PER_INCH,
                  height=ERIKA_PAGE_HEIGHT,
-                 exception_if_overprinted=True):
+                 exception_if_overprinted=True,
+                 output_after_each_step=False,
+                 delay_after_each_step=0):
         self.canvas = []
         for y in range(height):
             new_list = []
@@ -35,6 +36,8 @@ class ErikaMock:
         self.canvas_x = 0
         self.canvas_y = 0
         self.exception_if_overprinted = exception_if_overprinted
+        self.output_after_each_step = output_after_each_step
+        self.delay_after_each_step = delay_after_each_step
 
     def __enter__(self):
         return self
@@ -66,11 +69,15 @@ class ErikaMock:
             # print('Trying to print letter "{}" at ({}, {}).'.format(c, self.canvas_x, self.canvas_y))
             if not self.canvas[self.canvas_y][self.canvas_x] == " ":
                 if self.exception_if_overprinted:
-                    raise Exception('Not supposed to print a letter twice: "{}" at ({}, {}).'.format(c, self.canvas_x, self.canvas_y))
+                    raise Exception('Not supposed to print a letter twice: "{}" at ({}, {}).'.format(c, self.canvas_x,
+                                                                                                     self.canvas_y))
 
             self.canvas[self.canvas_y][self.canvas_x] = c
             self.canvas_x += 1
-            # self.test_debug_helper_print_canvas()
+            if self.output_after_each_step:
+                self.test_debug_helper_print_canvas()
+                if self.delay_after_each_step > 0:
+                    sleep(self.delay_after_each_step)
 
     def print_raw(self, data):
         raise Exception('User is not supposed to call print_raw directly')

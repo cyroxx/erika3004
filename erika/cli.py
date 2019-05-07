@@ -62,10 +62,10 @@ def print_ascii_art(args):
         strategy = ArchimedeanSpiralOutwardErikaImageRenderingStrategy()
 
     if is_dry_run:
-        erika = ErikaMock()
+        # using 40x40 just so it fits on the screen well - does not reflect the paper dimensions that Erika supports
+        erika = ErikaMock(40, 40, output_after_each_step=True, delay_after_each_step=0.2)
         renderer = ErikaImageRenderer(erika, strategy)
         renderer.render_ascii_art_file(file_path)
-        erika.test_debug_helper_print_canvas()
     else:
         erika = Erika(com_port)
         renderer = ErikaImageRenderer(erika, strategy)
