@@ -20,27 +20,27 @@ class Erika:
     def __exit__(self, *args):
         self.connection.close()
 
-    def write_delay(self, data, delay=DEFAULT_DELAY):
-        self.write_byte_delay(data.encode("ASCII"), delay)
+    def _write_delay(self, data, delay=DEFAULT_DELAY):
+        self._write_byte_delay(data.encode("ASCII"), delay)
 
-    def write_byte_delay(self, data, delay=DEFAULT_DELAY):
+    def _write_byte_delay(self, data, delay=DEFAULT_DELAY):
         self.connection.write(bytes.fromhex(data))
         time.sleep(delay)
 
-    def print_smiley(self):
-        self.write_delay('\x13')
-        self.write_delay('\x1F')
+    def _print_smiley(self):
+        self._write_delay('\x13')
+        self._write_delay('\x1F')
 
-    def advance_paper(self):
+    def _advance_paper(self):
         # move paper up / cursor down
         for i in range(0, 10):
-            self.connection.write(b'\x75')
+            self.connection.write(b'\x75') # TODO use self.move_down() instead?
             time.sleep(DEFAULT_DELAY)
 
     def demo(self):
-        self.advance_paper()
-        self.print_smiley()
-        self.advance_paper()
+        self._advance_paper()
+        self._print_smiley()
+        self._advance_paper()
 
     # TODO: use duration parameter instead of fixed value
     def alarm(self, duration):
@@ -53,27 +53,32 @@ class Erika:
     def print_ascii(self, text):
         for c in text:
             key_id = self.ddr_ascii.encode(c)
-            self.write_byte_delay(key_id)
+            self._write_byte_delay(key_id)
 
-    def print_raw(self, data):
+    def _print_raw(self, data):
         self.connection.write(bytes.fromhex(data))
 
+    # TODO no delay for the raw print - this may lead to bugs
     def move_up(self):
-        self.print_raw("76")
-        self.print_raw("76")
+        self._print_raw("76")
+        self._print_raw("76")
 
+    # TODO no delay for the raw print - this may lead to bugs
     def move_down(self):
-        self.print_raw("75")
-        self.print_raw("75")
+        self._print_raw("75")
+        self._print_raw("75")
 
+    # TODO no delay for the raw print - this may lead to bugs
     def move_left(self):
-        self.print_raw("74")
-        self.print_raw("74")
+        self._print_raw("74")
+        self._print_raw("74")
 
+    # TODO no delay for the raw print - this may lead to bugs
     def move_right(self):
-        self.print_raw("73")
-        self.print_raw("73")
+        self._print_raw("73")
+        self._print_raw("73")
 
+    # TODO no delay for the raw print - this may lead to bugs
     def crlf(self):
-        self.print_raw("78")
-        self.print_raw("9F")
+        self._print_raw("78")
+        self._print_raw("9F")
