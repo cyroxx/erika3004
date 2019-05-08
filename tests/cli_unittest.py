@@ -39,6 +39,12 @@ class CliTest(unittest.TestCase):
         self.assertEqual(args.serial_port, "COM3")
         self.assertEqual(args.strategy, "LineByLine")
 
+        #  act / assert - demo mode
+        args = parser.parse_args(["demo", "-p", "COM3", "-d"])
+        self.assertEqual(args.func, print_demo)
+        self.assertTrue(args.dry_run)
+        self.assertEqual(args.serial_port, "COM3")
+
     def test_argument_parser_prints_help(self):
         """simple test that ArgumentParser will print help text and exit"""
         # arrange
@@ -52,6 +58,7 @@ class CliTest(unittest.TestCase):
         self.assertTrue("--help" in actual_stdout)
         self.assertTrue("erika.sh" in actual_stdout)
         self.assertTrue("render_ascii_art_file" in actual_stdout)
+        self.assertTrue("demo" in actual_stdout)
 
         # act / assert
         actual_stdout = self.call_parse_args_and_capture_stdout(parser, ["-h"])
@@ -59,6 +66,7 @@ class CliTest(unittest.TestCase):
         self.assertTrue("--help" in actual_stdout)
         self.assertTrue("erika.sh" in actual_stdout)
         self.assertTrue("render_ascii_art_file" in actual_stdout)
+        self.assertTrue("demo" in actual_stdout)
 
         # act / assert
         actual_stdout = self.call_parse_args_and_capture_stdout(parser, ["render_ascii_art_file", "--help"])
@@ -89,6 +97,22 @@ class CliTest(unittest.TestCase):
         self.assertTrue("PerpendicularSpiralInward" in actual_stdout)
         self.assertTrue("RandomDotFill" in actual_stdout)
         self.assertTrue("ArchimedeanSpiralOutward" in actual_stdout)
+
+        # act / assert
+        actual_stdout = self.call_parse_args_and_capture_stdout(parser, ["demo", "--help"])
+        self.assertTrue("-h" in actual_stdout)
+        self.assertTrue("--help" in actual_stdout)
+        self.assertTrue("erika.sh demo" in actual_stdout)
+        self.assertTrue("--dry-run, -d" in actual_stdout)
+        self.assertTrue("--serial-port SERIAL_PORT, -p SERIAL_PORT" in actual_stdout)
+
+        # act / assert
+        actual_stdout = self.call_parse_args_and_capture_stdout(parser, ["demo", "-h"])
+        self.assertTrue("-h" in actual_stdout)
+        self.assertTrue("--help" in actual_stdout)
+        self.assertTrue("erika.sh demo" in actual_stdout)
+        self.assertTrue("--dry-run, -d" in actual_stdout)
+        self.assertTrue("--serial-port SERIAL_PORT, -p SERIAL_PORT" in actual_stdout)
 
     @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
     def call_parse_args_and_capture_stdout(self, parser, args, mock_stdout):
