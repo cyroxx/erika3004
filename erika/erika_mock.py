@@ -101,5 +101,5 @@ class ErikaMock:
     def test_debug_helper_print_canvas(self):
         """for debugging: print the current canvas to stdout"""
         for line in self.canvas:
-            print(line)
+            print(''.join(line))
         print()
