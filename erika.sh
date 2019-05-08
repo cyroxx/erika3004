@@ -7,6 +7,10 @@
 # ./erika.sh -h
 # ./erika.sh render_ascii_art_file -h
 #
+# * demo output
+# ./erika.sh demo -p "COM3"
+# ./erika.sh demo -p "/dev/ttyACM0"
+#
 # * simulation + "on-screen cinematics"
 # ./erika.sh render_ascii_art_file -d -f ./tests/test_resources/test_ascii_art.txt -s PerpendicularSpiralInward -p 'fake_port'
 # ./erika.sh render_ascii_art_file -d -f ./tests/test_resources/test_ascii_art.txt -s ArchimedeanSpiralOutward  -p 'fake_port'
