@@ -96,9 +96,9 @@ sudo apt install imagemagick
 sudo apt install jp2a
 ```
 * convert png files on the command line like this: 
-  * leave one dimension unspecified to keep teh original ratio
+  * leave one dimension unspecified to keep the original ratio
 ```
-convert ubuntu-logo32.png jpg:- | jp2a - --width=80 --height=80
+convert ubuntu-logo32.png jpg:- | jp2a - --width=80 --height=80 > ascii_art.txt
 ```
 
 ### Print ASCII art 
