@@ -45,17 +45,14 @@ class ErikaMock:
     def __exit__(self, *args):
         pass
 
-    def read_conversion_table(self):
-        pass
+    def _write_delay(self, data, delay=0.5):
+        raise Exception('User is not supposed to call this function directly')
 
-    def write_delay(self, data, delay=0.5):
-        pass
+    def _write_byte_delay(self, data, delay=0.5):
+        raise Exception('User is not supposed to call this function directly')
 
-    def write_byte_delay(self, data, delay=0.5):
-        raise Exception('User is not supposed to call connection.write directly')
-
-    def advance_paper(self):
-        self.canvas_y += 10
+    def _advance_paper(self):
+        raise Exception('User is not supposed to call this function directly')
 
     def alarm(self, duration):
         pass
@@ -63,6 +60,13 @@ class ErikaMock:
     def read(self):
         # reading not needed for current tests
         pass
+
+    def demo(self):
+        for i in range(0, 10):
+            self.move_down()
+        self.print_ascii(":)")
+        for i in range(0, 10):
+            self.move_down()
 
     def print_ascii(self, text):
         for c in text:
@@ -79,8 +83,8 @@ class ErikaMock:
                 if self.delay_after_each_step > 0:
                     sleep(self.delay_after_each_step)
 
-    def print_raw(self, data):
-        raise Exception('User is not supposed to call print_raw directly')
+    def _print_raw(self, data):
+        raise Exception('User is not supposed to call this function directly')
 
     def move_up(self):
         self.canvas_y -= 1
