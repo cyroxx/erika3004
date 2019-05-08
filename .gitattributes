@@ -1,0 +1,40 @@
+* text eol=lf
+
+*.py    text diff=python
+*.ini   text
+*.txt   text
+*.md    text
+*.ino   text
+*.h     text
+*.yml   text
+*.sh    text
+
+# These files are binary and should be left untouched
+# (binary is a macro for -text -diff)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.mov binary
+*.mp4 binary
+*.mp3 binary
+*.flv binary
+*.fla binary
+*.swf binary
+*.gz binary
+*.zip binary
+*.7z binary
+*.ttf binary
+
+# Documents
+*.doc  binary
+*.DOC  binary
+*.docx binary
+*.DOCX binary
+*.dot  binary
+*.DOT  binary
+*.pdf  binary
+*.PDF  binary
+*.rtf  binary
+*.RTF  binary
