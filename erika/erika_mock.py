@@ -45,28 +45,12 @@ class ErikaMock:
     def __exit__(self, *args):
         pass
 
-    def _write_delay(self, data, delay=0.5):
-        raise Exception('User is not supposed to call this function directly')
-
-    def _write_byte_delay(self, data, delay=0.5):
-        raise Exception('User is not supposed to call this function directly')
-
-    def _advance_paper(self):
-        raise Exception('User is not supposed to call this function directly')
-
     def alarm(self, duration):
         pass
 
     def read(self):
         # reading not needed for current tests
         pass
-
-    def demo(self):
-        for i in range(0, 10):
-            self.move_down()
-        self.print_ascii(":)")
-        for i in range(0, 10):
-            self.move_down()
 
     def print_ascii(self, text):
         for c in text:
@@ -101,6 +85,19 @@ class ErikaMock:
     def crlf(self):
         self.canvas_x = 0
         self.canvas_y += 1
+
+    def demo(self):
+        for i in range(0, 10):
+            self.move_down()
+        self.print_ascii(":)")
+        for i in range(0, 10):
+            self.move_down()
+
+    def _advance_paper(self):
+        raise Exception('User is not supposed to call this function directly')
+
+    def _write_byte_delay(self, data, delay=0.5):
+        raise Exception('User is not supposed to call this function directly')
 
     def test_debug_helper_print_canvas(self):
         """for debugging: print the current canvas to stdout"""
