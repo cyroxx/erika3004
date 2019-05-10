@@ -37,20 +37,21 @@ class ErikaImageRenderingStrategy:
         self.output_device = some_erika
 
     def render_ascii_art_file(self, file_path):
-        raise Exception('Not implemented')
+        lines = self.read_lines_without_trailing_newlines(file_path)
+        self.render_ascii_art_lines(lines)
 
     def render_ascii_art_lines(self, lines):
         raise Exception('Not implemented')
 
+    def read_lines_without_trailing_newlines(self, file_path):
+        lines_without_newlines = []
+        with open(file_path, "r") as open_file:
+            for line in open_file.readlines():
+                lines_without_newlines.append(self.remove_trailing_newline(line))
+        return lines_without_newlines
+
     def remove_trailing_newline(self, line):
         return line.replace('\n', "")
-
-    def read_lines_without_trailing_newlines(self, open_file):
-        lines = open_file.readlines()
-        lines_without_newlines = []
-        for line in lines:
-            lines_without_newlines.append(self.remove_trailing_newline(line))
-        return lines_without_newlines
 
     def calculate_max_line_length(self, lines):
         max_length = 0
@@ -78,12 +79,10 @@ class LineByLineErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
     def __init__(self):
         ErikaImageRenderingStrategy.__init__(self)
 
-    def render_ascii_art_file(self, file_path):
-        with open(file_path, "r") as open_file:
-            for line in open_file.readlines():
-                line_without_newline = line.replace('\n', "")
-                self.output_device.print_ascii(line_without_newline)
-                self.output_device.crlf()
+    def render_ascii_art_lines(self, lines):
+        for line in lines:
+            self.output_device.print_ascii(line)
+            self.output_device.crlf()
 
 
 class InterlacedErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
@@ -91,32 +90,30 @@ class InterlacedErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
     def __init__(self):
         ErikaImageRenderingStrategy.__init__(self)
 
-    def render_ascii_art_file(self, file_path):
-        with open(file_path, "r") as open_file:
-            lines = open_file.readlines()
-            line_count = len(lines)
-            moved = 0
-            for even in range(0, line_count, 2):
-                line_without_newline = lines[even].replace('\n', "")
-                self.output_device.print_ascii(line_without_newline)
-                self.output_device.crlf()
-                self.output_device.crlf()
-                moved += 2
-
-            # reset cursor to start of line
+    def render_ascii_art_lines(self, lines):
+        line_count = len(lines)
+        moved = 0
+        for even in range(0, line_count, 2):
+            line = lines[even]
+            self.output_device.print_ascii(line)
             self.output_device.crlf()
+            self.output_device.crlf()
+            moved += 2
 
-            # do not compensate the line that this adds - the extra line will position the cursor right where we want it
-            # self.output_device.move_up()
+        # reset cursor to start of line
+        self.output_device.crlf()
 
-            for lines_to_move_up in range(0, moved):
-                self.output_device.move_up()
+        # do not compensate the line that this adds - the extra line will position the cursor right where we want it
+        # self.output_device.move_up()
 
-            for odd in range(1, line_count, 2):
-                line_without_newline = lines[odd].replace('\n', "")
-                self.output_device.print_ascii(line_without_newline)
-                self.output_device.crlf()
-                self.output_device.crlf()
+        for lines_to_move_up in range(0, moved):
+            self.output_device.move_up()
+
+        for odd in range(1, line_count, 2):
+            line = lines[odd]
+            self.output_device.print_ascii(line)
+            self.output_device.crlf()
+            self.output_device.crlf()
 
 
 class PerpendicularSpiralInwardErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
@@ -124,12 +121,10 @@ class PerpendicularSpiralInwardErikaImageRenderingStrategy(ErikaImageRenderingSt
     def __init__(self):
         ErikaImageRenderingStrategy.__init__(self)
 
-    def render_ascii_art_file(self, file_path):
-        with open(file_path, "r") as open_file:
-            lines = self.read_lines_without_trailing_newlines(open_file)
-            line_count = len(lines)
-            max_line_length = self.calculate_max_line_length(lines)
-            self.print_spiral_recursively(lines, 0, 0, max_line_length - 1, line_count - 1)
+    def render_ascii_art_lines(self, lines):
+        line_count = len(lines)
+        max_line_length = self.calculate_max_line_length(lines)
+        self.print_spiral_recursively(lines, 0, 0, max_line_length - 1, line_count - 1)
 
     def print_spiral_recursively(self, lines, upper_left_x, upper_left_y, lower_right_x, lower_right_y):
         """ASSUMPTION: current position is at (upper_left_x, upper_left_y)"""
@@ -205,16 +200,14 @@ class RandomDotFillErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
     def __init__(self):
         ErikaImageRenderingStrategy.__init__(self)
 
-    def render_ascii_art_file(self, file_path):
+    def render_ascii_art_lines(self, lines):
         self.current_x = 0
         self.current_y = 0
 
-        with open(file_path, "r") as open_file:
-            lines = self.read_lines_without_trailing_newlines(open_file)
-            line_count = len(lines)
-            max_line_length = self.calculate_max_line_length(lines)
-            self.initialize_printed_characters_map(lines, max_line_length, line_count)
-            self.render_random_dots_naive(line_count, max_line_length, lines)
+        line_count = len(lines)
+        max_line_length = self.calculate_max_line_length(lines)
+        self.initialize_printed_characters_map(lines, max_line_length, line_count)
+        self.render_random_dots_naive(line_count, max_line_length, lines)
 
     # naive approach: generate random position, render if not yet printed there
     # * this results in about 100 additional re-generation attempts for random numbers for the small test images
@@ -300,22 +293,20 @@ class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStr
 
         self.render_remaining_characters = render_remaining_characters
 
-    def render_ascii_art_file(self, file_path):
+    def render_ascii_art_lines(self, lines):
         self.current_x = 0
         self.current_y = 0
 
-        with open(file_path, "r") as open_file:
-            lines = self.read_lines_without_trailing_newlines(open_file)
-            line_count = len(lines)
-            max_line_length = self.calculate_max_line_length(lines)
-            self.initialize_printed_characters_map(lines, max_line_length, line_count)
+        line_count = len(lines)
+        max_line_length = self.calculate_max_line_length(lines)
+        self.initialize_printed_characters_map(lines, max_line_length, line_count)
 
-            self.render_spiral(lines, max_line_length, line_count)
+        self.render_spiral(lines, max_line_length, line_count)
 
-            if (self.render_remaining_characters):
-                self.render_remaining(lines, max_line_length, line_count)
+        if (self.render_remaining_characters):
+            self.render_remaining(lines, max_line_length, line_count)
 
-            self.reset_to_upper_left()
+        self.reset_to_upper_left()
 
     # Formula for Archimedean spiral:
     # https://en.wikipedia.org/wiki/Archimedean_spiral
