@@ -1,5 +1,3 @@
-import sys
-
 """
 Record any printing and movement calls to Erika in a 2D array for testing purposes:
 
@@ -11,6 +9,7 @@ y ||
 
 This way, rendering algorithms can be tested.
 """
+import sys
 from time import sleep
 
 """page dimensions for Erika"""
@@ -112,8 +111,8 @@ class ErikaMock:
 
     def test_debug_helper_print_canvas(self):
         """for debugging: print the current canvas to stdout"""
-        print(''.zfill(self.width).replace('0', '#'))
+        print(' ' + ''.zfill(self.width).replace('0', '#'))
         for line in self.canvas:
             print('#' + ''.join(line) + '#')
-        print(''.zfill(self.width).replace('0', '#'))
+        print(' ' + ''.zfill(self.width).replace('0', '#'))
         print()

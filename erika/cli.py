@@ -11,7 +11,7 @@ from erika.erika_image_renderer import *
 from erika.erika_mock import *
 
 DRY_RUN_WIDTH = 60
-DRY_RUN_HEIGHT = 60
+DRY_RUN_HEIGHT = 40
 
 
 def create_argument_parser():
