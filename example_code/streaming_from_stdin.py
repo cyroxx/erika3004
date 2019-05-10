@@ -31,7 +31,8 @@ def main():
     ## cooperating (no option here with the system call)
     # read_using_watchdog_thread_with_timeout()
 
-    read_using_watchdog_process_with_timeout()
+    # read_using_watchdog_process_with_timeout()
+    read_using_separate_process_with_join_timeout()
 
 
 def direct_read_from_stdin():
@@ -175,18 +176,48 @@ def function_for_watchdog_process(queue_as_waitable_object, guarded_process):
         # wait timeout!
 
         print("Killing process that took too long to respond.")
-        for proc in psutil.process_iter():
-            if "python" in proc.name():
-                print("[DEBUG] There exists a python process with pid {} named '{}' with args '{}'".format(proc.pid,
-                                                                                                           proc.name(),
-                                                                                                           proc.cmdline()))
 
-        # Using the psutil lib to be os-independent
-        # https://github.com/giampaolo/psutil
-        for proc in psutil.process_iter():
-            if proc.pid == guarded_process.pid:
-                print("[DEBUG] Killing process of name: {}".format(proc.name()))
-                proc.kill()
+        guarded_process.terminate()
+
+        # for proc in psutil.process_iter():
+        #     if "python" in proc.name():
+        #         print("[DEBUG] There exists a python process with pid {} named '{}' with args '{}'".format(proc.pid,
+        #                                                                                                    proc.name(),
+        #                                                                                                    proc.cmdline()))
+        #
+        # # Using the psutil lib to be os-independent
+        # # https://github.com/giampaolo/psutil
+        # for proc in psutil.process_iter():
+        #     if proc.pid == guarded_process.pid:
+        #         print("[DEBUG] Killing process of name: {}".format(proc.name()))
+        #         proc.kill()
+
+
+def read_using_separate_process_with_join_timeout():
+    queue_to_pass_lines_through = multiprocessing.Queue(maxsize=1)
+    worker_process = Process(target=function_for_reading_lines_from_stdin_process,
+                             args=(queue_to_pass_lines_through, sys.stdin.fileno()))
+    worker_process.start()
+
+    worker_process.join(timeout=0.1)
+    has_exited = not worker_process.is_alive()
+    if has_exited:
+        try:
+            lines = queue_to_pass_lines_through.get(block=False)
+            for line in lines:
+                output_line(line)
+        except Empty as exception:
+            raise Exception('unexpected exception')
+    else:
+        print("no output to generate")
+        worker_process.terminate()
+
+
+def function_for_reading_lines_from_stdin_process(queue_to_pass_lines_through, input_stream_fileno):
+    input_stream = os.fdopen(input_stream_fileno)
+
+    lines = input_stream.readlines()
+    queue_to_pass_lines_through.put(lines)
 
 
 def output_line(line):
