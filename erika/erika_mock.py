@@ -1,3 +1,5 @@
+import sys
+
 """
 Record any printing and movement calls to Erika in a 2D array for testing purposes:
 
@@ -27,6 +29,8 @@ class ErikaMock:
                  exception_if_overprinted=True,
                  output_after_each_step=False,
                  delay_after_each_step=0):
+        self.width = width
+        self.height = height
         self.canvas = []
         for y in range(height):
             new_list = []
@@ -101,6 +105,8 @@ class ErikaMock:
 
     def test_debug_helper_print_canvas(self):
         """for debugging: print the current canvas to stdout"""
+        print(''.zfill(self.width).replace('0', '#'))
         for line in self.canvas:
-            print(''.join(line))
+            print('#' + ''.join(line) + '#')
+        print(''.zfill(self.width).replace('0', '#'))
         print()
