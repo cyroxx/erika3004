@@ -1,9 +1,15 @@
 import fileinput
+import multiprocessing
+import os
 import select
 import sys
-from queue import Queue
+from multiprocessing import Process
 from queue import Empty
+from queue import Queue
 from threading import Thread
+
+# pip3 install psutil
+import psutil
 
 
 # "Learning artifact" to try out how to read from stdin in python, preferrably not blocking on empty input
@@ -19,11 +25,13 @@ def main():
     # direct_read_from_stdin()
     # read_using_fileinput()
     # read_using_file_descriptor()
-    read_using_select_probe()
+    # read_using_select_probe()
 
     ## Had to abandon this approach for now, there seems no easy way to realize this except for the thread itself
     ## cooperating (no option here with the system call)
     # read_using_watchdog_thread_with_timeout()
+
+    read_using_watchdog_process_with_timeout()
 
 
 def direct_read_from_stdin():
@@ -64,6 +72,9 @@ def read_using_select_probe():
         print("No data")
 
 
+# FIXME there seems to be no easy portable way to achieve this in python... :/
+# (yet we need the killing feature and can't rely on cooperative threading as the sys calls for reading from
+# stdin are blocking)
 class KillableThread(Thread):
 
     def __init__(self, queue_to_signal_success):
@@ -85,8 +96,7 @@ class KillableThread(Thread):
         pass
 
     def kill(self):
-        # FIXME there seems to be no easy way to achieve this in python... :/
-        pass
+        raise Exception("It seems this can't be done in Python - read code comments")
 
 
 class ReadFromStdinThread(KillableThread):
@@ -130,6 +140,53 @@ def read_using_watchdog_thread_with_timeout():
 
     watchdog.join()
     worker.join()
+
+
+def read_using_watchdog_process_with_timeout():
+    queue_as_waitable_object = multiprocessing.Queue(maxsize=10)
+    worker_process = Process(target=function_for_stdin_reading_process,
+                             args=(queue_as_waitable_object, sys.stdin.fileno()))
+    watchdog_process = Process(target=function_for_watchdog_process, args=(queue_as_waitable_object, worker_process,))
+
+    worker_process.start()
+    watchdog_process.start()
+
+    watchdog_process.join()
+    worker_process.join()
+
+
+def function_for_stdin_reading_process(queue_to_signal_success, input_stream_fileno):
+    # stdin is closed for new processes :/
+    # https://docs.python.org/3.5/library/multiprocessing.html#all-start-methods
+    # Note to self: portable :)
+    # https://docs.python.org/3/library/os.html#os.fdopen
+    input_stream = os.fdopen(input_stream_fileno)
+
+    lines = input_stream.readlines()
+    queue_to_signal_success.put("don't kill me!")
+    for line in lines:
+        output_line(line)
+
+
+def function_for_watchdog_process(queue_as_waitable_object, guarded_process):
+    try:
+        queue_as_waitable_object.get(block=True, timeout=0.1)
+    except Empty as exception:
+        # wait timeout!
+
+        print("Killing process that took too long to respond.")
+        for proc in psutil.process_iter():
+            if "python" in proc.name():
+                print("[DEBUG] There exists a python process with pid {} named '{}' with args '{}'".format(proc.pid,
+                                                                                                           proc.name(),
+                                                                                                           proc.cmdline()))
+
+        # Using the psutil lib to be os-independent
+        # https://github.com/giampaolo/psutil
+        for proc in psutil.process_iter():
+            if proc.pid == guarded_process.pid:
+                print("[DEBUG] Killing process of name: {}".format(proc.name()))
+                proc.kill()
 
 
 def output_line(line):
