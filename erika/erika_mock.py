@@ -58,13 +58,20 @@ class ErikaMock:
 
     def print_ascii(self, text):
         for c in text:
-            # print('Trying to print letter "{}" at ({}, {}).'.format(c, self.canvas_x, self.canvas_y))
-            if not self.canvas[self.canvas_y][self.canvas_x] == " ":
-                if self.exception_if_overprinted:
-                    raise Exception('Not supposed to print a letter twice: "{}" at ({}, {}).'.format(c, self.canvas_x,
-                                                                                                     self.canvas_y))
+            try:
+                # print('Trying to print letter "{}" at ({}, {}).'.format(c, self.canvas_x, self.canvas_y))
+                if not self.canvas[self.canvas_y][self.canvas_x] == " ":
+                    if self.exception_if_overprinted:
+                        raise Exception(
+                            "Not supposed to print a letter twice: '{}' at ({}, {})."
+                                .format(c, self.canvas_x, self.canvas_y))
+                self.canvas[self.canvas_y][self.canvas_x] = c
+            except IndexError as e:
+                print("IndexError at ({}, {}) of ({}, {}) - increase values of "
+                      "cli.DRY_RUN_WIDTH and cli.DRY_RUN_HEIGHT "
+                      "if you need more space".format(self.canvas_x, self.canvas_y, self.width, self.height))
+                sys.exit(1)
 
-            self.canvas[self.canvas_y][self.canvas_x] = c
             self.canvas_x += 1
             if self.output_after_each_step:
                 self.test_debug_helper_print_canvas()

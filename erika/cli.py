@@ -10,6 +10,9 @@ from erika.erika import Erika
 from erika.erika_image_renderer import *
 from erika.erika_mock import *
 
+DRY_RUN_WIDTH = 60
+DRY_RUN_HEIGHT = 60
+
 
 def create_argument_parser():
     parser = ArgumentParser(prog='erika.sh', description='Erika type writer connector CLI')
@@ -94,11 +97,11 @@ def get_erika_for_given_args(args):
     com_port = args.serial_port
 
     if is_dry_run:
-        # using 60x40 just so it fits on the screen well - does not reflect the paper dimensions that Erika supports
-        erika = ErikaMock(60, 40, output_after_each_step=True, delay_after_each_step=0.005)
+        # using low size just so it fits on the screen well - does not reflect the paper dimensions that Erika supports
+        erika = ErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True, delay_after_each_step=0.005)
 
         # slower, but output will not flicker as much
-        # erika = ErikaMock(60, 40, output_after_each_step=True, delay_after_each_step=0.05)
+        # erika = ErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True, delay_after_each_step=0.05)
     else:
         erika = Erika(com_port)
 
