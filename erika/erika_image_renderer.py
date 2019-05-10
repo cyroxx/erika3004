@@ -19,6 +19,9 @@ class ErikaImageRenderer:
     def render_ascii_art_file(self, file_path):
         self.rendering_strategy.render_ascii_art_file(file_path)
 
+    def render_ascii_art_lines(self, lines):
+        self.rendering_strategy.render_ascii_art_lines(lines)
+
     def set_strategy(self, new_strategy):
         self.rendering_strategy = new_strategy
         self.rendering_strategy.set_output_device(self.output_device)
@@ -34,6 +37,9 @@ class ErikaImageRenderingStrategy:
         self.output_device = some_erika
 
     def render_ascii_art_file(self, file_path):
+        raise Exception('Not implemented')
+
+    def render_ascii_art_lines(self, lines):
         raise Exception('Not implemented')
 
     def remove_trailing_newline(self, line):
