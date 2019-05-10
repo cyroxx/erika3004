@@ -41,17 +41,26 @@ class ErikaImageRenderingStrategy:
         self.render_ascii_art_lines(lines)
 
     def render_ascii_art_lines(self, lines):
+        self._render_ascii_art_lines_internal(self.remove_trailing_newlines(lines))
+    
+    def _render_ascii_art_lines_internal(self, lines):
         raise Exception('Not implemented')
 
     def read_lines_without_trailing_newlines(self, file_path):
-        lines_without_newlines = []
+        lines = []
         with open(file_path, "r") as open_file:
-            for line in open_file.readlines():
-                lines_without_newlines.append(self.remove_trailing_newline(line))
+            lines = open_file.readlines()
+        return self.remove_trailing_newlines(lines)
+
+    def remove_trailing_newlines(self, lines):
+        lines_without_newlines = []
+        for line in lines:
+            lines_without_newlines.append(self.remove_trailing_newline(line))
         return lines_without_newlines
 
+
     def remove_trailing_newline(self, line):
-        return line.replace('\n', "")
+        return line.replace('\n', "").replace('\r', "")
 
     def calculate_max_line_length(self, lines):
         max_length = 0
@@ -79,7 +88,7 @@ class LineByLineErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
     def __init__(self):
         ErikaImageRenderingStrategy.__init__(self)
 
-    def render_ascii_art_lines(self, lines):
+    def _render_ascii_art_lines_internal(self, lines):
         for line in lines:
             self.output_device.print_ascii(line)
             self.output_device.crlf()
@@ -90,7 +99,7 @@ class InterlacedErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
     def __init__(self):
         ErikaImageRenderingStrategy.__init__(self)
 
-    def render_ascii_art_lines(self, lines):
+    def _render_ascii_art_lines_internal(self, lines):
         line_count = len(lines)
         moved = 0
         for even in range(0, line_count, 2):
@@ -121,7 +130,7 @@ class PerpendicularSpiralInwardErikaImageRenderingStrategy(ErikaImageRenderingSt
     def __init__(self):
         ErikaImageRenderingStrategy.__init__(self)
 
-    def render_ascii_art_lines(self, lines):
+    def _render_ascii_art_lines_internal(self, lines):
         line_count = len(lines)
         max_line_length = self.calculate_max_line_length(lines)
         self.print_spiral_recursively(lines, 0, 0, max_line_length - 1, line_count - 1)
@@ -200,7 +209,7 @@ class RandomDotFillErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
     def __init__(self):
         ErikaImageRenderingStrategy.__init__(self)
 
-    def render_ascii_art_lines(self, lines):
+    def _render_ascii_art_lines_internal(self, lines):
         self.current_x = 0
         self.current_y = 0
 
@@ -293,7 +302,7 @@ class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStr
 
         self.render_remaining_characters = render_remaining_characters
 
-    def render_ascii_art_lines(self, lines):
+    def _render_ascii_art_lines_internal(self, lines):
         self.current_x = 0
         self.current_y = 0
 
