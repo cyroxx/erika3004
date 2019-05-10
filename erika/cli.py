@@ -35,7 +35,7 @@ def print_demo(args):
 
 # TODO support using piped input https://docs.python.org/3/library/fileinput.html
 def add_render_ascii_art_parser(command_parser):
-    render_ascii_art_file_parser = command_parser.add_parser('render_ascii_art_file',
+    render_ascii_art_file_parser = command_parser.add_parser('render_ascii_art',
                                                              formatter_class=RawTextHelpFormatter,
                                                              help='Rendering ASCII art in a specified pattern (rendering strategy)')
     render_ascii_art_file_parser.set_defaults(func=print_ascii_art)
