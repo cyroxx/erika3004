@@ -48,22 +48,32 @@ class Erika:
 
     def move_up(self):
         self._print_raw("76")
+        time.sleep(DEFAULT_DELAY)
         self._print_raw("76")
+        time.sleep(DEFAULT_DELAY)
 
     def move_down(self):
         self._print_raw("75")
+        time.sleep(DEFAULT_DELAY)
         self._print_raw("75")
+        time.sleep(DEFAULT_DELAY)
 
     def move_left(self):
         self._print_raw("74")
+        time.sleep(DEFAULT_DELAY)
         self._print_raw("74")
+        time.sleep(DEFAULT_DELAY)
 
     def move_right(self):
         self._print_raw("73")
+        time.sleep(DEFAULT_DELAY)
         self._print_raw("73")
+        time.sleep(DEFAULT_DELAY)
 
     def crlf(self):
         self._print_raw("77")
+        time.sleep(DEFAULT_DELAY)
+        time.sleep(DEFAULT_DELAY)
 
     def demo(self):
         self._advance_paper()
