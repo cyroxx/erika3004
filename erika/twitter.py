@@ -1,14 +1,47 @@
+"""############## Simple Twitter listener + printout ##############
+
+Installation like in README.md
+
+* requires python3
+
+* install using command:
+
+pip3 install -r requirements.txt
+
+
+* run from the repository's main directory using command:
+sudo python3 -m erika.twitter
+
+
+
+Troubleshooting:
+
+
+FileNotFoundError: [Errno 2] No such file or directory: '/dev/ttyACM0'
+
+* change the configured ERIKA_PORT to the right device / COM port
+
+
+ModuleNotFoundError: No module named 'erika.local_settings'
+
+* copy [erika3004]/erika/local_settings.py.template to [erika3004]/erika/local_settings.py and add the required credentials
+"""
 import string
 from queue import Queue
 from threading import Thread
 
-from twython import TwythonStreamer
-
-from erika.erika import Erika
 from erika.local_settings import APP_KEY, APP_SECRET, OAUTH_TOKEN, OAUTH_TOKEN_SECRET
 from erika.local_settings import COMMA_SEPARATED_HASH_TAGS_TO_LISTEN_FOR
 from erika.local_settings import ERIKA_MAX_LINE_LENGTH
 from erika.local_settings import ERIKA_PORT
+from twython import TwythonStreamer
+
+from erika.erika import Erika
+
+
+# simple twitter listener + printout to Erika device
+#
+# THIS MODULE NEEDS LOVE - add some proper tests, remove global state + make it look nice!
 
 
 class MyStreamer(TwythonStreamer):
@@ -43,6 +76,7 @@ def twitter_worker():
 
 def erika_worker():
     tweet_as_string = q.get(block=True)
+    erika.crlf()
     print("### DEBUG (tweet):" + tweet_as_string)
     sanitized_tweet = tweet_as_string
     sanitized_tweet = ''.join(c for c in sanitized_tweet if c in (string.digits + string.ascii_letters + "@.,;: "))
