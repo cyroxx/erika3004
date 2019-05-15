@@ -1,9 +1,17 @@
+import os
+import sys
 from argparse import ArgumentParser
 from argparse import RawTextHelpFormatter
+from multiprocessing import Process
+from multiprocessing import Queue
+from queue import Empty
 
 from erika.erika import Erika
 from erika.erika_image_renderer import *
 from erika.erika_mock import *
+
+DRY_RUN_WIDTH = 60
+DRY_RUN_HEIGHT = 40
 
 
 def create_argument_parser():
@@ -35,12 +43,12 @@ def print_demo(args):
 
 # TODO support using piped input https://docs.python.org/3/library/fileinput.html
 def add_render_ascii_art_parser(command_parser):
-    render_ascii_art_file_parser = command_parser.add_parser('render_ascii_art_file',
+    render_ascii_art_file_parser = command_parser.add_parser('render_ascii_art',
                                                              formatter_class=RawTextHelpFormatter,
                                                              help='Rendering ASCII art in a specified pattern (rendering strategy)')
     render_ascii_art_file_parser.set_defaults(func=print_ascii_art)
     add_basic_erika_params(render_ascii_art_file_parser)
-    render_ascii_art_file_parser.add_argument('--file', '-f', required=True, metavar='FILEPATH',
+    render_ascii_art_file_parser.add_argument('--file', '-f', required=False, metavar='FILEPATH', default='-',
                                               help='File path to the file to print out, containing a pre-rendered ASCII art image.')
     render_ascii_art_file_parser.add_argument('--strategy', '-s',
                                               choices=['LineByLine', 'Interlaced', 'PerpendicularSpiralInward',
@@ -77,7 +85,11 @@ def print_ascii_art(args):
 
     erika = get_erika_for_given_args(args)
     renderer = ErikaImageRenderer(erika, strategy)
-    renderer.render_ascii_art_file(file_path)
+    if file_path == '-':
+        lines = read_lines_from_stdin_non_blocking()
+        renderer.render_ascii_art_lines(lines)
+    else:
+        renderer.render_ascii_art_file(file_path)
 
 
 def get_erika_for_given_args(args):
@@ -85,15 +97,50 @@ def get_erika_for_given_args(args):
     com_port = args.serial_port
 
     if is_dry_run:
-        # using 60x40 just so it fits on the screen well - does not reflect the paper dimensions that Erika supports
-        erika = ErikaMock(60, 40, output_after_each_step=True, delay_after_each_step=0.005)
+        # using low size just so it fits on the screen well - does not reflect the paper dimensions that Erika supports
+        erika = ErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True, delay_after_each_step=0.005)
 
         # slower, but output will not flicker as much
-        # erika = ErikaMock(60, 40, output_after_each_step=True, delay_after_each_step=0.05)
+        # erika = ErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True, delay_after_each_step=0.05)
     else:
         erika = Erika(com_port)
 
     return erika
+
+
+def read_lines_from_stdin_non_blocking():
+    lines = []
+
+    queue_to_pass_lines_through = Queue(maxsize=1)
+    worker_process = Process(target=function_for_reading_lines_from_stdin_process,
+                             args=(queue_to_pass_lines_through, sys.stdin.fileno()))
+    worker_process.start()
+
+    worker_process.join(timeout=0.1)
+    has_exited = not worker_process.is_alive()
+    if has_exited:
+        try:
+            lines = queue_to_pass_lines_through.get(block=False)
+            return lines
+        except Empty as exception:
+            raise Exception('unexpected exception') from exception
+    else:
+        print("no output to generate - provide ASCII art as a file  parameter or on stdin")
+        worker_process.terminate()
+        sys.exit(1)
+
+    return lines
+
+
+def function_for_reading_lines_from_stdin_process(queue_to_pass_lines_through, input_stream_fileno):
+    # stdin is closed for new processes :/
+    # https://docs.python.org/3.5/library/multiprocessing.html#all-start-methods
+    # Note to self: portable :)
+    # https://docs.python.org/3/library/os.html#os.fdopen
+    input_stream = os.fdopen(input_stream_fileno)
+
+    lines = input_stream.readlines()
+    queue_to_pass_lines_through.put(lines)
 
 
 def main():

@@ -13,7 +13,7 @@ class CliTest(unittest.TestCase):
         self.assertIsNotNone(parser)
 
         #  act / assert - short form of parameters
-        args = parser.parse_args(["render_ascii_art_file", "-d", "-p", "/dev/ttyACM0", "-f", "test_file.txt", "-s",
+        args = parser.parse_args(["render_ascii_art", "-d", "-p", "/dev/ttyACM0", "-f", "test_file.txt", "-s",
                                   "PerpendicularSpiralInward"])
         self.assertEqual(args.func, print_ascii_art)
         self.assertTrue(args.dry_run)
@@ -23,7 +23,7 @@ class CliTest(unittest.TestCase):
 
         #  act / assert - long form of parameters
         args = parser.parse_args(
-            ["render_ascii_art_file", "--dry-run", "--serial-port", "/dev/ttyACM0", "--file", "test_file.txt",
+            ["render_ascii_art", "--dry-run", "--serial-port", "/dev/ttyACM0", "--file", "test_file.txt",
              "--strategy", "ArchimedeanSpiralOutward"])
         self.assertEqual(args.func, print_ascii_art)
         self.assertTrue(args.dry_run)
@@ -32,10 +32,10 @@ class CliTest(unittest.TestCase):
         self.assertEqual(args.strategy, "ArchimedeanSpiralOutward")
 
         #  act / assert - defaults
-        args = parser.parse_args(["render_ascii_art_file", "-p", "COM3", "-f", "test_file2.txt"])
+        args = parser.parse_args(["render_ascii_art", "-p", "COM3"])
         self.assertEqual(args.func, print_ascii_art)
         self.assertFalse(args.dry_run)
-        self.assertEqual(args.file, "test_file2.txt")
+        self.assertEqual(args.file, "-")
         self.assertEqual(args.serial_port, "COM3")
         self.assertEqual(args.strategy, "LineByLine")
 
@@ -57,7 +57,7 @@ class CliTest(unittest.TestCase):
         self.assertTrue("-h" in actual_stdout)
         self.assertTrue("--help" in actual_stdout)
         self.assertTrue("erika.sh" in actual_stdout)
-        self.assertTrue("render_ascii_art_file" in actual_stdout)
+        self.assertTrue("render_ascii_art" in actual_stdout)
         self.assertTrue("demo" in actual_stdout)
 
         # act / assert
@@ -65,14 +65,14 @@ class CliTest(unittest.TestCase):
         self.assertTrue("-h" in actual_stdout)
         self.assertTrue("--help" in actual_stdout)
         self.assertTrue("erika.sh" in actual_stdout)
-        self.assertTrue("render_ascii_art_file" in actual_stdout)
+        self.assertTrue("render_ascii_art" in actual_stdout)
         self.assertTrue("demo" in actual_stdout)
 
         # act / assert
-        actual_stdout = self.call_parse_args_and_capture_stdout(parser, ["render_ascii_art_file", "--help"])
+        actual_stdout = self.call_parse_args_and_capture_stdout(parser, ["render_ascii_art", "--help"])
         self.assertTrue("-h" in actual_stdout)
         self.assertTrue("--help" in actual_stdout)
-        self.assertTrue("erika.sh render_ascii_art_file" in actual_stdout)
+        self.assertTrue("erika.sh render_ascii_art" in actual_stdout)
         self.assertTrue("--file FILEPATH, -f FILEPATH" in actual_stdout)
         self.assertTrue("--dry-run, -d" in actual_stdout)
         self.assertTrue("--serial-port SERIAL_PORT, -p SERIAL_PORT" in actual_stdout)
@@ -84,10 +84,10 @@ class CliTest(unittest.TestCase):
         self.assertTrue("ArchimedeanSpiralOutward" in actual_stdout)
 
         # act / assert
-        actual_stdout = self.call_parse_args_and_capture_stdout(parser, ["render_ascii_art_file", "-h"])
+        actual_stdout = self.call_parse_args_and_capture_stdout(parser, ["render_ascii_art", "-h"])
         self.assertTrue("-h" in actual_stdout)
         self.assertTrue("--help" in actual_stdout)
-        self.assertTrue("erika.sh render_ascii_art_file" in actual_stdout)
+        self.assertTrue("erika.sh render_ascii_art" in actual_stdout)
         self.assertTrue("--file FILEPATH, -f FILEPATH" in actual_stdout)
         self.assertTrue("--dry-run, -d" in actual_stdout)
         self.assertTrue("--serial-port SERIAL_PORT, -p SERIAL_PORT" in actual_stdout)
