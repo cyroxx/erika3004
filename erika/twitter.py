@@ -1,7 +1,9 @@
-import queue
-import threading
+from queue import Queue
+from threading import Thread
 
 from twython import TwythonStreamer
+
+from erika.local_settings import APP_KEY, APP_SECRET, OAUTH_TOKEN, OAUTH_TOKEN_SECRET
 
 
 class MyStreamer(TwythonStreamer):
@@ -14,7 +16,6 @@ class MyStreamer(TwythonStreamer):
             print(tweet)
             q.put(tweet)
 
-
     def on_error(self, status_code, data):
         print(status_code)
 
@@ -23,12 +24,10 @@ class MyStreamer(TwythonStreamer):
         # self.disconnect()
 
 
-q = queue.Queue()
+q = Queue()
 
 
 def twitter_worker():
-    from local_settings import APP_KEY, APP_SECRET, OAUTH_TOKEN, OAUTH_TOKEN_SECRET
-
     stream = MyStreamer(APP_KEY, APP_SECRET,
                         OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
     stream.statuses.filter(track='berlin')
@@ -52,11 +51,11 @@ def erika_worker():
 
 def main():
     threads = []
-    t = threading.Thread(target=twitter_worker)
+    t = Thread(target=twitter_worker)
     t.start()
     threads.append(t)
 
-    t = threading.Thread(target=erika_worker)
+    t = Thread(target=erika_worker)
     t.start()
     threads.append(t)
 
