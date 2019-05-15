@@ -1,3 +1,4 @@
+import string
 from queue import Queue
 from threading import Thread
 
@@ -5,9 +6,9 @@ from twython import TwythonStreamer
 
 from erika.erika import Erika
 from erika.local_settings import APP_KEY, APP_SECRET, OAUTH_TOKEN, OAUTH_TOKEN_SECRET
-from erika.local_settings import ERIKA_PORT
 from erika.local_settings import COMMA_SEPARATED_HASH_TAGS_TO_LISTEN_FOR
 from erika.local_settings import ERIKA_MAX_LINE_LENGTH
+from erika.local_settings import ERIKA_PORT
 
 
 class MyStreamer(TwythonStreamer):
@@ -39,9 +40,12 @@ def twitter_worker():
                         OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
     stream.statuses.filter(track=COMMA_SEPARATED_HASH_TAGS_TO_LISTEN_FOR)
 
+
 def erika_worker():
     tweet_as_string = q.get(block=True)
     print("### DEBUG (tweet):" + tweet_as_string)
+    sanitized_tweet = ''.join(c for c in sanitized_tweet if c in (string.digits + string.ascii_letters + ".,;: "))
+    sanitized_tweet = sanitized_tweet.replace('@', "[at]")
     sanitized_tweet = tweet_as_string[:ERIKA_MAX_LINE_LENGTH]
     print("### DEBUG (print string):" + sanitized_tweet)
     erika.print_ascii(sanitized_tweet)
