@@ -3,7 +3,11 @@ from threading import Thread
 
 from twython import TwythonStreamer
 
+from erika.erika import Erika
 from erika.local_settings import APP_KEY, APP_SECRET, OAUTH_TOKEN, OAUTH_TOKEN_SECRET
+from erika.local_settings import ERIKA_PORT
+from erika.local_settings import COMMA_SEPARATED_HASH_TAGS_TO_LISTEN_FOR
+from erika.local_settings import ERIKA_MAX_LINE_LENGTH
 
 
 class MyStreamer(TwythonStreamer):
@@ -12,9 +16,9 @@ class MyStreamer(TwythonStreamer):
         if 'text' in data:
             username = data['user']['screen_name']
             tweet = data['text']
-            tweet = "{}: {}".format(username, tweet)
-            print(tweet)
-            q.put(tweet)
+            tweet_as_string = "{}: {}".format(username, tweet)
+            # print(tweet)
+            q.put(tweet_as_string)
 
     def on_error(self, status_code, data):
         print(status_code)
@@ -26,15 +30,22 @@ class MyStreamer(TwythonStreamer):
 
 q = Queue()
 
+# TODO bad style, use "with" statement instead for clean closing...
+erika = Erika(ERIKA_PORT)
+
 
 def twitter_worker():
     stream = MyStreamer(APP_KEY, APP_SECRET,
                         OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
-    stream.statuses.filter(track='berlin')
-
+    stream.statuses.filter(track=COMMA_SEPARATED_HASH_TAGS_TO_LISTEN_FOR)
 
 def erika_worker():
-    pass
+    tweet_as_string = q.get(block=True)
+    print("### DEBUG (tweet):" + tweet_as_string)
+    sanitized_tweet = tweet_as_string[:ERIKA_MAX_LINE_LENGTH]
+    print("### DEBUG (print string):" + sanitized_tweet)
+    erika.print_ascii(sanitized_tweet)
+    erika.crlf()
 
 
 # block until all tasks are done
