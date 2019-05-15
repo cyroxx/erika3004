@@ -44,6 +44,7 @@ def twitter_worker():
 def erika_worker():
     tweet_as_string = q.get(block=True)
     print("### DEBUG (tweet):" + tweet_as_string)
+    sanitized_tweet = tweet_as_string
     sanitized_tweet = ''.join(c for c in sanitized_tweet if c in (string.digits + string.ascii_letters + ".,;: "))
     sanitized_tweet = sanitized_tweet.replace('@', "[at]")
     sanitized_tweet = tweet_as_string[:ERIKA_MAX_LINE_LENGTH]
