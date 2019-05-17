@@ -4,7 +4,7 @@ import serial
 
 from erika.erica_encoder_decoder import DDR_ASCII
 
-DEFAULT_DELAY = 0.5
+DEFAULT_DELAY = 0.3
 
 
 class Erika:
