@@ -30,14 +30,13 @@ import string
 from queue import Queue
 from threading import Thread
 
+from twython import TwythonStreamer
+
+from erika.erika import Erika
 from erika.local_settings import APP_KEY, APP_SECRET, OAUTH_TOKEN, OAUTH_TOKEN_SECRET
 from erika.local_settings import COMMA_SEPARATED_HASH_TAGS_TO_LISTEN_FOR
 from erika.local_settings import ERIKA_MAX_LINE_LENGTH
 from erika.local_settings import ERIKA_PORT
-from twython import TwythonStreamer
-
-from erika.erika import Erika
-from erika.erika_mock import ErikaMock
 
 
 # simple twitter listener + printout to Erika device
@@ -72,6 +71,16 @@ erika = Erika(ERIKA_PORT)
 # erika = ErikaMock(output_after_each_step=True)
 
 
+def sanitize_tweet(tweet_as_string):
+    allowed_characters = string.digits + string.ascii_letters + "@.,;:# ()_/!\"§+%&=*-'äöüÄÖÜßéè°|µ^²³"
+    sanitized_tweet = tweet_as_string
+    sanitized_tweet = ''.join(c for c in sanitized_tweet if c in allowed_characters)
+    sanitized_tweet = sanitized_tweet.replace('@', "(at)")
+    sanitized_tweet = sanitized_tweet[:ERIKA_MAX_LINE_LENGTH]
+
+    return sanitized_tweet
+
+
 def twitter_worker():
     stream = MyStreamer(APP_KEY, APP_SECRET,
                         OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
@@ -85,10 +94,7 @@ def erika_worker():
         print("### DEBUG (tweet):" + tweet_as_string)
 
         # TODO split input to multiple lines, call erika.crlf for linebreaks!
-        sanitized_tweet = tweet_as_string
-        sanitized_tweet = ''.join(c for c in sanitized_tweet if c in (string.digits + string.ascii_letters + "@.,;: "))
-        sanitized_tweet = sanitized_tweet.replace('@', "[at]")
-        sanitized_tweet = sanitized_tweet[:ERIKA_MAX_LINE_LENGTH]
+        sanitized_tweet = sanitize_tweet(tweet_as_string)
         print("### DEBUG (print string):" + sanitized_tweet)
         erika.print_ascii(sanitized_tweet)
         erika.crlf()
