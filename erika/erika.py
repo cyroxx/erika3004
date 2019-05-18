@@ -5,6 +5,7 @@ import serial
 from erika.erica_encoder_decoder import DDR_ASCII
 
 DEFAULT_DELAY = 0.3
+LINE_BREAK_DELAY = 2.0
 
 
 class Erika:
@@ -72,8 +73,7 @@ class Erika:
 
     def crlf(self):
         self._print_raw("77")
-        time.sleep(DEFAULT_DELAY)
-        time.sleep(DEFAULT_DELAY)
+        time.sleep(LINE_BREAK_DELAY)
 
     def demo(self):
         self._advance_paper()
