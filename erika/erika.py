@@ -74,6 +74,12 @@ class Erika:
     def crlf(self):
         self._print_raw("77")
         time.sleep(LINE_BREAK_DELAY)
+        
+    def set_keyboard_echo(self, value):
+        if value:
+            self._print_raw("92")
+        else:
+            self._print_raw("91")
 
     def demo(self):
         self._advance_paper()
