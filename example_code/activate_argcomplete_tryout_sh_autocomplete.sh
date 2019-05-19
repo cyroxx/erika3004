@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 
-# ALTERNATIVE: activate auto-completion for one script only (I have not tried this out successfully)
+# ALTERNATIVE: activate tab completion for one script only (I have not tried this out successfully)
 #eval "$(register-python-argcomplete argcomplete_tryout_sh)"
 
-echo "[ERIKA 3004] Activating script autocompletion"
+echo "[ERIKA 3004] Activating script tab completion"
 echo "[ERIKA 3004] (see https://argcomplete.readthedocs.io/en/latest/#global-completion )"
 
 argcomplete_support_installed=$(type -P activate-global-python-argcomplete)
@@ -39,5 +39,5 @@ if [[ "$?" -ne 0 ]]; then
     fi
 fi
 
-echo "[ERIKA 3004] Python auto-completion successfully activated."
+echo "[ERIKA 3004] tab completion successfully activated."
 
