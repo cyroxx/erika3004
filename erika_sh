@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# PYTHON_ARGCOMPLETE_OK
+# ^ is about auto-completion, see https://argcomplete.readthedocs.io/en/latest/#global-completion
 
 # Forward all to Python Command Line Interface
 # e.g.
