@@ -56,7 +56,7 @@ class CliTest(unittest.TestCase):
         actual_stdout = self.call_parse_args_and_capture_stdout(parser, ["--help"])
         self.assertTrue("-h" in actual_stdout)
         self.assertTrue("--help" in actual_stdout)
-        self.assertTrue("erika.sh" in actual_stdout)
+        self.assertTrue("erika_sh" in actual_stdout)
         self.assertTrue("render_ascii_art" in actual_stdout)
         self.assertTrue("demo" in actual_stdout)
 
@@ -64,7 +64,7 @@ class CliTest(unittest.TestCase):
         actual_stdout = self.call_parse_args_and_capture_stdout(parser, ["-h"])
         self.assertTrue("-h" in actual_stdout)
         self.assertTrue("--help" in actual_stdout)
-        self.assertTrue("erika.sh" in actual_stdout)
+        self.assertTrue("erika_sh" in actual_stdout)
         self.assertTrue("render_ascii_art" in actual_stdout)
         self.assertTrue("demo" in actual_stdout)
 
@@ -72,7 +72,7 @@ class CliTest(unittest.TestCase):
         actual_stdout = self.call_parse_args_and_capture_stdout(parser, ["render_ascii_art", "--help"])
         self.assertTrue("-h" in actual_stdout)
         self.assertTrue("--help" in actual_stdout)
-        self.assertTrue("erika.sh render_ascii_art" in actual_stdout)
+        self.assertTrue("erika_sh render_ascii_art" in actual_stdout)
         self.assertTrue("--file FILEPATH, -f FILEPATH" in actual_stdout)
         self.assertTrue("--dry-run, -d" in actual_stdout)
         self.assertTrue("--serial-port SERIAL_PORT, -p SERIAL_PORT" in actual_stdout)
@@ -87,7 +87,7 @@ class CliTest(unittest.TestCase):
         actual_stdout = self.call_parse_args_and_capture_stdout(parser, ["render_ascii_art", "-h"])
         self.assertTrue("-h" in actual_stdout)
         self.assertTrue("--help" in actual_stdout)
-        self.assertTrue("erika.sh render_ascii_art" in actual_stdout)
+        self.assertTrue("erika_sh render_ascii_art" in actual_stdout)
         self.assertTrue("--file FILEPATH, -f FILEPATH" in actual_stdout)
         self.assertTrue("--dry-run, -d" in actual_stdout)
         self.assertTrue("--serial-port SERIAL_PORT, -p SERIAL_PORT" in actual_stdout)
@@ -102,7 +102,7 @@ class CliTest(unittest.TestCase):
         actual_stdout = self.call_parse_args_and_capture_stdout(parser, ["demo", "--help"])
         self.assertTrue("-h" in actual_stdout)
         self.assertTrue("--help" in actual_stdout)
-        self.assertTrue("erika.sh demo" in actual_stdout)
+        self.assertTrue("erika_sh demo" in actual_stdout)
         self.assertTrue("--dry-run, -d" in actual_stdout)
         self.assertTrue("--serial-port SERIAL_PORT, -p SERIAL_PORT" in actual_stdout)
 
@@ -110,7 +110,7 @@ class CliTest(unittest.TestCase):
         actual_stdout = self.call_parse_args_and_capture_stdout(parser, ["demo", "-h"])
         self.assertTrue("-h" in actual_stdout)
         self.assertTrue("--help" in actual_stdout)
-        self.assertTrue("erika.sh demo" in actual_stdout)
+        self.assertTrue("erika_sh demo" in actual_stdout)
         self.assertTrue("--dry-run, -d" in actual_stdout)
         self.assertTrue("--serial-port SERIAL_PORT, -p SERIAL_PORT" in actual_stdout)
 
