@@ -15,7 +15,7 @@ DRY_RUN_HEIGHT = 40
 
 
 def create_argument_parser():
-    parser = ArgumentParser(prog='erika.sh', description='Erika type writer connector CLI')
+    parser = ArgumentParser(prog='erika_sh', description='Erika type writer connector CLI')
     command_parser = parser.add_subparsers(help='Available commands')
     add_render_demo_parser(command_parser)
     add_render_ascii_art_parser(command_parser)

@@ -2,7 +2,7 @@
 
 
 # ALTERNATIVE: activate auto-completion for one script only (I have not tried this out successfully)
-#eval "$(register-python-argcomplete argcomplete_tryout.sh)"
+#eval "$(register-python-argcomplete argcomplete_tryout_sh)"
 
 echo "[ERIKA 3004] Activating script autocompletion"
 echo "[ERIKA 3004] (see https://argcomplete.readthedocs.io/en/latest/#global-completion )"
