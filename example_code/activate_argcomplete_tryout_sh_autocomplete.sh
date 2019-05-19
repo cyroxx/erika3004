@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
+# PYTHON_ARGCOMPLETE_OK
 
 # ALTERNATIVE: activate tab completion for one script only (I have not tried this out successfully)
-#eval "$(register-python-argcomplete argcomplete_tryout_sh)"
+#eval "$(register-python-argcomplete argcomplete_tryout.sh)"
 
 echo "[ERIKA 3004] Activating script tab completion"
 echo "[ERIKA 3004] (see https://argcomplete.readthedocs.io/en/latest/#global-completion )"

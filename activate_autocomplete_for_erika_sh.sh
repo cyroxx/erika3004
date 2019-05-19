@@ -2,7 +2,7 @@
 
 
 # ALTERNATIVE: activate tab completion for one script only (I have not tried this out successfully)
-#eval "$(register-python-argcomplete erika_sh)"
+#eval "$(register-python-argcomplete erika.sh)"
 
 echo "[ERIKA 3004] Activating script tab completion"
 echo "[ERIKA 3004] (see https://argcomplete.readthedocs.io/en/latest/#global-completion )"

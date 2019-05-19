@@ -8,7 +8,7 @@ def print_stuff(parsed_args, arg):
     print("print_stuff called with argument '{}' for these args:\n{}".format(arg, parsed_args))
 
 
-parser = argparse.ArgumentParser(prog='argcomplete_tryout_sh', description='Command line autocompletion test - ### MAKE SURE YOU CALL activate_argcomplete_tryout_sh_autocompletion.sh FIRST! ###')
+parser = argparse.ArgumentParser(prog='argcomplete_tryout.sh', description='Command line autocompletion test - ### MAKE SURE YOU CALL activate_argcomplete_tryout_sh_autocomplete.sh FIRST! ###')
 command_parser = parser.add_subparsers(help='Available commands')
 
 subparser_1 = command_parser.add_parser('option_1', help='Option 1')
