@@ -4,7 +4,7 @@ import serial
 
 from erika.erica_encoder_decoder import DDR_ASCII
 
-DEFAULT_DELAY = 0.3
+DEFAULT_DELAY = 0.02
 LINE_BREAK_DELAY = 2.0
 
 
@@ -14,7 +14,7 @@ class Erika:
     def __init__(self, com_port, *args, **kwargs):
         """Set comport to serial device that connects to Erika typewriter."""
         self.com_port = com_port
-        self.connection = serial.Serial(com_port, 1200)  # , timeout=0, parity=serial.PARITY_EVEN, rtscts=1)
+        self.connection = serial.Serial(com_port, 1200, rtscts=True, dsrdtr=None, write_timeout=1)  # , timeout=0, parity=serial.PARITY_EVEN, rtscts=1)
         self.ddr_ascii = DDR_ASCII()
 
     ## resource manager stuff
@@ -104,4 +104,6 @@ class Erika:
 
     def _print_raw(self, data):
         """prints base16 formated data"""
+        while not self.connection.cts:
+            pass
         self.connection.write(bytes.fromhex(data))
