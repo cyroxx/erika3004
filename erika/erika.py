@@ -14,7 +14,7 @@ class Erika:
     def __init__(self, com_port, *args, **kwargs):
         """Set comport to serial device that connects to Erika typewriter."""
         self.com_port = com_port
-        self.connection = serial.Serial(com_port, 1200, rtscts=True, dsrdtr=None, write_timeout=1)  # , timeout=0, parity=serial.PARITY_EVEN, rtscts=1)
+        self.connection = serial.Serial(com_port, 1200, rtscts=True)  # , timeout=0, parity=serial.PARITY_EVEN, rtscts=1)
         self.ddr_ascii = DDR_ASCII()
 
     ## resource manager stuff
