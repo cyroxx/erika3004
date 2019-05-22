@@ -69,19 +69,18 @@ def add_render_ascii_art_parser(command_parser):
 
 
 def print_ascii_art(args):
-    startegy_string = args.strategy
+    strategy_string = args.strategy
     file_path = args.file
 
-    if startegy_string == 'LineByLine':
-        strategy = strategy = LineByLineErikaImageRenderingStrategy()
-    elif startegy_string == 'Interlaced':
-        strategy = InterlacedErikaImageRenderingStrategy()
-    elif startegy_string == 'PerpendicularSpiralInward':
-        strategy = PerpendicularSpiralInwardErikaImageRenderingStrategy()
-    elif startegy_string == 'RandomDotFill':
-        strategy = RandomDotFillErikaImageRenderingStrategy()
-    elif startegy_string == 'ArchimedeanSpiralOutward':
-        strategy = ArchimedeanSpiralOutwardErikaImageRenderingStrategy()
+    strategies = {
+        'LineByLine': LineByLineErikaImageRenderingStrategy,
+        'Interlaced': InterlacedErikaImageRenderingStrategy,
+        'PerpendicularSpiralInward': PerpendicularSpiralInwardErikaImageRenderingStrategy,
+        'RandomDotFill': RandomDotFillErikaImageRenderingStrategy,
+        'ArchimedeanSpiralOutward': ArchimedeanSpiralOutwardErikaImageRenderingStrategy
+    }
+
+    strategy = strategies[strategy_string]()
 
     erika = get_erika_for_given_args(args)
     renderer = ErikaImageRenderer(erika, strategy)
