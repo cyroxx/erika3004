@@ -1,3 +1,7 @@
+# PYTHON_ARGCOMPLETE_OK
+# ^ is about auto-completion, see https://argcomplete.readthedocs.io/en/latest/#global-completion
+
+import argcomplete
 import os
 import sys
 from argparse import ArgumentParser
@@ -19,6 +23,7 @@ def create_argument_parser():
     command_parser = parser.add_subparsers(help='Available commands')
     add_render_demo_parser(command_parser)
     add_render_ascii_art_parser(command_parser)
+    argcomplete.autocomplete(parser, always_complete_options=True)
     return parser
 
 
@@ -143,6 +148,7 @@ def function_for_reading_lines_from_stdin_process(queue_to_pass_lines_through, i
 
 
 def main():
+    # with argcomplete used now, this shoudl be the very first call - no side-effects should happen before
     argument_parser = create_argument_parser()
     args = argument_parser.parse_args()
     if ('func' in args):
