@@ -7,6 +7,11 @@ from erika.erica_encoder_decoder import DDR_ASCII
 DEFAULT_DELAY = 0.3
 LINE_BREAK_DELAY = 2.0
 
+# confirmed experimentally
+MICROSTEPS_PER_CHARACTER_WIDTH = 10
+
+# confirmed experimentally
+MICROSTEPS_PER_CHARACTER_HEIGHT = 20
 
 class Erika:
     conversion_table_path = "erika/charTranslation.json"
@@ -71,6 +76,29 @@ class Erika:
         self._print_raw("73")
         time.sleep(DEFAULT_DELAY)
 
+    def move_down_microstep(self):
+        self._write_byte_delay("81")
+
+    def move_up_microstep(self):
+        self._write_byte_delay("82")
+
+
+    def move_right_microsteps(self, num_steps=1):
+        for i in range(0, num_steps):
+            self._write_byte_delay("A5")
+
+            # one step: two's complement
+            # FIXME use num_steps as number
+            self._write_byte_delay("01")
+
+    def move_left_microsteps(self, num_steps=1):
+        for i in range(0, num_steps):
+            self._write_byte_delay("A5")
+
+            # minus one step: two's complement
+            # FIXME use num_steps as number
+            self._write_byte_delay("FF")
+
     def crlf(self):
         self._print_raw("77")
         time.sleep(LINE_BREAK_DELAY)
@@ -80,6 +108,8 @@ class Erika:
             self._print_raw("92")
         else:
             self._print_raw("91")
+
+
 
     def demo(self):
         self._advance_paper()
