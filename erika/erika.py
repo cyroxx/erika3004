@@ -48,32 +48,23 @@ class Erika:
             self._write_byte_delay(key_id)
 
     def move_up(self):
-        self._print_raw("76")
-        time.sleep(DEFAULT_DELAY)
-        self._print_raw("76")
-        time.sleep(DEFAULT_DELAY)
+        self._write_byte_delay("76")
+        self._write_byte_delay("76")
 
     def move_down(self):
-        self._print_raw("75")
-        time.sleep(DEFAULT_DELAY)
-        self._print_raw("75")
-        time.sleep(DEFAULT_DELAY)
+        self._write_byte_delay("75")
+        self._write_byte_delay("75")
 
     def move_left(self):
-        self._print_raw("74")
-        time.sleep(DEFAULT_DELAY)
-        self._print_raw("74")
-        time.sleep(DEFAULT_DELAY)
+        self._write_byte_delay("74")
+        self._write_byte_delay("74")
 
     def move_right(self):
-        self._print_raw("73")
-        time.sleep(DEFAULT_DELAY)
-        self._print_raw("73")
-        time.sleep(DEFAULT_DELAY)
+        self._write_byte_delay("73")
+        self._write_byte_delay("73")
 
     def crlf(self):
-        self._print_raw("77")
-        time.sleep(LINE_BREAK_DELAY)
+        self._write_byte_delay("77")
         
     def set_keyboard_echo(self, value):
         if value:
