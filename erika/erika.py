@@ -95,6 +95,4 @@ class Erika:
 
     def _print_raw(self, data):
         """prints base16 formated data"""
-        while not self.connection.cts:
-            pass
         self.connection.write(bytes.fromhex(data))
