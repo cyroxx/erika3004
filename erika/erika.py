@@ -3,6 +3,7 @@ import time
 import serial
 
 from erika.erica_encoder_decoder import DDR_ASCII
+from erika.util import twos_complement_hex_string
 
 DEFAULT_DELAY = 0.3
 LINE_BREAK_DELAY = 2.0
@@ -12,6 +13,7 @@ MICROSTEPS_PER_CHARACTER_WIDTH = 10
 
 # confirmed experimentally
 MICROSTEPS_PER_CHARACTER_HEIGHT = 20
+
 
 class Erika:
     conversion_table_path = "erika/charTranslation.json"
@@ -82,27 +84,29 @@ class Erika:
     def move_up_microstep(self):
         self._write_byte_delay("82")
 
-
     def move_right_microsteps(self, num_steps=1):
-        for i in range(0, num_steps):
+        while num_steps > 127:
             self._write_byte_delay("A5")
+            self._write_byte_delay(twos_complement_hex_string(127))
+            num_steps = num_steps - 127
 
-            # one step: two's complement
-            # FIXME use num_steps as number
-            self._write_byte_delay("01")
+        self._write_byte_delay("A5")
+        self._write_byte_delay(twos_complement_hex_string(num_steps))
 
     def move_left_microsteps(self, num_steps=1):
-        for i in range(0, num_steps):
+        # two's complement numbers: negative value range is 1 bigger than positive (because 0 positive)
+        while num_steps > 128:
             self._write_byte_delay("A5")
+            self._write_byte_delay(twos_complement_hex_string(-128))
+            num_steps = num_steps - 128
 
-            # minus one step: two's complement
-            # FIXME use num_steps as number
-            self._write_byte_delay("FF")
+        self._write_byte_delay("A5")
+        self._write_byte_delay(twos_complement_hex_string(-1 * num_steps))
 
     def crlf(self):
         self._print_raw("77")
         time.sleep(LINE_BREAK_DELAY)
-        
+
     def set_keyboard_echo(self, value):
         if value:
             self._print_raw("92")
