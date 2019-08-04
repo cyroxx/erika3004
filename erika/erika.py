@@ -113,11 +113,55 @@ class Erika:
         else:
             self._print_raw("91")
 
+    def _print_demo_rectangle(self):
 
+        for i in range(0, 10):
+            self.print_ascii(".")
+            self.move_left_microsteps(MICROSTEPS_PER_CHARACTER_WIDTH - 1)
+
+        self.move_left_microsteps(1)
+
+        for i in range(0, 5):
+            self.move_down_microstep()
+            self.print_ascii(".")
+            self.move_left_microsteps(MICROSTEPS_PER_CHARACTER_WIDTH)
+
+        self.move_left_microsteps(1)
+
+        for i in range(0, 10):
+            self.print_ascii(".")
+            self.move_left_microsteps(MICROSTEPS_PER_CHARACTER_WIDTH + 1)
+
+        self.move_right_microsteps(1)
+
+        for i in range(0, 5):
+            self.move_up_microstep()
+            self.print_ascii(".")
+            self.move_left_microsteps(MICROSTEPS_PER_CHARACTER_WIDTH)
+
+    def _print_precision_test(self):
+        self.crlf()
+        self.crlf()
+
+        self.print_ascii(".")
+        self.move_left_microsteps(MICROSTEPS_PER_CHARACTER_WIDTH)
+        self.move_right_microsteps(256)
+        self.print_ascii(".")
+        self.move_left_microsteps(MICROSTEPS_PER_CHARACTER_WIDTH)
+
+        self.move_down_microstep()
+        self.move_down_microstep()
+
+        self.move_left_microsteps(256)
+        self.print_ascii(".")
+        self.move_left_microsteps(MICROSTEPS_PER_CHARACTER_WIDTH)
+        self.move_right_microsteps(256)
+        self.print_ascii(".")
 
     def demo(self):
-        self._advance_paper()
-        self._print_smiley()
+        self.crlf()
+        # self._print_smiley()
+        self._print_demo_rectangle()
         self._advance_paper()
 
     def _advance_paper(self):
