@@ -24,23 +24,31 @@ def enforcedmethod(func):
 
 class MetaclassForEnforcingMethods:
 
+    # verify that enforced methods are implemented
     def __new__(cls, *args, **kwargs):
+        method_names = set()
         not_found_enforced_methods = set()
         # search through method resolution order
         method_resolution_order = cls.__mro__
         for base_class in method_resolution_order:
             for name, value in base_class.__dict__.items():
-                if getattr(value, "__enforcedmethod__", False) and name not in cls.__dict__:
+                # method_names are collected in this dictionary while going up the inheritance hierarchy.
+                # If the method is not in there when the method is marked <to be enforced in the current base_class,
+                # it has not been implemented in a base class as expected.
+                if getattr(value, "__enforcedmethod__", False) and name not in method_names:
                     not_found_enforced_methods.add(name)
+                method_names.add(name)
+
         if not_found_enforced_methods:
             raise TypeError("Can't instantiate abstract class {} - must implement enforced methods {}"
                             .format(cls.__name__, ', \n'.join(not_found_enforced_methods)))
         else:
-            return super(MetaclassForEnforcingMethods, cls).__new__(cls)  # (*args, **kwargs)
+            return super(MetaclassForEnforcingMethods, cls).__new__(cls)
 
 
 class AbstractErika(MetaclassForEnforcingMethods):
 
+    # verify that all "public" methods are part of this "interface" class
     def __new__(cls, *args, **kwargs):
         not_found_methods = set()
 
@@ -48,15 +56,14 @@ class AbstractErika(MetaclassForEnforcingMethods):
         method_resolution_order = cls.__mro__
         for base_class in method_resolution_order:
             for name, value in base_class.__dict__.items():
-                if not name.startswith("_") and not getattr(value, "__enforcedmethod__",
-                                                            False) and name not in AbstractErika.__dict__:
+                if not name.startswith("_") and name not in AbstractErika.__dict__:
                     not_found_methods.add(name)
         if not_found_methods:
             raise TypeError("Can't instantiate abstract class {}. All public methods (not starting with underscore) "
                             "must be part of the AbstractErika base class: {}"
                             .format(cls.__name__, ', \n'.join(not_found_methods)))
         else:
-            return super(AbstractErika, cls).__new__(cls)  # , *args, **kwargs)
+            return super(AbstractErika, cls).__new__(cls)
 
     @enforcedmethod
     def alarm(self, duration):
