@@ -1,4 +1,5 @@
 import time
+from typing import Any
 
 import serial
 
@@ -15,7 +16,118 @@ MICROSTEPS_PER_CHARACTER_WIDTH = 10
 MICROSTEPS_PER_CHARACTER_HEIGHT = 20
 
 
-class Erika:
+# sepecial decorator: erforce that subclasses implement the method
+# See https://stackoverflow.com/a/25651022
+def enforcedmethod(func):
+    func.__enforcedmethod__ = True
+    return func
+
+
+class MetaclassForEnforcingMethods:
+
+    # def __call__(cls, *args, **kwargs):
+    def __new__(cls, *args, **kwargs):
+        # return verify_all_enforced_methods_are_implemented(args, kwargs)
+    #
+    # @classmethod
+    # def verify_all_enforced_methods_are_implemented(cls, *args, **kwargs):
+        not_found_enforced_methods = set()
+        # search through method resolution order
+        method_resolution_order = cls.__mro__
+        for base_class in method_resolution_order:
+            for name, value in base_class.__dict__.items():
+                if getattr(value, "__enforcedmethod__", False) and name not in cls.__dict__:
+                    not_found_enforced_methods.add(name)
+        if not_found_enforced_methods:
+            raise TypeError("Can't instantiate abstract class {} - must implement enforced methods {}"
+                            .format(cls.__name__, ', \n'.join(not_found_enforced_methods)))
+        else:
+            return super(MetaclassForEnforcingMethods, cls).__new__(cls)#(*args, **kwargs)
+
+
+class AbstractErika(MetaclassForEnforcingMethods):
+    # class AbstractErika(object):
+    # __metaclass__ = MetaclassForEnforcingMethods
+
+    def __new__(cls, *args, **kwargs):
+    #     return verify_all_subclass_methods_are_part_of_this_interface(cls, args, kwargs)
+    #
+    # def verify_all_subclass_methods_are_part_of_this_interface(cls, *args, **kwargs):
+        not_found_methods = set()
+
+        # search through method resolution order
+        method_resolution_order = cls.__mro__
+        for base_class in method_resolution_order:
+            for name, value in base_class.__dict__.items():
+                if not name.startswith("_") and not getattr(value, "__enforcedmethod__", False) and name not in AbstractErika.__dict__:
+                    not_found_methods.add(name)
+        if not_found_methods:
+            raise TypeError("Can't instantiate abstract class {}. All public methods (not starting with underscore) "
+                            "must be part of the AbstractErika base class: {}"
+                            .format(cls.__name__, ', \n'.join(not_found_methods)))
+        else:
+            # return super(MetaclassForEnforcingMethods, cls).__new__(cls) #, *args, **kwargs)
+            return super(AbstractErika, cls).__new__(cls) #, *args, **kwargs)
+
+
+    @enforcedmethod
+    def alarm(self, duration):
+        pass
+
+    @enforcedmethod
+    def read(self):
+        pass
+
+    @enforcedmethod
+    def print_ascii(self, text):
+        pass
+
+    @enforcedmethod
+    def move_up(self):
+        pass
+
+    @enforcedmethod
+    def move_down(self):
+        pass
+
+    @enforcedmethod
+    def move_left(self):
+        pass
+
+    @enforcedmethod
+    def move_right(self):
+        pass
+
+    @enforcedmethod
+    def move_down_microstep(self):
+        pass
+
+    @enforcedmethod
+    def move_up_microstep(self):
+        pass
+
+    @enforcedmethod
+    def move_right_microsteps(self, num_steps=1):
+        pass
+
+    @enforcedmethod
+    def move_left_microsteps(self, num_steps=1):
+        pass
+
+    @enforcedmethod
+    def crlf(self):
+        pass
+
+    @enforcedmethod
+    def set_keyboard_echo(self, value):
+        pass
+
+    @enforcedmethod
+    def demo(self):
+        pass
+
+
+class Erika(AbstractErika):
     conversion_table_path = "erika/charTranslation.json"
 
     def __init__(self, com_port, *args, **kwargs):
@@ -113,6 +225,12 @@ class Erika:
         else:
             self._print_raw("91")
 
+    def demo(self):
+        self.crlf()
+        # self._print_smiley()
+        self._print_demo_rectangle()
+        self._advance_paper()
+
     def _print_demo_rectangle(self):
 
         for i in range(0, 10):
@@ -157,12 +275,6 @@ class Erika:
         self.move_left_microsteps(MICROSTEPS_PER_CHARACTER_WIDTH)
         self.move_right_microsteps(256)
         self.print_ascii(".")
-
-    def demo(self):
-        self.crlf()
-        # self._print_smiley()
-        self._print_demo_rectangle()
-        self._advance_paper()
 
     def _advance_paper(self):
         """ move paper up / cursor down by 10 halfsteps"""

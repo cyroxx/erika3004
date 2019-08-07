@@ -11,6 +11,7 @@ This way, rendering algorithms can be tested.
 """
 import sys
 from time import sleep
+from erika.erika import AbstractErika
 
 """page dimensions for Erika"""
 # tested manually - the cursor will no longer move if a key is pressed
@@ -21,7 +22,8 @@ ERIKA_PAGE_WIDTH_SOFT_LIMIT_AT_12_CHARS_PER_INCH = 65
 ERIKA_PAGE_HEIGHT = 150
 
 
-class ErikaMock:
+class ErikaMock(AbstractErika):
+
     def __init__(self,
                  width=ERIKA_PAGE_WIDTH_SOFT_LIMIT_AT_12_CHARS_PER_INCH,
                  height=ERIKA_PAGE_HEIGHT,
@@ -73,7 +75,7 @@ class ErikaMock:
 
             self.canvas_x += 1
             if self.output_after_each_step:
-                self.test_debug_helper_print_canvas()
+                self._test_debug_helper_print_canvas()
                 if self.delay_after_each_step > 0:
                     sleep(self.delay_after_each_step)
 
@@ -109,10 +111,26 @@ class ErikaMock:
     def _write_byte_delay(self, data, delay=0.5):
         raise Exception('User is not supposed to call this function directly')
 
-    def test_debug_helper_print_canvas(self):
+    def _test_debug_helper_print_canvas(self):
         """for debugging: print the current canvas to stdout"""
         print(' ' + ''.zfill(self.width).replace('0', '#'))
         for line in self.canvas:
             print('#' + ''.join(line) + '#')
         print(' ' + ''.zfill(self.width).replace('0', '#'))
         print()
+
+    def move_down_microstep(self):
+        raise Exception('Microsteps are not supported in character-based tests')
+
+    def move_up_microstep(self):
+        raise Exception('Microsteps are not supported in character-based tests')
+
+    def move_right_microsteps(self, num_steps=1):
+        raise Exception('Microsteps are not supported in character-based tests')
+
+    def move_left_microsteps(self, num_steps=1):
+        raise Exception('Microsteps are not supported in character-based tests')
+
+    def set_keyboard_echo(self, value):
+        raise Exception('Not supported yet')
+
