@@ -1,6 +1,6 @@
 import unittest
 
-from erika.erika_mock import ErikaMock
+from erika.erika_mock import CharacterBasedErikaMock
 
 
 def assert_print_output(test_case, my_erika, expected_array_of_joined_lines):
@@ -13,8 +13,8 @@ def assert_print_output(test_case, my_erika, expected_array_of_joined_lines):
 
 class ErikaMockTest(unittest.TestCase):
     def testWriteBack(self):
-        """simple test that the ErikaMock records what is written to it"""
-        my_erika = ErikaMock(width=5, height=3)
+        """simple test that the CharacterBasedErikaMock records what is written to it"""
+        my_erika = CharacterBasedErikaMock(width=5, height=3)
         my_erika.print_ascii("Hello")
         my_erika.move_down()
         my_erika.move_down()

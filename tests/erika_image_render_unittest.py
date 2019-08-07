@@ -12,14 +12,14 @@ class RendererTest(unittest.TestCase):
 
     def helper_test_ErikaImageRenderingStrategy_square(self, strategy):
         """test helper to verify rendering with the given strategy works"""
-        with ErikaMock(6, 6) as my_erika:
+        with CharacterBasedErikaMock(6, 6) as my_erika:
             renderer = ErikaImageRenderer(my_erika, strategy)
             renderer.render_ascii_art_file('tests/test_resources/test_ascii_art_small.txt')
             assert_print_output(self, my_erika, ["abcdef", "ghijkl", "mnopqr", "stuvwx", "yzäöüß", "!?#'\"/"])
 
     def helper_test_ErikaImageRenderingStrategy_high(self, strategy):
         """test helper to verify rendering with the given strategy works"""
-        with ErikaMock(3, 12) as my_erika:
+        with CharacterBasedErikaMock(3, 12) as my_erika:
             renderer = ErikaImageRenderer(my_erika, strategy)
             renderer.render_ascii_art_file('tests/test_resources/test_ascii_art_small_high.txt')
             assert_print_output(self, my_erika,
@@ -27,7 +27,7 @@ class RendererTest(unittest.TestCase):
 
     def helper_test_ErikaImageRenderingStrategy_wide(self, strategy):
         """test helper to verify rendering with the given strategy works"""
-        with ErikaMock(9, 4) as my_erika:
+        with CharacterBasedErikaMock(9, 4) as my_erika:
             renderer = ErikaImageRenderer(my_erika, strategy)
             renderer.render_ascii_art_file('tests/test_resources/test_ascii_art_small_wide.txt')
             assert_print_output(self, my_erika, ["abcdefghi", "jklmnopqr", "stuvwxyzä"])
@@ -69,7 +69,7 @@ class RendererTest(unittest.TestCase):
 
     def testArchimedeanSpiralOutwardErikaImageRenderingStrategy2(self):
         """test with a bigger file + two spirals"""
-        with ErikaMock(60, 30, False) as my_erika:
+        with CharacterBasedErikaMock(60, 30, False) as my_erika:
             strategy = ArchimedeanSpiralOutwardErikaImageRenderingStrategy(spiral_param_a=1, render_remaining_characters=False)
             renderer = ErikaImageRenderer(my_erika, strategy)
             renderer.render_ascii_art_file('tests/test_resources/test_ascii_art.txt')

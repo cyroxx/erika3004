@@ -102,10 +102,10 @@ def get_erika_for_given_args(args):
 
     if is_dry_run:
         # using low size just so it fits on the screen well - does not reflect the paper dimensions that Erika supports
-        erika = ErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True, delay_after_each_step=0.005)
+        erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True, delay_after_each_step=0.005)
 
         # slower, but output will not flicker as much
-        # erika = ErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True, delay_after_each_step=0.05)
+        # erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True, delay_after_each_step=0.05)
     else:
         erika = Erika(com_port)
 
