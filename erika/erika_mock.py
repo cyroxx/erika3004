@@ -13,6 +13,8 @@ import sys
 from time import sleep
 
 from erika.erika import AbstractErika
+from erika.erika import MICROSTEPS_PER_CHARACTER_HEIGHT
+from erika.erika import MICROSTEPS_PER_CHARACTER_WIDTH
 
 """page dimensions for Erika"""
 # tested manually - the cursor will no longer move if a key is pressed
@@ -21,6 +23,11 @@ ERIKA_PAGE_WIDTH_CHARACTERS_HARD_LIMIT_AT_12_CHARS_PER_INCH = 74
 ERIKA_PAGE_WIDTH_CHARACTERS_SOFT_LIMIT_AT_12_CHARS_PER_INCH = 65
 
 ERIKA_PAGE_HEIGHT_CHARACTERS = 150
+
+ERIKA_PAGE_WIDTH_MICROSTEPS_HARD_LIMIT_AT_12_CHARS_PER_INCH = ERIKA_PAGE_WIDTH_CHARACTERS_HARD_LIMIT_AT_12_CHARS_PER_INCH * MICROSTEPS_PER_CHARACTER_WIDTH
+ERIKA_PAGE_WIDTH_MICROSTEPS_SOFT_LIMIT_AT_12_CHARS_PER_INCH = ERIKA_PAGE_WIDTH_CHARACTERS_SOFT_LIMIT_AT_12_CHARS_PER_INCH * MICROSTEPS_PER_CHARACTER_WIDTH
+
+ERIKA_PAGE_HEIGHT_MICROSTEPS = ERIKA_PAGE_HEIGHT_CHARACTERS * MICROSTEPS_PER_CHARACTER_HEIGHT
 
 
 class AbstractErikaMock(AbstractErika):
@@ -144,3 +151,87 @@ class CharacterBasedErikaMock(AbstractErikaMock):
             print('#' + ''.join(line) + '#')
         print(' ' + ''.zfill(self.width).replace('0', '#'))
         print()
+
+
+class MicrostepBasedErikaMock(AbstractErikaMock):
+
+    def __init__(self,
+                 width=ERIKA_PAGE_WIDTH_MICROSTEPS_HARD_LIMIT_AT_12_CHARS_PER_INCH,
+                 height=ERIKA_PAGE_HEIGHT_MICROSTEPS,
+                 exception_if_overprinted=True,
+                 output_after_each_step=False,
+                 delay_after_each_step=0):
+        self.width = width
+        self.height = height
+        self.canvas = []
+        for y in range(height):
+            new_list = []
+            for x in range(width):
+                new_list.append(False)
+            self.canvas.append(new_list)
+        self.canvas_x = 0
+        self.canvas_y = 0
+        self.exception_if_overprinted = exception_if_overprinted
+        self.output_after_each_step = output_after_each_step
+        self.delay_after_each_step = delay_after_each_step
+
+    # microstep-based
+    def move_down_microstep(self):
+        self.canvas_y += 1
+
+    def move_up_microstep(self):
+        self.canvas_y -= 1
+
+    def move_right_microsteps(self, num_steps=1):
+        self.canvas_x += num_steps
+
+    def move_left_microsteps(self, num_steps=1):
+        self.canvas_x -= num_steps
+
+    def print_pixel(self):
+        try:
+            if self.canvas[self.canvas_y][self.canvas_x]:
+                if self.exception_if_overprinted:
+                    raise Exception(
+                        "Not supposed to print a pixel twice: at ({}, {})."
+                            .format(self.canvas_x, self.canvas_y))
+            self.canvas[self.canvas_y][self.canvas_x] = True
+        except IndexError as e:
+            print("IndexError at ({}, {}) of ({}, {}) - increase values of "
+                  "cli.DRY_RUN_WIDTH and cli.DRY_RUN_HEIGHT "
+                  "if you need more space".format(self.canvas_x, self.canvas_y, self.width, self.height))
+            sys.exit(1)
+
+    def _test_debug_helper_print_canvas(self):
+        """for debugging: print the current canvas to stdout"""
+        print(' ' + ''.zfill(self.width).replace('0', '#'))
+        for line in self.canvas:
+            print('#' + ''.join(self._transform_for_output(line)) + '#')
+        print(' ' + ''.zfill(self.width).replace('0', '#'))
+        print()
+
+    def _transform_for_output(self, line):
+        return ["X" if x else " " for x in line]
+
+    # character-based
+
+    def move_up(self):
+        raise Exception('Characters and character steps are not supported in microstep-based tests')
+
+    def move_down(self):
+        raise Exception('Characters and character steps are not supported in microstep-based tests')
+
+    def move_left(self):
+        raise Exception('Characters and character steps are not supported in microstep-based tests')
+
+    def move_right(self):
+        raise Exception('Characters and character steps are not supported in microstep-based tests')
+
+    def demo(self):
+        raise Exception('Characters and character steps are not supported in microstep-based tests')
+
+    def crlf(self):
+        raise Exception('Characters and character steps are not supported in microstep-based tests')
+
+    def print_ascii(self, text):
+        raise Exception('Characters and character steps are not supported in microstep-based tests')
