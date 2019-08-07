@@ -1,5 +1,4 @@
 import time
-from typing import Any
 
 import serial
 
@@ -25,12 +24,7 @@ def enforcedmethod(func):
 
 class MetaclassForEnforcingMethods:
 
-    # def __call__(cls, *args, **kwargs):
     def __new__(cls, *args, **kwargs):
-        # return verify_all_enforced_methods_are_implemented(args, kwargs)
-    #
-    # @classmethod
-    # def verify_all_enforced_methods_are_implemented(cls, *args, **kwargs):
         not_found_enforced_methods = set()
         # search through method resolution order
         method_resolution_order = cls.__mro__
@@ -42,33 +36,27 @@ class MetaclassForEnforcingMethods:
             raise TypeError("Can't instantiate abstract class {} - must implement enforced methods {}"
                             .format(cls.__name__, ', \n'.join(not_found_enforced_methods)))
         else:
-            return super(MetaclassForEnforcingMethods, cls).__new__(cls)#(*args, **kwargs)
+            return super(MetaclassForEnforcingMethods, cls).__new__(cls)  # (*args, **kwargs)
 
 
 class AbstractErika(MetaclassForEnforcingMethods):
-    # class AbstractErika(object):
-    # __metaclass__ = MetaclassForEnforcingMethods
 
     def __new__(cls, *args, **kwargs):
-    #     return verify_all_subclass_methods_are_part_of_this_interface(cls, args, kwargs)
-    #
-    # def verify_all_subclass_methods_are_part_of_this_interface(cls, *args, **kwargs):
         not_found_methods = set()
 
         # search through method resolution order
         method_resolution_order = cls.__mro__
         for base_class in method_resolution_order:
             for name, value in base_class.__dict__.items():
-                if not name.startswith("_") and not getattr(value, "__enforcedmethod__", False) and name not in AbstractErika.__dict__:
+                if not name.startswith("_") and not getattr(value, "__enforcedmethod__",
+                                                            False) and name not in AbstractErika.__dict__:
                     not_found_methods.add(name)
         if not_found_methods:
             raise TypeError("Can't instantiate abstract class {}. All public methods (not starting with underscore) "
                             "must be part of the AbstractErika base class: {}"
                             .format(cls.__name__, ', \n'.join(not_found_methods)))
         else:
-            # return super(MetaclassForEnforcingMethods, cls).__new__(cls) #, *args, **kwargs)
-            return super(AbstractErika, cls).__new__(cls) #, *args, **kwargs)
-
+            return super(AbstractErika, cls).__new__(cls)  # , *args, **kwargs)
 
     @enforcedmethod
     def alarm(self, duration):
