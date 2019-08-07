@@ -87,6 +87,9 @@ class CharacterBasedErikaMock(AbstractErikaMock):
     def move_left_microsteps(self, num_steps=1):
         raise Exception('Microsteps are not supported in character-based tests')
 
+    def print_pixel(self):
+        raise Exception('Microsteps are not supported in character-based tests')
+
     # character-based
 
     def move_up(self):

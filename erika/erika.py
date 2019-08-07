@@ -121,6 +121,10 @@ class AbstractErika(MetaclassForEnforcingMethods):
     def demo(self):
         pass
 
+    @enforcedmethod
+    def print_pixel(self):
+        pass
+
 
 class Erika(AbstractErika):
     conversion_table_path = "erika/charTranslation.json"
@@ -209,6 +213,10 @@ class Erika(AbstractErika):
 
         self._write_byte_delay("A5")
         self._write_byte_delay(twos_complement_hex_string(-1 * num_steps))
+
+    def print_pixel(self):
+        self.print_ascii(".")
+        self.move_left_microsteps(MICROSTEPS_PER_CHARACTER_WIDTH)
 
     def crlf(self):
         self._print_raw("77")
