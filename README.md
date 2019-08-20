@@ -9,7 +9,7 @@ Therefore, software is needed to convert the RAW encoding (or DDR ASCII (GDR ASC
 into something more useful (by modern standands) like ASCII.
 
 A table of all available characters and their hexadecimal value can be found in this 
-manual( [Erika-IF2014_AnwenderHandbuch](Erika-IF2014_AnwenderHandbuch.pdf) ) as Appendix E on page 10.    
+manual( [Erika-IF2014_AnwenderHandbuch](http://www.robotron-net.de/Service/Dokus/erikahb.pdf) ) as Appendix E on page 10.    
 It also has a list of the most used controll characters on page 11 (Appendix F).  
 A complete list can be found [here](http://hc-ddr.hucki.net/wiki/doku.php/z9001/erweiterungen/s3004).  
 
