@@ -72,7 +72,7 @@ erika = Erika(ERIKA_PORT)
 
 
 def sanitize_tweet(tweet_as_string):
-    allowed_characters = string.digits + string.ascii_letters + "@.,;:# ()_/!\"§+%&=*-'äöüÄÖÜßéè°|$£µ^²³"
+    allowed_characters = string.digits + string.ascii_letters + "@.,;:# ()_/?!\"§+%&=*-'äöüÄÖÜßéè°|$£µ^²³"
     sanitized_tweet = tweet_as_string
     sanitized_tweet = ''.join(c for c in sanitized_tweet if c in allowed_characters)
     sanitized_tweet = sanitized_tweet.replace('@', "(at)")
