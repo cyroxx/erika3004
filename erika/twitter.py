@@ -50,6 +50,7 @@ class MyStreamer(TwythonStreamer):
         if 'text' in data:
             username = data['user']['screen_name']
             tweet = data['text']
+            print(data)
             tweet_as_string = "{}: {}".format(username, tweet)
             # print(tweet)
             q.put(tweet_as_string)
