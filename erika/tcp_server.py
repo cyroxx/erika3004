@@ -14,6 +14,7 @@ ALLOWED_CHARACTERS = string.digits + string.ascii_letters + "@.,;:# ()_/?!\"§+%
 
 # TODO bad style, use "with" statement instead for clean closing...
 erika = Erika(ERIKA_PORT)
+erika.set_keyboard_echo(False)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((TCP_IP, TCP_PORT))
