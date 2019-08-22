@@ -25,9 +25,14 @@ s.listen(1)
 def print_to_erika(sanitized_tweet):
     erika.crlf()
 
-    for i in range(0, len(sanitized_tweet), ERIKA_MAX_LINE_LENGTH):
-        erika.print_ascii(sanitized_tweet[i:i + ERIKA_MAX_LINE_LENGTH])
-        erika.crlf()
+    xpos = 0
+    for i in range(0, len(sanitized_tweet)):
+        erika.print_ascii(sanitized_tweet[i])
+        xpos += 1
+
+        if xpos > ERIKA_MAX_LINE_LENGTH:
+            erika.crlf()
+            xpos = 0
 
 
 while True:
