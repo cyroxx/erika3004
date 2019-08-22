@@ -17,7 +17,6 @@ while True:
     conn, addr = s.accept()
     print('Connection address:', addr)
     data = conn.recv(BUFFER_SIZE)
-    print("received data:", data)
 
     try:
         sanitized_tweet = data.decode('utf-8')
@@ -28,5 +27,6 @@ while True:
         conn.send(data)  # echo
     except UnicodeDecodeError as e:
         conn.send("Invalid bytes. You must send UTF-8.\n".encode("utf-8"))
+        print("Invalid bytes", e)
     finally:
         conn.close()
