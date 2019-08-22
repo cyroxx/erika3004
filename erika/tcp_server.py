@@ -54,5 +54,7 @@ while True:
     except UnicodeDecodeError as e:
         conn.send("Invalid bytes. You must send UTF-8.\n".encode("utf-8"))
         print("Invalid bytes", e)
+    except ConnectionError as e:
+        print("Connection error", e)
     finally:
         conn.close()
