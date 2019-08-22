@@ -7,10 +7,7 @@ import time
 from erika.erika import Erika
 from erika.local_settings import ERIKA_MAX_LINE_LENGTH
 from erika.local_settings import ERIKA_PORT
-
-TCP_IP = '127.0.0.1'
-TCP_PORT = 2227
-BUFFER_SIZE = 256  # Normally 1024, but we want fast response
+from erika.local_settings import TCP_IP, TCP_PORT, BUFFER_SIZE
 
 ALLOWED_CHARACTERS = string.digits + string.ascii_letters + "@.,;:# ()_/?!\"§+%&=*-'äöüÄÖÜßéè°|$£µ^²³\n"
 
