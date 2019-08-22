@@ -31,7 +31,7 @@ def print_to_erika(sanitized_tweet):
         if sanitized_tweet[i] == '\n':
             xpos = 0
 
-        if xpos > ERIKA_MAX_LINE_LENGTH:
+        if xpos >= ERIKA_MAX_LINE_LENGTH:
             erika.crlf()
             xpos = 0
 
