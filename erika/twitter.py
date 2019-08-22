@@ -49,8 +49,12 @@ class MyStreamer(TwythonStreamer):
     def on_success(self, data):
         if 'text' in data:
             username = data['user']['screen_name']
-            tweet = data['text']
-            print(data)
+
+            if 'extended_tweet' in data:
+                tweet = data['extended_tweet']['full_text']
+            else:
+                tweet = data['text']
+
             tweet_as_string = "{}: {}".format(username, tweet)
             # print(tweet)
             q.put(tweet_as_string)
