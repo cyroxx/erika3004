@@ -42,7 +42,8 @@ while True:
 
         print("sanitized data:", sanitized_tweet)
         print_to_erika(sanitized_tweet)
-        conn.send(sanitized_tweet)  # echo
+        # return sanitized data
+        conn.send(sanitized_tweet.encode('utf-8'))
     except UnicodeDecodeError as e:
         conn.send("Invalid bytes. You must send UTF-8.\n".encode("utf-8"))
         print("Invalid bytes", e)
