@@ -5,7 +5,7 @@ import string
 
 TCP_IP = '127.0.0.1'
 TCP_PORT = 2227
-BUFFER_SIZE = 1024  # Normally 1024, but we want fast response
+BUFFER_SIZE = 256  # Normally 1024, but we want fast response
 
 ALLOWED_CHARACTERS = string.digits + string.ascii_letters + "@.,;:# ()_/?!\"§+%&=*-'äöüÄÖÜßéè°|$£µ^²³"
 
