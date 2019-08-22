@@ -45,7 +45,7 @@ while True:
         sanitized_tweet = data.decode('utf-8')
         sanitized_tweet = ''.join(c for c in sanitized_tweet if c in ALLOWED_CHARACTERS)
         sanitized_tweet = sanitized_tweet.replace('@', "(at)")
-        sanitized_tweet = '[{}] Message sent by {}:{}:\n{}\n'.format(time.strftime('%Y-%m-%d %H:%M:%S'), addr[0], addr[1], sanitized_tweet)
+        sanitized_tweet = '({}) Message sent by {}:{}:\n{}\n'.format(time.strftime('%Y-%m-%d %H:%M:%S'), addr[0], addr[1], sanitized_tweet)
 
         print("sanitized data:", sanitized_tweet)
         print_to_erika(sanitized_tweet)
