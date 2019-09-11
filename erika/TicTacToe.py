@@ -3,8 +3,7 @@ from math import ceil
 
 import numpy as np
 
-sys
-from erika.erika import Erika
+from erika import Erika
 
 
 class Players(Enum):
@@ -43,7 +42,7 @@ class TicTacToe:
         self.game_over = False
         self.turn = -1
 
-        self.erika = Erika()
+        self.erika = Erika("/dev/ttyAMA0")
         # disable keyboard echo
         self.erika.set_keyboard_echo(False)
 
@@ -84,12 +83,13 @@ class TicTacToe:
             self.check_winner()
 
     def check_winner(self):
-        empty_fields = np.argwhere(self.game_field == Players.N0NE.value)
-
-        for row in self.game_field:
-            for col in row:
-
-        if len(empty_fields):
+        pass
+        # empty_fields = np.argwhere(self.game_field == Players.N0NE.value)
+        #
+        # for row in self.game_field:
+        #     for col in row:
+        #
+        # if len(empty_fields):
 
     def move_abs(self, x, y):
         if self.pos_y < y:
@@ -132,5 +132,6 @@ class TicTacToe:
         candidates = np.argwhere(self.game_field == Players.N0NE.value)
         erikas_choice = np.random.choice(candidates)
 
-    if __name__ == "__main__":
-        pass
+
+if __name__ == "__main__":
+    game = TicTacToe()

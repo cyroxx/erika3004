@@ -3,7 +3,7 @@ from enum import Enum
 
 import serial
 
-from erika.erica_encoder_decoder import DDR_ASCII
+from erica_encoder_decoder import DDR_ASCII
 from erika_fs.ansii_decoder import EscapeSequenceDecoder
 
 ERIKA_BAUDRATE = 1200
