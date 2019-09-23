@@ -12,6 +12,8 @@ This way, rendering algorithms can be tested.
 import sys
 from time import sleep
 
+from erika_fs.ansii_decoder import EscapeSequenceDecoder
+
 """page dimensions for Erika"""
 # tested manually - the cursor will no longer move if a key is pressed
 ERIKA_PAGE_WIDTH_HARD_LIMIT_AT_12_CHARS_PER_INCH = 74
@@ -20,14 +22,84 @@ ERIKA_PAGE_WIDTH_SOFT_LIMIT_AT_12_CHARS_PER_INCH = 65
 
 ERIKA_PAGE_HEIGHT = 150
 
+import curses
 
-class ErikaMock:
+
+class ErikaMock(EscapeSequenceDecoder):
+    def _decode_character(self, char):
+        pass
+
+    def _cursor_up(self, n=1):
+        y, x = self.stdscr.getyx()
+        self.stdscr.move(y - n, x)
+
+    def _cursor_down(self, n=1):
+        y, x = self.stdscr.getyx()
+        self.stdscr.move(y + n, x)
+
+    def _cursor_forward(self, n=1):
+        y, x = self.stdscr.getyx()
+        self.stdscr.move(y, x + n)
+
+    def _cursor_back(self, n=1):
+        y, x = self.stdscr.getyx()
+        self.stdscr.move(y, x - n)
+
+    def _cursor_next_line(self, n=1):
+        pass
+
+    def _cursor_previous_line(self, n=1):
+        pass
+
+    def _cursor_horizontal_absolute(self, n=1):
+        pass
+
+    def _cursor_position(self, n=1, m=1):
+        pass
+
+    def _erase_in_display(self, n=0):
+        pass
+
+    def _erase_in_line(self, n=0):
+        pass
+
+    def _scroll_up(self, n=1):
+        pass
+
+    def _scroll_down(self, n=1):
+        pass
+
+    def _select_graphic_rendition(self, *n):
+        pass
+
+    def _aux_port_on(self):
+        pass
+
+    def _aux_port_off(self):
+        pass
+
+    def _device_status_report(self):
+        pass
+
+    def _save_cursor_position(self):
+        pass
+
+    def _restore_cursor_position(self):
+        pass
+
     def __init__(self,
                  width=ERIKA_PAGE_WIDTH_SOFT_LIMIT_AT_12_CHARS_PER_INCH,
                  height=ERIKA_PAGE_HEIGHT,
                  exception_if_overprinted=True,
                  output_after_each_step=False,
                  delay_after_each_step=0):
+        self.stdscr = curses.initscr()
+        # disable input buffer
+        curses.cbreak()
+        curses.nl()
+        # wrap special keys
+        self.stdscr.keypad(True)
+
         self.width = width
         self.height = height
         self.canvas = []
@@ -46,36 +118,26 @@ class ErikaMock:
         return self
 
     def __exit__(self, *args):
-        pass
+        curses.nocbreak()
+        self.stdscr.keypad(False)
+        curses.echo()
+        curses.endwin()
+
+    def set_keyboard_echo(self, value):
+        if value:
+            curses.echo()
+        else:
+            curses.noecho()
 
     def alarm(self, duration):
         pass
 
     def read(self):
-        # reading not needed for current tests
-        pass
+        c = chr(self.stdscr.getch())
+        return c
 
     def print_ascii(self, text):
-        for c in text:
-            try:
-                # print('Trying to print letter "{}" at ({}, {}).'.format(c, self.canvas_x, self.canvas_y))
-                if not self.canvas[self.canvas_y][self.canvas_x] == " ":
-                    if self.exception_if_overprinted:
-                        raise Exception(
-                            "Not supposed to print a letter twice: '{}' at ({}, {})."
-                                .format(c, self.canvas_x, self.canvas_y))
-                self.canvas[self.canvas_y][self.canvas_x] = c
-            except IndexError as e:
-                print("IndexError at ({}, {}) of ({}, {}) - increase values of "
-                      "cli.DRY_RUN_WIDTH and cli.DRY_RUN_HEIGHT "
-                      "if you need more space".format(self.canvas_x, self.canvas_y, self.width, self.height))
-                sys.exit(1)
-
-            self.canvas_x += 1
-            if self.output_after_each_step:
-                self.test_debug_helper_print_canvas()
-                if self.delay_after_each_step > 0:
-                    sleep(self.delay_after_each_step)
+        self.stdscr.addstr(text)
 
     def _print_raw(self, data):
         raise Exception('User is not supposed to call this function directly')
