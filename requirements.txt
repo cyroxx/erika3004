@@ -1,3 +1,4 @@
+Pillow==5.4.1
 pyserial==3.4
 twython==3.7.0
 argcomplete==1.10.0
