@@ -1,5 +1,7 @@
 import unittest
 
+import PIL
+
 from erika.image_converter import *
 
 root_path = 'tests/test_resources/'
@@ -7,6 +9,11 @@ root_path = 'tests/test_resources/'
 
 # noinspection SpellCheckingInspection
 class WrappedImageUnitTest(unittest.TestCase):
+
+    def testPillowIsProperlyInstalled(self):
+        self.assertIsNotNone(PIL.PILLOW_VERSION)
+        self.assertNotEqual(PIL.PILLOW_VERSION, "1.1.7")
+        self.assertEqual(PIL.PILLOW_VERSION, "6.2.0")
 
     def testBmpImageIsRecognizedAsGrayScale(self):
         """simple test that grayscale images are recognized as such"""
