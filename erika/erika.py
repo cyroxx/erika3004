@@ -15,7 +15,7 @@ MICROSTEPS_PER_CHARACTER_WIDTH = 10
 MICROSTEPS_PER_CHARACTER_HEIGHT = 20
 
 
-# sepecial decorator: erforce that subclasses implement the method
+# special decorator: enforce that subclasses implement the method
 # See https://stackoverflow.com/a/25651022
 def enforcedmethod(func):
     func.__enforcedmethod__ = True
