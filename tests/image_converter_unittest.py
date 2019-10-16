@@ -78,12 +78,12 @@ class WrappedImageUnitTest(unittest.TestCase):
 
     def testTextFileInput(self):
         """simple test how the wrapper behaves when given a text file (ASCII art)"""
-        self.assertRaisesRegexp(Exception, "Exception when opening the file - maybe not an image[?]",
-                                load_text_file_as_wrapped_image)
+        self.assertRaisesRegex(Exception, "Exception when opening the file - maybe not an image[?]",
+                               load_text_file_as_wrapped_image)
 
     def testNonExistentFileInput(self):
         """simple test how the wrapper behaves when the file is not found"""
-        self.assertRaisesRegexp(Exception, "Exception when opening the file - file not found", load_non_existent_file)
+        self.assertRaisesRegex(Exception, "Exception when opening the file - file not found", load_non_existent_file)
 
 
 def load_text_file_as_wrapped_image():

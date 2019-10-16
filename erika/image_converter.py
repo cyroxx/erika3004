@@ -1,3 +1,5 @@
+import sys
+
 from PIL import Image
 
 
@@ -11,10 +13,10 @@ class WrappedImage:
         """
         try:
             self.image = Image.open(image_path)
-        except FileNotFoundError as exception:
-            raise Exception("Exception when opening the file - file not found")
-        except OSError as exception:
-            raise Exception("Exception when opening the file - maybe not an image?")
+        except FileNotFoundError:
+            raise Exception("Exception when opening the file - file not found").with_traceback(sys.exc_info()[2])
+        except OSError:
+            raise Exception("Exception when opening the file - maybe not an image?").with_traceback(sys.exc_info()[2])
 
         self.pixels = self.image.load()
         self.threshold = threshold
