@@ -12,4 +12,4 @@ python:
 install:
   - pip install -r test_requirements.txt
 script:
-  - pytest -m 'not hardware'
+  - pytest -m 'not hardware and not os_specific_smart'

@@ -1,5 +1,5 @@
 import unittest
-# import pytest
+import pytest
 
 import PIL
 
@@ -46,14 +46,14 @@ class WrappedImageUnitTest(unittest.TestCase):
         self.assertTrue(image.is_rgb())
         self.assertFalse(image.is_grayscale())
 
-    # @pytest.mark.os_specific_dumb
+    @pytest.mark.os_specific_dumb
     def testRenamedPngImageIsRecognizedAsRgbOnDumbOperatingSystem(self):
         """Simple test how the wrapper behaves when given a PNG file named like a text file. Some OSs will not see
         through this, raise an OSError internally"""
         self.assertRaisesRegex(NotAnImageException, "Exception when opening the file - maybe not an image[?]",
                                load_renamed_png_file_as_wrapped_image)
 
-    # @pytest.mark.os_specific_smart
+    @pytest.mark.os_specific_smart
     def testRenamedPngImageIsRecognizedAsRgbOnSmartOperatingSystem(self):
         """Simple test how the wrapper behaves when given a PNG file named like a text file. Some OSs will see through
         this, and know it's a PNG."""
