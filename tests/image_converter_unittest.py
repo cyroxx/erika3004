@@ -1,4 +1,5 @@
 import unittest
+# import pytest
 
 import PIL
 
@@ -45,8 +46,17 @@ class WrappedImageUnitTest(unittest.TestCase):
         self.assertTrue(image.is_rgb())
         self.assertFalse(image.is_grayscale())
 
-    def testRenamedPngImageIsRecognizedAsRgb(self):
-        """simple test that a renamed RGB image file is recognized as RGB image"""
+    # @pytest.mark.os_specific_dumb
+    def testRenamedPngImageIsRecognizedAsRgbOnDumbOperatingSystem(self):
+        """Simple test how the wrapper behaves when given a PNG file named like a text file. Some OSs will not see
+        through this, raise an OSError internally"""
+        self.assertRaisesRegex(NotAnImageException, "Exception when opening the file - maybe not an image[?]",
+                               load_renamed_png_file_as_wrapped_image)
+
+    # @pytest.mark.os_specific_smart
+    def testRenamedPngImageIsRecognizedAsRgbOnSmartOperatingSystem(self):
+        """Simple test how the wrapper behaves when given a PNG file named like a text file. Some OSs will see through
+        this, and know it's a PNG."""
         image = WrappedImage(root_path + 'ubuntu-logo32.png.renamedwithextension.txt')
         self.assertTrue(image.is_rgb())
         self.assertFalse(image.is_grayscale())
@@ -85,12 +95,17 @@ class WrappedImageUnitTest(unittest.TestCase):
 
     def testTextFileInput(self):
         """simple test how the wrapper behaves when given a text file (ASCII art)"""
-        self.assertRaisesRegex(Exception, "Exception when opening the file - maybe not an image[?]",
+        self.assertRaisesRegex(NotAnImageException, "Exception when opening the file .* - maybe not an image[?]",
                                load_text_file_as_wrapped_image)
 
     def testNonExistentFileInput(self):
         """simple test how the wrapper behaves when the file is not found"""
-        self.assertRaisesRegex(Exception, "Exception when opening the file - file not found", load_non_existent_file)
+        self.assertRaisesRegex(FileNotFoundError, "Exception when opening the file .* - file not found",
+                               load_non_existent_file)
+
+
+def load_renamed_png_file_as_wrapped_image():
+    WrappedImage(root_path + 'ubuntu-logo32.png.renamedwithextension.txt')
 
 
 def load_text_file_as_wrapped_image():

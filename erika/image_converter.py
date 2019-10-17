@@ -3,6 +3,10 @@ import sys
 from PIL import Image
 
 
+class NotAnImageException(Exception):
+    pass
+
+
 class WrappedImage:
 
     def __init__(self, image_path, threshold=128):
@@ -14,9 +18,12 @@ class WrappedImage:
         try:
             self.image = Image.open(image_path)
         except FileNotFoundError:
-            raise Exception("Exception when opening the file - file not found").with_traceback(sys.exc_info()[2])
+            raise FileNotFoundError("Exception when opening the file {} - file not found".format(image_path)) \
+                .with_traceback(sys.exc_info()[2])
         except OSError:
-            raise Exception("Exception when opening the file - maybe not an image?").with_traceback(sys.exc_info()[2])
+            # OSError - OS-specific! Results may vary among different operating systems
+            raise NotAnImageException("Exception when opening the file {} - maybe not an image?".format(image_path)) \
+                .with_traceback(sys.exc_info()[2])
 
         self.pixels = self.image.load()
         self.threshold = threshold
