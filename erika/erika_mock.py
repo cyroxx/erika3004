@@ -1,14 +1,13 @@
 """
 Record any printing and movement calls to Erika in a 2D array for testing purposes:
 
-    x
-    ===>
-y ||
-  ||
-  \/
-
 This way, rendering algorithms can be tested.
 """
+#     x
+#     ===>
+# y ||
+#   ||
+#   \/
 import sys
 from time import sleep
 
