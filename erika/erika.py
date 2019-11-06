@@ -215,8 +215,12 @@ class Erika(AbstractErika):
         self._write_byte_delay(twos_complement_hex_string(-1 * num_steps))
 
     def print_pixel(self):
+        """
+        Print pixel and end up one microstep to the right of the initial position (in analogue to "normal" text printing)
+        :return:
+        """
         self.print_ascii(".")
-        self.move_left_microsteps(MICROSTEPS_PER_CHARACTER_WIDTH)
+        self.move_left_microsteps(MICROSTEPS_PER_CHARACTER_WIDTH - 1)
 
     def crlf(self):
         self._print_raw("77")
