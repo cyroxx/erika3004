@@ -2,6 +2,8 @@ import math
 import random
 from enum import Enum
 
+from erika.image_converter import WrappedImage, NotAnImageException
+
 
 class Direction(Enum):
     NORTHEAST = 1
@@ -447,3 +449,143 @@ class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStr
     def reset_to_upper_left(self):
         # print('### Reset to (0, 0) ###')
         self.move_to(0, 0)
+
+
+class ErikaAndInputFacadeFactory:
+
+    @classmethod
+    def createAbstractionForPath(cls, erika, file_path):
+        try:
+            image = WrappedImage(file_path)
+            return GraphicErikaImageAbstraction(erika, image)
+        except NotAnImageException:
+            lines = _read_lines_without_trailing_newlines(file_path)
+            return AsciiArtErikaImageAbstraction(erika, lines)
+
+    @classmethod
+    def createAbstractionForLines(cls, erika, lines):
+        return AsciiArtErikaImageAbstraction(erika, lines)
+
+
+class ErikaAndInputFacade:
+
+    def move_left(self):
+        pass
+
+    def move_right(self):
+        pass
+
+    def move_up(self):
+        pass
+
+    def move_down(self):
+        pass
+
+    def crlf(self):
+        pass
+
+    def print_at(selfs, x, y):
+        pass
+
+    def print_line_at(self, y):
+        pass
+
+    def print_whole_line(self, line):
+        pass
+
+
+class ErikaAndAsciiArtInputFacade(ErikaAndInputFacade):
+
+    def __init__(self, erika, lines):
+        """
+        Indirection for rendering ASCII art images - hiding the concrete type of image from the rendering strategy.
+        :param erika an Erika instance (or test double)
+        :param lines ASCII art image's text lines
+        """
+        self.erika = erika
+        self.lines = lines
+
+    def move_left(self):
+        self.erika.move_left()
+
+    def move_right(self):
+        self.erika.move_right()
+
+    def move_up(self):
+        self.erika.move_up()
+
+    def move_down(self):
+        self.erika.move_down()
+
+    def crlf(self):
+        self.erika.crlf()
+
+    def print_at(self, x, y):
+        self.erika.print_ascii(self.lines[y][x])
+
+    def print_line_at(self, y):
+        self.erika.print_ascii(self.lines[y])
+
+
+class ErikaAndImageInputFacade(ErikaAndInputFacade):
+
+    def __init__(self, erika, wrapped_image):
+        """
+        Indirection for rendering ASCII art images - hiding the concrete type of image from the rendering strategy.
+        :param erika an Erika instance (or test double)
+        :param wrapped_image a WrappedImage abstracting from the image data
+        """
+        self.erika = erika
+        self.wrapped_image = wrapped_image
+
+        # because we can't rely on the crlf command, we need to keep track of
+        # the position along the X axis for supporting "newline" for image output
+        self.position_x = 0
+
+    def move_left(self):
+        self.erika.move_left_microstep()
+        self.position_x -= 1
+
+    def move_right(self):
+        self.erika.move_right_microstep()
+        self.position_x += 1
+
+    def move_up(self):
+        self.erika.move_up_microstep()
+
+    def move_down(self):
+        self.erika.move_down_microstep()
+
+    def crlf(self):
+        self.erika.move_left_microsteps(self.position_x)
+        self.position_x = 0
+        self.erika.move_down_microstep()
+
+    def print_at(self, x, y):
+        if self.wrapped_image.is_pixel_set(x, y):
+            self.erika.print_pixel()
+        else:
+            self.erika.move_right_microstep()
+        self.position_x += 1
+
+    def print_line_at(self, y):
+        for x in range(0, self.wrapped_image.width):
+            self.print_at(x, y)
+
+
+def _read_lines_without_trailing_newlines(file_path):
+    lines = []
+    with open(file_path, "r") as open_file:
+        lines = open_file.readlines()
+    return _remove_trailing_newlines(lines)
+
+
+def _remove_trailing_newlines(lines):
+    lines_without_newlines = []
+    for line in lines:
+        lines_without_newlines.append(_remove_trailing_newline(line))
+    return lines_without_newlines
+
+
+def _remove_trailing_newline(line):
+    return line.replace('\n', "").replace('\r', "")
