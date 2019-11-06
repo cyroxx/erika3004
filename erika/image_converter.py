@@ -44,5 +44,11 @@ class WrappedImage:
         else:
             raise Exception("Image type not supported")
 
+    def width(self):
+        return self.image.width
+
+    def height(self):
+        return self.image.height
+
     def __exit__(self, *args):
         self.image.close()

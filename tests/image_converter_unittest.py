@@ -103,6 +103,14 @@ class WrappedImageUnitTest(unittest.TestCase):
         self.assertRaisesRegex(FileNotFoundError, "Exception when opening the file .* - file not found",
                                load_non_existent_file)
 
+    def testWidth(self):
+        grayscale_image = WrappedImage(root_path + 'test_image_grayscale_1.bmp')
+        self.assertEqual(grayscale_image.height(), 30)
+
+    def testHeight(self):
+        grayscale_image = WrappedImage(root_path + 'test_image_grayscale_1.bmp')
+        self.assertEqual(grayscale_image.width(), 20)
+
 
 def load_renamed_png_file_as_wrapped_image():
     WrappedImage(root_path + 'ubuntu-logo32.png.renamedwithextension.txt')
