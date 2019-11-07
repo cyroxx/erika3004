@@ -13,23 +13,23 @@ class RendererTest(unittest.TestCase):
     def helper_test_ErikaImageRenderingStrategy_square(self, strategy):
         """test helper to verify rendering with the given strategy works"""
         with CharacterBasedErikaMock(6, 6) as my_erika:
-            renderer = ErikaImageRenderer(my_erika, strategy)
-            renderer.render_ascii_art_file('tests/test_resources/test_ascii_art_small.txt')
+            renderer = ErikaImageRenderer(my_erika, "test: strategy will be set explicitly")
+            renderer.render_file_for_fixed_strategy('tests/test_resources/test_ascii_art_small.txt', strategy)
             assert_print_output(self, my_erika, ["abcdef", "ghijkl", "mnopqr", "stuvwx", "yzäöüß", "!?#'\"/"])
 
     def helper_test_ErikaImageRenderingStrategy_high(self, strategy):
         """test helper to verify rendering with the given strategy works"""
         with CharacterBasedErikaMock(3, 12) as my_erika:
-            renderer = ErikaImageRenderer(my_erika, strategy)
-            renderer.render_ascii_art_file('tests/test_resources/test_ascii_art_small_high.txt')
+            renderer = ErikaImageRenderer(my_erika, "test: strategy will be set explicitly")
+            renderer.render_file_for_fixed_strategy('tests/test_resources/test_ascii_art_small_high.txt', strategy)
             assert_print_output(self, my_erika,
                                 ["abc", "def", "ghi", "jkl", "mno", "pqr", "stu", "vwx", "yzä", "öüß", "!?#", "'\"/"])
 
     def helper_test_ErikaImageRenderingStrategy_wide(self, strategy):
         """test helper to verify rendering with the given strategy works"""
         with CharacterBasedErikaMock(9, 4) as my_erika:
-            renderer = ErikaImageRenderer(my_erika, strategy)
-            renderer.render_ascii_art_file('tests/test_resources/test_ascii_art_small_wide.txt')
+            renderer = ErikaImageRenderer(my_erika, "test: strategy will be set explicitly")
+            renderer.render_file_for_fixed_strategy('tests/test_resources/test_ascii_art_small_wide.txt', strategy)
             assert_print_output(self, my_erika, ["abcdefghi", "jklmnopqr", "stuvwxyzä"])
 
     def testLineByLineErikaImageRenderingStrategy(self):
@@ -70,16 +70,16 @@ class RendererTest(unittest.TestCase):
     def testArchimedeanSpiralOutwardErikaImageRenderingStrategy2(self):
         """test with a bigger file + two spirals"""
         with CharacterBasedErikaMock(60, 30, False) as my_erika:
-            strategy = ArchimedeanSpiralOutwardErikaImageRenderingStrategy(spiral_param_a=1, render_remaining_characters=False)
-            renderer = ErikaImageRenderer(my_erika, strategy)
-            renderer.render_ascii_art_file('tests/test_resources/test_ascii_art.txt')
+            strategy = ArchimedeanSpiralOutwardErikaImageRenderingStrategy(spiral_param_a=1,
+                                                                           render_remaining_characters=False)
+            renderer = ErikaImageRenderer(my_erika, "test: strategy will be set explicitly")
+            renderer.render_file_for_fixed_strategy('tests/test_resources/test_ascii_art.txt', strategy)
             # my_erika.test_debug_helper_print_canvas()
 
-            strategy2 = ArchimedeanSpiralOutwardErikaImageRenderingStrategy(spiral_param_a=0.5, render_remaining_characters=False)
-            renderer.set_strategy(strategy2)
-            renderer.render_ascii_art_file('tests/test_resources/test_ascii_art.txt')
+            strategy2 = ArchimedeanSpiralOutwardErikaImageRenderingStrategy(spiral_param_a=0.5,
+                                                                            render_remaining_characters=False)
+            renderer.render_file_for_fixed_strategy('tests/test_resources/test_ascii_art.txt', strategy2)
             # my_erika.test_debug_helper_print_canvas()
-
 
 
 def main():

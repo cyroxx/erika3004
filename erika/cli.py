@@ -46,7 +46,6 @@ def print_demo(args):
     erika.demo()
 
 
-# TODO support using piped input https://docs.python.org/3/library/fileinput.html
 def add_render_ascii_art_parser(command_parser):
     render_ascii_art_file_parser = command_parser.add_parser('render_ascii_art',
                                                              formatter_class=RawTextHelpFormatter,
@@ -77,23 +76,13 @@ def print_ascii_art(args):
     strategy_string = args.strategy
     file_path = args.file
 
-    strategies = {
-        'LineByLine': LineByLineErikaImageRenderingStrategy,
-        'Interlaced': InterlacedErikaImageRenderingStrategy,
-        'PerpendicularSpiralInward': PerpendicularSpiralInwardErikaImageRenderingStrategy,
-        'RandomDotFill': RandomDotFillErikaImageRenderingStrategy,
-        'ArchimedeanSpiralOutward': ArchimedeanSpiralOutwardErikaImageRenderingStrategy
-    }
-
-    strategy = strategies[strategy_string]()
-
     erika = get_erika_for_given_args(args)
-    renderer = ErikaImageRenderer(erika, strategy)
+    renderer = ErikaImageRenderer(erika, strategy_string)
     if file_path == '-':
         lines = read_lines_from_stdin_non_blocking()
-        renderer.render_ascii_art_lines(lines)
+        renderer.render_lines(lines)
     else:
-        renderer.render_ascii_art_file(file_path)
+        renderer.render_file(file_path)
 
 
 def get_erika_for_given_args(args):
@@ -145,7 +134,6 @@ def function_for_reading_lines_from_stdin_process(queue_to_pass_lines_through, i
 
     lines = input_stream.readlines()
     queue_to_pass_lines_through.put(lines)
-
 
 def main():
     # with argcomplete used now, this shoudl be the very first call - no side-effects should happen before

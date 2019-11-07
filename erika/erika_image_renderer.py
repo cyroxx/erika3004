@@ -13,20 +13,37 @@ class Direction(Enum):
 
 
 class ErikaImageRenderer:
-    def __init__(self, some_erika, rendering_strategy):
-        self.output_device = some_erika
-        self.rendering_strategy = rendering_strategy
-        self.rendering_strategy._set_output_device(some_erika)
+    def __init__(self, some_erika, rendering_strategy_string):
+        self.erika = some_erika
+        self.strategy_string = rendering_strategy_string
 
-    def render_ascii_art_file(self, file_path):
-        self.rendering_strategy.render_ascii_art_file(file_path)
+    def render_file(self, file_path):
+        strategy = self.create_strategy()
+        strategy._set_output_device(self.erika)
+        strategy.render_ascii_art_file(file_path)
 
-    def render_ascii_art_lines(self, lines):
-        self.rendering_strategy.render_ascii_art_lines(lines)
+    def render_file_for_fixed_strategy(self, file_path, strategy):
+        strategy._set_output_device(self.erika)
+        strategy.render_ascii_art_file(file_path)
 
-    def set_strategy(self, new_strategy):
-        self.rendering_strategy = new_strategy
-        self.rendering_strategy._set_output_device(self.output_device)
+    def render_lines(self, lines):
+        strategy = self.create_strategy()
+        strategy._set_output_device(self.erika)
+        strategy.render_ascii_art_lines(lines)
+
+    def render_lines_for_fixed_strategy(self, lines, strategy):
+        strategy._set_output_device(self.erika)
+        strategy.render_ascii_art_lines(lines)
+
+    def create_strategy(self):
+        strategies = {
+            'LineByLine': LineByLineErikaImageRenderingStrategy,
+            'Interlaced': InterlacedErikaImageRenderingStrategy,
+            'PerpendicularSpiralInward': PerpendicularSpiralInwardErikaImageRenderingStrategy,
+            'RandomDotFill': RandomDotFillErikaImageRenderingStrategy,
+            'ArchimedeanSpiralOutward': ArchimedeanSpiralOutwardErikaImageRenderingStrategy
+        }
+        return strategies[self.strategy_string]()
 
 
 class ErikaImageRenderingStrategy:
