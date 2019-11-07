@@ -52,7 +52,7 @@ class ErikaImageRenderingStrategy:
         pass
 
     def _set_output_device(self, some_erika):
-        self.output_device = some_erika
+        self.erika_image_abstraction = some_erika
 
     def render_ascii_art_file(self, file_path):
         lines = self._read_lines_without_trailing_newlines(file_path)
@@ -109,8 +109,8 @@ class LineByLineErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
 
     def render_ascii_art_lines_internal(self, lines):
         for line in lines:
-            self.output_device.print_ascii(line)
-            self.output_device.crlf()
+            self.erika_image_abstraction.print_ascii(line)
+            self.erika_image_abstraction.crlf()
 
 
 class InterlacedErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
@@ -123,25 +123,25 @@ class InterlacedErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
         moved = 0
         for even in range(0, line_count, 2):
             line = lines[even]
-            self.output_device.print_ascii(line)
-            self.output_device.crlf()
-            self.output_device.crlf()
+            self.erika_image_abstraction.print_ascii(line)
+            self.erika_image_abstraction.crlf()
+            self.erika_image_abstraction.crlf()
             moved += 2
 
         # reset cursor to start of line
-        self.output_device.crlf()
+        self.erika_image_abstraction.crlf()
 
         # do not compensate the line that this adds - the extra line will position the cursor right where we want it
-        # self.output_device.move_up()
+        # self.erika_image_abstraction.move_up()
 
         for lines_to_move_up in range(0, moved):
-            self.output_device.move_up()
+            self.erika_image_abstraction.move_up()
 
         for odd in range(1, line_count, 2):
             line = lines[odd]
-            self.output_device.print_ascii(line)
-            self.output_device.crlf()
-            self.output_device.crlf()
+            self.erika_image_abstraction.print_ascii(line)
+            self.erika_image_abstraction.crlf()
+            self.erika_image_abstraction.crlf()
 
 
 class PerpendicularSpiralInwardErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
@@ -165,59 +165,59 @@ class PerpendicularSpiralInwardErikaImageRenderingStrategy(ErikaImageRenderingSt
         # =====>
         #
         for x in range(upper_left_x, lower_right_x + 1):
-            self.output_device.print_ascii(lines[upper_left_y][x])
+            self.erika_image_abstraction.print_ascii(lines[upper_left_y][x])
 
         # edge case: this was the only last row
         if upper_left_y == lower_right_y:
             return
 
         # reset to last cursor position
-        self.output_device.move_left()
+        self.erika_image_abstraction.move_left()
 
         # go down - do not print a character twice
-        self.output_device.move_down()
+        self.erika_image_abstraction.move_down()
 
         # ||
         # ||
         # \/
         for y in range(upper_left_y + 1, lower_right_y):
-            self.output_device.print_ascii(lines[y][lower_right_x])
-            self.output_device.move_down()
-            self.output_device.move_left()
+            self.erika_image_abstraction.print_ascii(lines[y][lower_right_x])
+            self.erika_image_abstraction.move_down()
+            self.erika_image_abstraction.move_left()
 
         # special handling of last character - smoothen transition
-        self.output_device.print_ascii(lines[lower_right_y][lower_right_x])
+        self.erika_image_abstraction.print_ascii(lines[lower_right_y][lower_right_x])
 
         # edge case: this was the only last column
         if upper_left_x == lower_right_x:
             return
 
         # back to last printed character
-        self.output_device.move_left()
-        self.output_device.move_left()
+        self.erika_image_abstraction.move_left()
+        self.erika_image_abstraction.move_left()
 
         #
         # <=====
         #
         for x in range(lower_right_x - 1, upper_left_x - 1, -1):
-            self.output_device.print_ascii(lines[lower_right_y][x])
-            self.output_device.move_left()
-            self.output_device.move_left()
+            self.erika_image_abstraction.print_ascii(lines[lower_right_y][x])
+            self.erika_image_abstraction.move_left()
+            self.erika_image_abstraction.move_left()
 
-        self.output_device.move_right()
-        self.output_device.move_up()
+        self.erika_image_abstraction.move_right()
+        self.erika_image_abstraction.move_up()
 
         # /\
         # ||
         # ||
         for y in range(lower_right_y - 1, upper_left_y + 1, -1):
-            self.output_device.print_ascii(lines[y][upper_left_x])
-            self.output_device.move_up()
-            self.output_device.move_left()
+            self.erika_image_abstraction.print_ascii(lines[y][upper_left_x])
+            self.erika_image_abstraction.move_up()
+            self.erika_image_abstraction.move_left()
 
         # special handling of last character - smoothen transition
         if lower_right_y - 1 >= upper_left_y + 1:
-            self.output_device.print_ascii(lines[upper_left_y + 1][upper_left_x])
+            self.erika_image_abstraction.print_ascii(lines[upper_left_y + 1][upper_left_x])
 
         # continue with smaller spiral - restart recursion
         self._print_spiral_recursively(lines, upper_left_x + 1, upper_left_y + 1, lower_right_x - 1, lower_right_y - 1)
@@ -258,7 +258,7 @@ class RandomDotFillErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
             # move there + print
             self._move_to(position_x, position_y)
 
-            self.output_device.print_ascii(lines[position_y][position_x])
+            self.erika_image_abstraction.print_ascii(lines[position_y][position_x])
             self.current_x += 1
             self.printed[position_y][position_x] = True
             # repeat
@@ -272,19 +272,19 @@ class RandomDotFillErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
     def _move_to(self, position_x, position_y):
         # naive: adjust X position first, then Y position
         while self.current_x < position_x:
-            self.output_device.move_right()
+            self.erika_image_abstraction.move_right()
             self.current_x += 1
 
         while position_x < self.current_x:
-            self.output_device.move_left()
+            self.erika_image_abstraction.move_left()
             self.current_x -= 1
 
         while self.current_y < position_y:
-            self.output_device.move_down()
+            self.erika_image_abstraction.move_down()
             self.current_y += 1
 
         while position_y < self.current_y:
-            self.output_device.move_up()
+            self.erika_image_abstraction.move_up()
             self.current_y -= 1
 
 
@@ -420,26 +420,26 @@ class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStr
 
         self.printed[y][x] = True
         self._move_to(x, y)
-        self.output_device.print_ascii(lines[y][x])
+        self.erika_image_abstraction.print_ascii(lines[y][x])
         self.current_x += 1
 
     # TODO dry
     def _move_to(self, position_x, position_y):
         # naive: adjust X position first, then Y position
         while self.current_x < position_x:
-            self.output_device.move_right()
+            self.erika_image_abstraction.move_right()
             self.current_x += 1
 
         while position_x < self.current_x:
-            self.output_device.move_left()
+            self.erika_image_abstraction.move_left()
             self.current_x -= 1
 
         while self.current_y < position_y:
-            self.output_device.move_down()
+            self.erika_image_abstraction.move_down()
             self.current_y += 1
 
         while position_y < self.current_y:
-            self.output_device.move_up()
+            self.erika_image_abstraction.move_up()
             self.current_y -= 1
 
     def render_remaining(self, lines, max_line_length, line_count):
