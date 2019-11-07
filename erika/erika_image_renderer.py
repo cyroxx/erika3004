@@ -44,7 +44,7 @@ class ErikaImageRenderingStrategy:
 
     def render_ascii_art_lines(self, lines):
         self._render_ascii_art_lines_internal(self.remove_trailing_newlines(lines))
-    
+
     def _render_ascii_art_lines_internal(self, lines):
         raise Exception('Not implemented')
 
@@ -454,17 +454,17 @@ class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStr
 class ErikaAndInputFacadeFactory:
 
     @classmethod
-    def createAbstractionForPath(cls, erika, file_path):
+    def create_for_path(cls, erika, file_path):
         try:
             image = WrappedImage(file_path)
-            return GraphicErikaImageAbstraction(erika, image)
+            return ErikaAndImageInputFacade(erika, image)
         except NotAnImageException:
             lines = _read_lines_without_trailing_newlines(file_path)
-            return AsciiArtErikaImageAbstraction(erika, lines)
+            return ErikaAndAsciiArtInputFacade(erika, lines)
 
     @classmethod
-    def createAbstractionForLines(cls, erika, lines):
-        return AsciiArtErikaImageAbstraction(erika, lines)
+    def create_for_lines(cls, erika, lines):
+        return ErikaAndAsciiArtInputFacade(erika, lines)
 
 
 class ErikaAndInputFacade:
@@ -484,7 +484,7 @@ class ErikaAndInputFacade:
     def crlf(self):
         pass
 
-    def print_at(selfs, x, y):
+    def print_at(self, x, y):
         pass
 
     def print_line_at(self, y):
@@ -525,6 +525,20 @@ class ErikaAndAsciiArtInputFacade(ErikaAndInputFacade):
 
     def print_line_at(self, y):
         self.erika.print_ascii(self.lines[y])
+
+    def height(self):
+        return len(self.lines)
+
+    def width(self):
+        return self._calculate_max_line_length(self.lines)
+
+    @staticmethod
+    def _calculate_max_line_length(lines):
+        max_length = 0
+        for line in lines:
+            if len(line) > max_length:
+                max_length = len(line)
+        return max_length
 
 
 class ErikaAndImageInputFacade(ErikaAndInputFacade):
@@ -572,9 +586,14 @@ class ErikaAndImageInputFacade(ErikaAndInputFacade):
         for x in range(0, self.wrapped_image.width):
             self.print_at(x, y)
 
+    def height(self):
+        return self.wrapped_image.height()
+
+    def width(self):
+        return self.wrapped_image.width()
+
 
 def _read_lines_without_trailing_newlines(file_path):
-    lines = []
     with open(file_path, "r") as open_file:
         lines = open_file.readlines()
     return _remove_trailing_newlines(lines)
