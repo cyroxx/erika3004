@@ -34,7 +34,6 @@ class ErikaImageRenderingStrategy:
     def __init__(self):
         pass
 
-    # noinspection PyAttributeOutsideInit
     def _set_output_device(self, some_erika):
         self._output_device = some_erika
 
@@ -49,7 +48,6 @@ class ErikaImageRenderingStrategy:
         raise Exception('Not implemented')
 
     def _read_lines_without_trailing_newlines(self, file_path):
-        lines = []
         with open(file_path, "r") as open_file:
             lines = open_file.readlines()
         return self._remove_trailing_newlines(lines)
@@ -60,23 +58,25 @@ class ErikaImageRenderingStrategy:
             lines_without_newlines.append(self._remove_trailing_newline(line))
         return lines_without_newlines
 
-
-    def _remove_trailing_newline(self, line):
+    @staticmethod
+    def _remove_trailing_newline(line):
         return line.replace('\n', "").replace('\r', "")
 
-    def _calculate_max_line_length(self, lines):
+    @staticmethod
+    def _calculate_max_line_length(lines):
         max_length = 0
         for line in lines:
             if len(line) > max_length:
                 max_length = len(line)
         return max_length
 
-    def _generate_coordinates(self, range_x_upper, range_y_upper, range_x_lower=0, range_y_lower=0):
+    @staticmethod
+    def _generate_coordinates(range_x_upper, range_y_upper, range_x_lower=0, range_y_lower=0):
         for x in range(range_x_lower, range_x_upper):
             for y in range(range_y_lower, range_y_upper):
                 yield (x, y)
 
-    def _initialize_printed_characters_map(self, lines, max_line_length, line_count):
+    def _initialize_printed_characters_map(self, max_line_length, line_count):
         self._printed = []
         for y in range(line_count):
             new_row = []
@@ -210,6 +210,8 @@ class RandomDotFillErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
 
     def __init__(self):
         ErikaImageRenderingStrategy.__init__(self)
+        self.current_x = 0
+        self.current_y = 0
 
     def render_ascii_art_lines_internal(self, lines):
         self.current_x = 0
@@ -217,7 +219,7 @@ class RandomDotFillErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
 
         line_count = len(lines)
         max_line_length = self._calculate_max_line_length(lines)
-        self._initialize_printed_characters_map(lines, max_line_length, line_count)
+        self._initialize_printed_characters_map(max_line_length, line_count)
         self.render_random_dots_naive(line_count, max_line_length, lines)
 
     # naive approach: generate random position, render if not yet printed there
@@ -244,10 +246,11 @@ class RandomDotFillErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
             self._printed[position_y][position_x] = True
             # repeat
 
-    def _generate_random_position(self, exclusive_max_x, exclusive_max_y):
+    @staticmethod
+    def _generate_random_position(exclusive_max_x, exclusive_max_y):
         random1 = random.randint(0, exclusive_max_x - 1)
         random2 = random.randint(0, exclusive_max_y - 1)
-        return (random1, random2)
+        return random1, random2
 
     def _move_to(self, position_x, position_y):
         # naive: adjust X position first, then Y position
@@ -255,7 +258,7 @@ class RandomDotFillErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
             self._output_device.move_right()
             self.current_x += 1
 
-        while (position_x < self.current_x):
+        while position_x < self.current_x:
             self._output_device.move_left()
             self.current_x -= 1
 
@@ -263,7 +266,7 @@ class RandomDotFillErikaImageRenderingStrategy(ErikaImageRenderingStrategy):
             self._output_device.move_down()
             self.current_y += 1
 
-        while (position_y < self.current_y):
+        while position_y < self.current_y:
             self._output_device.move_up()
             self.current_y -= 1
 
@@ -304,17 +307,22 @@ class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStr
 
         self.render_remaining_characters = render_remaining_characters
 
+        self.current_x = 0
+        self.current_y = 0
+        self.spiral_offset_x = 0
+        self.spiral_offset_y = 0
+
     def render_ascii_art_lines_internal(self, lines):
         self.current_x = 0
         self.current_y = 0
 
         line_count = len(lines)
         max_line_length = self._calculate_max_line_length(lines)
-        self._initialize_printed_characters_map(lines, max_line_length, line_count)
+        self._initialize_printed_characters_map(max_line_length, line_count)
 
         self.render_spiral(lines, max_line_length, line_count)
 
-        if (self.render_remaining_characters):
+        if self.render_remaining_characters:
             self.render_remaining(lines, max_line_length, line_count)
 
         self._reset_to_upper_left()
@@ -342,8 +350,6 @@ class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStr
         max_x = max_line_length - 1
         max_y = line_count - 1
 
-        # print('max_x: {}, max_y: {}'.format(max_x, max_y))
-
         i = 1
         directions_out_of_bounds = {}
         self.spiral_offset_x = math.floor(max_x / 2)
@@ -357,16 +363,16 @@ class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStr
 
             # cut off: cut off if turtle is in the corner (close to 45 degree angle in all directions) + out of bounds
             current_angle = (math.degrees(t) % 360)
-            if ((45 - self.CUTOFF_ANGLE_TOLERANCE <= current_angle) \
+            if ((45 - self.CUTOFF_ANGLE_TOLERANCE <= current_angle)
                     and (current_angle <= 45 + self.CUTOFF_ANGLE_TOLERANCE)):
                 self._note_if_out_of_bounds(directions_out_of_bounds, Direction.NORTHEAST, max_x, max_y, x, y)
-            if ((135 - self.CUTOFF_ANGLE_TOLERANCE <= current_angle) \
+            if ((135 - self.CUTOFF_ANGLE_TOLERANCE <= current_angle)
                     and (current_angle <= 135 + self.CUTOFF_ANGLE_TOLERANCE)):
                 self._note_if_out_of_bounds(directions_out_of_bounds, Direction.NORTHWEST, max_x, max_y, x, y)
-            if ((225 - self.CUTOFF_ANGLE_TOLERANCE <= current_angle) \
+            if ((225 - self.CUTOFF_ANGLE_TOLERANCE <= current_angle)
                     and (current_angle <= 225 + self.CUTOFF_ANGLE_TOLERANCE)):
                 self._note_if_out_of_bounds(directions_out_of_bounds, Direction.SOUTHEAST, max_x, max_y, x, y)
-            if ((315 - self.CUTOFF_ANGLE_TOLERANCE <= current_angle) \
+            if ((315 - self.CUTOFF_ANGLE_TOLERANCE <= current_angle)
                     and (current_angle <= 315 + self.CUTOFF_ANGLE_TOLERANCE)):
                 self._note_if_out_of_bounds(directions_out_of_bounds, Direction.SOUTHWEST, max_x, max_y, x, y)
 
@@ -381,7 +387,8 @@ class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStr
 
             i += 1
 
-    def _note_if_out_of_bounds(self, directions_out_of_bounds, direction, max_x, max_y, x, y):
+    @staticmethod
+    def _note_if_out_of_bounds(directions_out_of_bounds, direction, max_x, max_y, x, y):
         if (x < 0) or (y < 0) or (max_x < x) or (max_y < y):
             directions_out_of_bounds[direction] = 1
 
@@ -391,13 +398,11 @@ class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStr
         self._goto_and_print(lines, x, y)
 
     def _goto_and_print(self, lines, x, y):
-        # print('goto_and_print_if_in_bounds(1) -- x: {}, y: {}, current_x: {}, current_y: {}'.format(x, y, self._current_x, self._current_y))
-        if (self._printed[y][x]):
+        if self._printed[y][x]:
             return
 
         self._printed[y][x] = True
         self._move_to(x, y)
-        # print('goto_and_print_if_in_bounds(2) -- x: {}, y: {}, current_x: {}, current_y: {}'.format(x, y, self._current_x, self._current_y))
         self._output_device.print_ascii(lines[y][x])
         self.current_x += 1
 
@@ -408,7 +413,7 @@ class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStr
             self._output_device.move_right()
             self.current_x += 1
 
-        while (position_x < self.current_x):
+        while position_x < self.current_x:
             self._output_device.move_left()
             self.current_x -= 1
 
@@ -416,12 +421,11 @@ class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStr
             self._output_device.move_down()
             self.current_y += 1
 
-        while (position_y < self.current_y):
+        while position_y < self.current_y:
             self._output_device.move_up()
             self.current_y -= 1
 
     def render_remaining(self, lines, max_line_length, line_count):
-        # print('### Render remaining letters ###')
         # render remaining letters in ascending order of distance to middle point
         found = True
         while found:
@@ -447,7 +451,6 @@ class ArchimedeanSpiralOutwardErikaImageRenderingStrategy(ErikaImageRenderingStr
         return math.sqrt(delta_x * delta_x + delta_y * delta_y)
 
     def _reset_to_upper_left(self):
-        # print('### Reset to (0, 0) ###')
         self._move_to(0, 0)
 
 
