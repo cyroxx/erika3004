@@ -64,34 +64,34 @@ class WrappedImageUnitTest(unittest.TestCase):
     def testIsPixelSetWorksForGrayScale(self):
         """simple test that the wrapper can correctly determine if a pixel is colored-in (grayscale image)"""
         image_white_first_pixel = WrappedImage(root_path + 'test_image_monochrome_1.bmp')
-        self.assertTrue(image_white_first_pixel.is_pixel_set(0, 0))
+        self.assertFalse(image_white_first_pixel.is_pixel_set(0, 0))
 
         imageBlackFirstPixel = WrappedImage(root_path + 'test_image_grayscale_2.bmp')
-        self.assertFalse(imageBlackFirstPixel.is_pixel_set(0, 0))
+        self.assertTrue(imageBlackFirstPixel.is_pixel_set(0, 0))
 
     def testAdjustableThresholdWorksForGrayScale(self):
         """simple test that the wrapper can correctly determine if a pixel is colored-in when the threshold is
         adjusted """
         image_gray_first_pixel = WrappedImage(root_path + 'test_image_grayscale_1.bmp')
         self.assertTrue(image_gray_first_pixel.is_pixel_set(0, 0))
-        image_gray_first_pixel_higher_threshold = WrappedImage(root_path + 'test_image_grayscale_1.bmp', threshold=129)
+        image_gray_first_pixel_higher_threshold = WrappedImage(root_path + 'test_image_grayscale_1.bmp', threshold=127)
         self.assertFalse(image_gray_first_pixel_higher_threshold.is_pixel_set(0, 0))
 
     def testIsPixelSetWorksForRgb(self):
         """simple test that the wrapper can correctly determine if a pixel is colored-in (RGB image)"""
         color_image = WrappedImage(root_path + 'test_image_color.bmp')
-        self.assertTrue(color_image.is_pixel_set(0, 0))
+        self.assertFalse(color_image.is_pixel_set(0, 0))
 
         image_black_first_pixel = WrappedImage(root_path + 'ubuntu-logo32.png')
-        self.assertFalse(image_black_first_pixel.is_pixel_set(0, 0))
+        self.assertTrue(image_black_first_pixel.is_pixel_set(0, 0))
 
     def testAdjustableThresholdWorksForRgb(self):
         """simple test that the wrapper can correctly determine if a pixel is colored-in when the threshold is
         adjusted """
         color_image = WrappedImage(root_path + 'test_image_color.bmp')
-        self.assertTrue(color_image.is_pixel_set(0, 0))
+        self.assertFalse(color_image.is_pixel_set(0, 0))
         color_image_higher_threshold = WrappedImage(root_path + 'test_image_color.bmp', threshold=153)
-        self.assertFalse(color_image_higher_threshold.is_pixel_set(0, 0))
+        self.assertTrue(color_image_higher_threshold.is_pixel_set(0, 0))
 
     def testTextFileInput(self):
         """simple test how the wrapper behaves when given a text file (ASCII art)"""

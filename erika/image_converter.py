@@ -36,11 +36,11 @@ class WrappedImage:
 
     def is_pixel_set(self, x, y):
         if self.is_grayscale():
-            return self.pixels[x, y] >= self.threshold
+            return self.pixels[x, y] <= self.threshold
         elif self.is_rgb():
             pixel = self.pixels[x, y]
             grayscale_value = (pixel[0] + pixel[1] + pixel[2]) // 3
-            return grayscale_value >= self.threshold
+            return grayscale_value <= self.threshold
         else:
             raise Exception("Image type not supported")
 
