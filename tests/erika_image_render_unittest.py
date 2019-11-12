@@ -5,6 +5,7 @@ import unittest
 from erika.erika_image_renderer import *
 from erika.erika_mock import *
 from tests.erika_mock_unittest import assert_print_output
+from tests.erika_mock_unittest import assert_print_output_pixels
 
 
 # noinspection SpellCheckingInspection
@@ -32,12 +33,50 @@ class RendererTest(unittest.TestCase):
             renderer.render_file_for_fixed_strategy('tests/test_resources/test_ascii_art_small_wide.txt', strategy)
             assert_print_output(self, my_erika, ["abcdefghi", "jklmnopqr", "stuvwxyzä"])
 
+    def helper_test_ErikaImageRenderingStrategy_real_image(self, strategy):
+        """test helper to verify rendering with the given strategy works"""
+        with MicrostepBasedErikaMock(20, 30) as my_erika:
+            renderer = ErikaImageRenderer(my_erika, "test: strategy will be set explicitly")
+            renderer.render_file_for_fixed_strategy('tests/test_resources/test_image_grayscale_1.bmp', strategy)
+            assert_print_output_pixels(self, my_erika, [
+                "XXXXXXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXXXXXX",
+                "                    ",
+                "                    ",
+                "                    ",
+                "                    ",
+                "                    ",
+                "                    ",
+                "                    ",
+                "                    "])
+
     def testLineByLineErikaImageRenderingStrategy(self):
         """simple test that printing line by line works"""
         strategy = LineByLineErikaImageRenderingStrategy()
         self.helper_test_ErikaImageRenderingStrategy_square(strategy)
         self.helper_test_ErikaImageRenderingStrategy_high(strategy)
         self.helper_test_ErikaImageRenderingStrategy_wide(strategy)
+        self.helper_test_ErikaImageRenderingStrategy_real_image(strategy)
 
     def testInterlacedErikaImageRenderingStrategy(self):
         """simple test that printing odd-then-even lines works"""
@@ -45,6 +84,7 @@ class RendererTest(unittest.TestCase):
         self.helper_test_ErikaImageRenderingStrategy_square(strategy)
         self.helper_test_ErikaImageRenderingStrategy_high(strategy)
         self.helper_test_ErikaImageRenderingStrategy_wide(strategy)
+        self.helper_test_ErikaImageRenderingStrategy_real_image(strategy)
 
     def testPerpendicularSpiralInwardErikaImageRenderingStrategy(self):
         """simple test that printing as a perpendicular spiral inward works"""
@@ -52,6 +92,7 @@ class RendererTest(unittest.TestCase):
         self.helper_test_ErikaImageRenderingStrategy_square(strategy)
         self.helper_test_ErikaImageRenderingStrategy_high(strategy)
         self.helper_test_ErikaImageRenderingStrategy_wide(strategy)
+        self.helper_test_ErikaImageRenderingStrategy_real_image(strategy)
 
     def testRandomDotFillErikaImageRenderingStrategy(self):
         """simple test that printing as one random dot at a time works"""
@@ -59,6 +100,7 @@ class RendererTest(unittest.TestCase):
         self.helper_test_ErikaImageRenderingStrategy_square(strategy)
         self.helper_test_ErikaImageRenderingStrategy_high(strategy)
         self.helper_test_ErikaImageRenderingStrategy_wide(strategy)
+        self.helper_test_ErikaImageRenderingStrategy_real_image(strategy)
 
     def testArchimedeanSpiralOutwardErikaImageRenderingStrategy(self):
         """simple test that printing following along an archimedean spiral works"""
@@ -66,6 +108,7 @@ class RendererTest(unittest.TestCase):
         self.helper_test_ErikaImageRenderingStrategy_square(strategy)
         self.helper_test_ErikaImageRenderingStrategy_high(strategy)
         self.helper_test_ErikaImageRenderingStrategy_wide(strategy)
+        self.helper_test_ErikaImageRenderingStrategy_real_image(strategy)
 
     def testArchimedeanSpiralOutwardErikaImageRenderingStrategy2(self):
         """test with a bigger file + two spirals"""
