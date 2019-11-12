@@ -192,14 +192,14 @@ class MicrostepBasedErikaMock(AbstractErikaMock):
             if self.canvas[self.canvas_y][self.canvas_x]:
                 if self.exception_if_overprinted:
                     raise Exception(
-                        "Not supposed to print a pixel twice: at ({}, {})."
-                            .format(self.canvas_x, self.canvas_y))
+                        "Not supposed to print a pixel twice: at ({}, {}).".format(self.canvas_x, self.canvas_y))
             self.canvas[self.canvas_y][self.canvas_x] = True
         except IndexError as e:
             print("IndexError at ({}, {}) of ({}, {}) - increase values of "
                   "cli.DRY_RUN_WIDTH and cli.DRY_RUN_HEIGHT "
                   "if you need more space".format(self.canvas_x, self.canvas_y, self.width, self.height))
             sys.exit(1)
+        self.canvas_x += 1
 
     def _test_debug_helper_print_canvas(self):
         """for debugging: print the current canvas to stdout"""
