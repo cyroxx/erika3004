@@ -545,11 +545,11 @@ class ErikaAndImageInputFacade(ErikaAndInputFacade):
         self.position_x = 0
 
     def move_left(self):
-        self.erika.move_left_microstep()
+        self.erika.move_left_microsteps(1)
         self.position_x -= 1
 
     def move_right(self):
-        self.erika.move_right_microstep()
+        self.erika.move_right_microsteps(1)
         self.position_x += 1
 
     def move_up(self):
@@ -567,11 +567,11 @@ class ErikaAndImageInputFacade(ErikaAndInputFacade):
         if self.wrapped_image.is_pixel_set(x, y):
             self.erika.print_pixel()
         else:
-            self.erika.move_right_microstep()
+            self.erika.move_right_microsteps(1)
         self.position_x += 1
 
     def print_line_at(self, y):
-        for x in range(0, self.wrapped_image.width):
+        for x in range(0, self.wrapped_image.width()):
             self.print_at(x, y)
 
     def height(self):
