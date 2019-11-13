@@ -200,6 +200,10 @@ class MicrostepBasedErikaMock(AbstractErikaMock):
                   "if you need more space".format(self.canvas_x, self.canvas_y, self.width, self.height))
             sys.exit(1)
         self.canvas_x += 1
+        if self.output_after_each_step:
+            self._test_debug_helper_print_canvas()
+            if self.delay_after_each_step > 0:
+                sleep(self.delay_after_each_step)
 
     def _test_debug_helper_print_canvas(self):
         """for debugging: print the current canvas to stdout"""
@@ -234,3 +238,5 @@ class MicrostepBasedErikaMock(AbstractErikaMock):
 
     def print_ascii(self, text):
         raise Exception('Characters and character steps are not supported in microstep-based tests')
+
+
