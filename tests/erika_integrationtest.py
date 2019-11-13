@@ -11,10 +11,12 @@ from erika.erika import Erika
 #   dmesg
 # on the command line after connecting USB)
 #
+# e.g. Linux
 # COM_PORT = "/dev/ttyACM0"
+COM_PORT = "/dev/ttyUSB0"
 
 # e.g. Windows
-COM_PORT = "COM3"
+# COM_PORT = "COM3"
 
 @pytest.mark.hardware
 class ConnectTest(unittest.TestCase):

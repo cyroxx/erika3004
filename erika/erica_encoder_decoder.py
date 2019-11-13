@@ -5,8 +5,7 @@ class DDR_ASCII():
     
     def __init__(self, *args, **kwargs):
         self.read_conversion_table()
-        print("table loaded")
-    
+
     def read_conversion_table(self):
         """read conversion table from file and populate 2 dicts"""
         with open(self.CONVERSION_TABLE_PATH, encoding="UTF-8") as f:

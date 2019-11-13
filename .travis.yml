@@ -7,9 +7,10 @@ python:
   - "3.6-dev"
   - "3.7"
   - "3.7-dev"
+  - "3.8"
   # PyPy versions
-  - "pypy3.5"
+  - "pypy3.6-7.1.1"
 install:
   - pip install -r test_requirements.txt
 script:
-  - pytest -m 'not hardware'
+  - pytest --cov=erika tests/ --cov-report=html -m 'not hardware'
