@@ -46,21 +46,6 @@ class WrappedImageUnitTest(unittest.TestCase):
         self.assertTrue(image.is_rgb())
         self.assertFalse(image.is_grayscale())
 
-    @pytest.mark.os_specific_dumb
-    def testRenamedPngImageIsRecognizedAsRgbOnDumbOperatingSystem(self):
-        """Simple test how the wrapper behaves when given a PNG file named like a text file. Some OSs will not see
-        through this, raise an OSError internally"""
-        self.assertRaisesRegex(NotAnImageException, "Exception when opening the file .* - maybe not an image[?]",
-                               load_renamed_png_file_as_wrapped_image)
-
-    @pytest.mark.os_specific_smart
-    def testRenamedPngImageIsRecognizedAsRgbOnSmartOperatingSystem(self):
-        """Simple test how the wrapper behaves when given a PNG file named like a text file. Some OSs will see through
-        this, and know it's a PNG."""
-        image = WrappedImage(root_path + 'ubuntu-logo32.png.renamedwithextension.txt')
-        self.assertTrue(image.is_rgb())
-        self.assertFalse(image.is_grayscale())
-
     def testIsPixelSetWorksForGrayScale(self):
         """simple test that the wrapper can correctly determine if a pixel is colored-in (grayscale image)"""
         image_white_first_pixel = WrappedImage(root_path + 'test_image_monochrome_1.bmp')

@@ -13,4 +13,4 @@ python:
 install:
   - pip install -r test_requirements.txt
 script:
-  - pytest --cov=erika tests/ --cov-report=html -m 'not hardware and not os_specific_smart'
+  - pytest --cov=erika tests/ --cov-report=html -m 'not hardware'
