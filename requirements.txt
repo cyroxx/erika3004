@@ -1,4 +1,4 @@
+Pillow==6.2.0
 pyserial==3.4
 twython==3.7.0
 argcomplete==1.10.0
-pyfuse3
