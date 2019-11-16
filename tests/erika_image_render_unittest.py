@@ -74,10 +74,10 @@ class RendererTest(unittest.TestCase):
     def testLineByLineErikaImageRenderingStrategy(self):
         """simple test that printing line by line works"""
         strategy = LineByLineErikaImageRenderingStrategy()
-        self.helper_test_ErikaImageRenderingStrategy_real_image(strategy)
         self.helper_test_ErikaImageRenderingStrategy_square(strategy)
         self.helper_test_ErikaImageRenderingStrategy_high(strategy)
         self.helper_test_ErikaImageRenderingStrategy_wide(strategy)
+        self.helper_test_ErikaImageRenderingStrategy_real_image(strategy)
 
     def testInterlacedErikaImageRenderingStrategy(self):
         """simple test that printing odd-then-even lines works"""

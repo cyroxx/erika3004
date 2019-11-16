@@ -4,8 +4,8 @@ from enum import Enum
 import serial
 
 from erika.erica_encoder_decoder import DDR_ASCII
-from erika_fs.ansii_decoder import EscapeSequenceDecoder
 from erika.util import twos_complement_hex_string
+from erika_fs.ansii_decoder import *
 
 ERIKA_BAUDRATE = 1200
 
@@ -18,52 +18,18 @@ MICROSTEPS_PER_CHARACTER_WIDTH = 10
 # confirmed experimentally
 MICROSTEPS_PER_CHARACTER_HEIGHT = 20
 
-
-# special decorator: enforce that subclasses implement the method
-# See https://stackoverflow.com/a/25651022
-def enforcedmethod(func):
-    func.__enforcedmethod__ = True
-    return func
-
-
-class MetaclassForEnforcingMethods:
-
-    # verify that enforced methods are implemented
-    def __new__(cls, *args, **kwargs):
-        method_names = set()
-        not_found_enforced_methods = set()
-        # search through method resolution order
-        method_resolution_order = cls.__mro__
-        for base_class in method_resolution_order:
-            for name, value in base_class.__dict__.items():
-                # method_names are collected in this dictionary while going up the inheritance hierarchy.
-                # If the method is not in there when the method is marked <to be enforced in the current base_class,
-                # it has not been implemented in a base class as expected.
-                if getattr(value, "__enforcedmethod__", False) and name not in method_names:
-                    not_found_enforced_methods.add(name)
-                method_names.add(name)
-
-        if not_found_enforced_methods:
-            raise TypeError("Can't instantiate abstract class {} - must implement enforced methods {}"
-                            .format(cls.__name__, ', \n'.join(not_found_enforced_methods)))
-        else:
-            return super(MetaclassForEnforcingMethods, cls).__new__(cls)
-
-
-class AbstractErika(MetaclassForEnforcingMethods):
-
-    # verify that all "public" methods are part of this "interface" class
-    def __new__(cls, *args, **kwargs):
-        not_found_methods = set()
-
 class Direction(Enum):
     RIGHT = "73"
     LEFT = "74"
     UP = "76"
     DOWN = "75"
 
+class AbstractErika(EscapeSequenceDecoder):
 
-class Erika(EscapeSequenceDecoder):
+    # verify that all "public" methods are part of this "interface" class
+    def __new__(cls, *args, **kwargs):
+        not_found_methods = set()
+
         # search through method resolution order
         method_resolution_order = cls.__mro__
         for base_class in method_resolution_order:
@@ -137,6 +103,10 @@ class Erika(EscapeSequenceDecoder):
     def print_pixel(self):
         pass
 
+    @enforcedmethod
+    def decode(self, string):
+        pass
+
 
 class Erika(AbstractErika):
     conversion_table_path = "erika/charTranslation.json"
@@ -166,7 +136,6 @@ class Erika(AbstractErika):
         self._print_raw(chr(duration_hex[1:]))
         # self.connection.write(b"\xaa\xff")
 
-    # TODO: use duration parameter instead of fixed value
     def read(self):
         """Read a character data from the Erika typewriter and try to decode it.
         Returns: ASCII encoded character
@@ -176,7 +145,6 @@ class Erika(AbstractErika):
 
     def print_ascii(self, text, esc_sequences=False):
         """Print given string on the Erika typewriter."""
-        # TODO: handle escape sequences
         if esc_sequences:
             self.decode(text)
         for c in text:
