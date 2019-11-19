@@ -121,6 +121,24 @@ It offers the following built-in rendering strategies:
 For further information, simply call   
 ```./erika.sh -h```
 
+### Print images
+
+This works mostly just like for ASCII art images, described in the previous section.
+
+If as a file parameter for the CLI you specify an image file, it will be printed pixel by pixel, according to the
+specified rendering strategy, like before for ASCII art images.
+
+### Play "Tic Tac Toe"
+
+To run the Tic Tac Toe game in a simulated environment, call this in your shell:
+
+```
+python3 -m erika.TicTacToe
+```
+
+**Work in Progress** : Play against the real Erika machine.
+
+
 ## Testing
 
 ### Run unit tests
