@@ -22,11 +22,12 @@ class Direction(Enum):
 class Erika(EscapeSequenceDecoder):
     conversion_table_path = "erika/charTranslation.json"
 
-    def __init__(self, com_port, *args, **kwargs):
+    def __init__(self, com_port, rts_cts, *args, **kwargs):
         """Set comport to serial device that connects to Erika typewriter."""
         self.com_port = com_port
         self.connection = serial.Serial(com_port, ERIKA_BAUDRATE)  # , timeout=0, parity=serial.PARITY_EVEN, rtscts=1)
         self.ddr_ascii = DDR_ASCII()
+        self.use_rts_cts = rts_cts
 
     ## resource manager stuff
 
@@ -43,8 +44,8 @@ class Erika(EscapeSequenceDecoder):
         assert duration <= 5.1, "duration must be less than or equal to 5.1 seconds"
         duration /= 0.02
         duration_hex = hex(round(duration))
-        self._print_raw("AA")
-        self._print_raw(chr(duration_hex[1:]))
+        self._write_byte("AA")
+        self._write_byte(duration_hex[1:])
         # self.connection.write(b"\xaa\xff")
 
     # TODO: use duration parameter instead of fixed value
@@ -62,41 +63,29 @@ class Erika(EscapeSequenceDecoder):
             self.decode(text)
         for c in text:
             key_id = self.ddr_ascii.encode(c)
-            self._write_byte_delay(key_id)
+            self._write_byte(key_id)
 
     def move_up(self):
-        self._print_raw("76")
-        time.sleep(DEFAULT_DELAY)
-        self._print_raw("76")
-        time.sleep(DEFAULT_DELAY)
+        self._cursor_up()
 
     def move_down(self):
-        self._print_raw("75")
-        time.sleep(DEFAULT_DELAY)
-        self._print_raw("75")
-        time.sleep(DEFAULT_DELAY)
+        self._cursor_down()
 
     def move_left(self):
-        self._print_raw("74")
-        time.sleep(DEFAULT_DELAY)
-        self._print_raw("74")
-        time.sleep(DEFAULT_DELAY)
+        self._cursor_back()
 
     def move_right(self):
-        self._print_raw("73")
-        time.sleep(DEFAULT_DELAY)
-        self._print_raw("73")
-        time.sleep(DEFAULT_DELAY)
+        self._cursor_forward()
 
     def crlf(self):
-        self._print_raw("77")
+        self._write_byte("77")
         time.sleep(LINE_BREAK_DELAY)
 
     def set_keyboard_echo(self, value):
         if value:
-            self._print_raw("92")
+            self._write_byte("92")
         else:
-            self._print_raw("91")
+            self._write_byte("91")
 
     def demo(self):
         self._advance_paper()
@@ -109,17 +98,15 @@ class Erika(EscapeSequenceDecoder):
 
     def _print_smiley(self):
         """print a smiley"""
-        self._write_byte_delay('13')
-        self._write_byte_delay('1F')
+        self._write_byte('13')
+        self._write_byte('1F')
 
-    def _write_byte_delay(self, data, delay=DEFAULT_DELAY):
-        """print base16 encoded data with delay"""
-        self._print_raw(data)
-        time.sleep(delay)
-
-    def _print_raw(self, data):
+    def _write_byte(self, data, delay=DEFAULT_DELAY):
         """prints base16 formated data"""
         self.connection.write(bytes.fromhex(data))
+
+        if not self.use_rts_cts:
+            time.sleep(delay)
 
     def _move_erika(self, direction: Direction, n=1):
         """
@@ -128,7 +115,7 @@ class Erika(EscapeSequenceDecoder):
         :param direction: direction to move: Direction
         :param n: number of full steps to move
         """
-        self._print_raw(direction.value * (2 * n))
+        self._write_byte(direction.value * (2 * n))
 
     def _cursor_up(self, n=1):
         self._move_erika(Direction.UP, n)
@@ -152,7 +139,7 @@ class Erika(EscapeSequenceDecoder):
 
     def _decode_character(self, char):
         key_id = self.ddr_ascii.encode(char)
-        self._write_byte_delay(key_id)
+        self._write_byte(key_id)
 
     def _cursor_horizontal_absolute(self, n=1):
         pass
