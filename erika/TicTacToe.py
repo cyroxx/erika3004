@@ -3,8 +3,8 @@ from math import ceil
 
 import numpy as np
 
-from erika import Erika
-from erika_mock import ErikaMock
+from erika.erika import Erika
+from erika.erika_mock import CharacterBasedErikaMock
 
 
 class Players(Enum):
@@ -197,5 +197,5 @@ class TicTacToe:
 
 if __name__ == "__main__":
     # Erika("/dev/ttyAMA0")
-    with ErikaMock() as erika:
+    with CharacterBasedErikaMock() as erika:
         game = TicTacToe(erika)
