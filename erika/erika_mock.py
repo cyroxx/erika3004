@@ -102,14 +102,6 @@ class ErikaMock(EscapeSequenceDecoder):
 
         self.width = width
         self.height = height
-        self.canvas = []
-        for y in range(height):
-            new_list = []
-            for x in range(width):
-                new_list.append(" ")
-            self.canvas.append(new_list)
-        self.canvas_x = 0
-        self.canvas_y = 0
         self.exception_if_overprinted = exception_if_overprinted
         self.output_after_each_step = output_after_each_step
         self.delay_after_each_step = delay_after_each_step
@@ -143,20 +135,19 @@ class ErikaMock(EscapeSequenceDecoder):
         raise Exception('User is not supposed to call this function directly')
 
     def move_up(self):
-        self.canvas_y -= 1
+        self._cursor_up()
 
     def move_down(self):
-        self.canvas_y += 1
+        self._cursor_down()
 
     def move_left(self):
-        self.canvas_x -= 1
+        self._cursor_back()
 
     def move_right(self):
-        self.canvas_x += 1
+        self._cursor_forward()
 
     def crlf(self):
-        self.canvas_x = 0
-        self.canvas_y += 1
+        self.stdscr.addstr("\n")
 
     def demo(self):
         for i in range(0, 10):
