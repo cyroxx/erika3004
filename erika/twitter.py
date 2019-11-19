@@ -68,7 +68,7 @@ q = Queue()
 erika = Erika(ERIKA_PORT)
 
 # For local tests
-# erika = ErikaMock(output_after_each_step=True)
+# erika = CharacterBasedErikaMock(output_after_each_step=True)
 
 
 def sanitize_tweet(tweet_as_string):

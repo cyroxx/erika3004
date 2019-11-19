@@ -3,14 +3,20 @@ from enum import Enum
 
 import serial
 
-from erica_encoder_decoder import DDR_ASCII
-from erika_fs.ansii_decoder import EscapeSequenceDecoder
+from erika.erica_encoder_decoder import DDR_ASCII
+from erika.util import twos_complement_hex_string
+from erika_fs.ansii_decoder import *
 
 ERIKA_BAUDRATE = 1200
 
 DEFAULT_DELAY = 0.3
 LINE_BREAK_DELAY = 2.0
 
+# confirmed experimentally
+MICROSTEPS_PER_CHARACTER_WIDTH = 10
+
+# confirmed experimentally
+MICROSTEPS_PER_CHARACTER_HEIGHT = 20
 
 class Direction(Enum):
     RIGHT = "73"
@@ -19,7 +25,91 @@ class Direction(Enum):
     DOWN = "75"
 
 
-class Erika(EscapeSequenceDecoder):
+class AbstractErika(EscapeSequenceDecoder):
+
+    # verify that all "public" methods are part of this "interface" class
+    def __new__(cls, *args, **kwargs):
+        not_found_methods = set()
+
+        # search through method resolution order
+        method_resolution_order = cls.__mro__
+        for base_class in method_resolution_order:
+            for name, value in base_class.__dict__.items():
+                if not name.startswith("_") and name not in AbstractErika.__dict__:
+                    not_found_methods.add(name)
+        if not_found_methods:
+            raise TypeError("Can't instantiate abstract class {}. All public methods (not starting with underscore) "
+                            "must be part of the AbstractErika base class: {}"
+                            .format(cls.__name__, ', \n'.join(not_found_methods)))
+        else:
+            return super(AbstractErika, cls).__new__(cls)
+
+    @enforcedmethod
+    def alarm(self, duration):
+        pass
+
+    @enforcedmethod
+    def read(self):
+        pass
+
+    @enforcedmethod
+    def print_ascii(self, text):
+        pass
+
+    @enforcedmethod
+    def move_up(self):
+        pass
+
+    @enforcedmethod
+    def move_down(self):
+        pass
+
+    @enforcedmethod
+    def move_left(self):
+        pass
+
+    @enforcedmethod
+    def move_right(self):
+        pass
+
+    @enforcedmethod
+    def move_down_microstep(self):
+        pass
+
+    @enforcedmethod
+    def move_up_microstep(self):
+        pass
+
+    @enforcedmethod
+    def move_right_microsteps(self, num_steps=1):
+        pass
+
+    @enforcedmethod
+    def move_left_microsteps(self, num_steps=1):
+        pass
+
+    @enforcedmethod
+    def crlf(self):
+        pass
+
+    @enforcedmethod
+    def set_keyboard_echo(self, value):
+        pass
+
+    @enforcedmethod
+    def demo(self):
+        pass
+
+    @enforcedmethod
+    def print_pixel(self):
+        pass
+
+    @enforcedmethod
+    def decode(self, string):
+        pass
+
+
+class Erika(AbstractErika):
     conversion_table_path = "erika/charTranslation.json"
 
     def __init__(self, com_port, rts_cts, *args, **kwargs):
@@ -48,7 +138,6 @@ class Erika(EscapeSequenceDecoder):
         self._write_byte(duration_hex[1:])
         # self.connection.write(b"\xaa\xff")
 
-    # TODO: use duration parameter instead of fixed value
     def read(self):
         """Read a character data from the Erika typewriter and try to decode it.
         Returns: ASCII encoded character
@@ -58,7 +147,6 @@ class Erika(EscapeSequenceDecoder):
 
     def print_ascii(self, text, esc_sequences=False):
         """Print given string on the Erika typewriter."""
-        # TODO: handle escape sequences
         if esc_sequences:
             self.decode(text)
         for c in text:
@@ -77,6 +165,39 @@ class Erika(EscapeSequenceDecoder):
     def move_right(self):
         self._cursor_forward()
 
+    def move_down_microstep(self):
+        self._write_byte_delay("81")
+
+    def move_up_microstep(self):
+        self._write_byte_delay("82")
+
+    def move_right_microsteps(self, num_steps=1):
+        while num_steps > 127:
+            self._write_byte_delay("A5")
+            self._write_byte_delay(twos_complement_hex_string(127))
+            num_steps = num_steps - 127
+
+        self._write_byte_delay("A5")
+        self._write_byte_delay(twos_complement_hex_string(num_steps))
+
+    def move_left_microsteps(self, num_steps=1):
+        # two's complement numbers: negative value range is 1 bigger than positive (because 0 positive)
+        while num_steps > 128:
+            self._write_byte_delay("A5")
+            self._write_byte_delay(twos_complement_hex_string(-128))
+            num_steps = num_steps - 128
+
+        self._write_byte_delay("A5")
+        self._write_byte_delay(twos_complement_hex_string(-1 * num_steps))
+
+    def print_pixel(self):
+        """
+        Print pixel and end up one microstep to the right of the initial position (in analogue to "normal" text printing)
+        :return:
+        """
+        self.print_ascii(".")
+        self.move_left_microsteps(MICROSTEPS_PER_CHARACTER_WIDTH - 1)
+
     def crlf(self):
         self._write_byte("77")
         time.sleep(LINE_BREAK_DELAY)
@@ -88,9 +209,55 @@ class Erika(EscapeSequenceDecoder):
             self._write_byte("91")
 
     def demo(self):
+        self.crlf()
+        # self._print_smiley()
+        self._print_demo_rectangle()
         self._advance_paper()
-        self._print_smiley()
-        self._advance_paper()
+
+    def _print_demo_rectangle(self):
+
+        for i in range(0, 10):
+            self.print_ascii(".")
+            self.move_left_microsteps(MICROSTEPS_PER_CHARACTER_WIDTH - 1)
+
+        self.move_left_microsteps(1)
+
+        for i in range(0, 5):
+            self.move_down_microstep()
+            self.print_ascii(".")
+            self.move_left_microsteps(MICROSTEPS_PER_CHARACTER_WIDTH)
+
+        self.move_left_microsteps(1)
+
+        for i in range(0, 10):
+            self.print_ascii(".")
+            self.move_left_microsteps(MICROSTEPS_PER_CHARACTER_WIDTH + 1)
+
+        self.move_right_microsteps(1)
+
+        for i in range(0, 5):
+            self.move_up_microstep()
+            self.print_ascii(".")
+            self.move_left_microsteps(MICROSTEPS_PER_CHARACTER_WIDTH)
+
+    def _print_precision_test(self):
+        self.crlf()
+        self.crlf()
+
+        self.print_ascii(".")
+        self.move_left_microsteps(MICROSTEPS_PER_CHARACTER_WIDTH)
+        self.move_right_microsteps(256)
+        self.print_ascii(".")
+        self.move_left_microsteps(MICROSTEPS_PER_CHARACTER_WIDTH)
+
+        self.move_down_microstep()
+        self.move_down_microstep()
+
+        self.move_left_microsteps(256)
+        self.print_ascii(".")
+        self.move_left_microsteps(MICROSTEPS_PER_CHARACTER_WIDTH)
+        self.move_right_microsteps(256)
+        self.print_ascii(".")
 
     def _advance_paper(self):
         """ move paper up / cursor down by 10 halfsteps"""

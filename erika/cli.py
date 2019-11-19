@@ -46,7 +46,6 @@ def print_demo(args):
     erika.demo()
 
 
-# TODO support using piped input https://docs.python.org/3/library/fileinput.html
 def add_render_ascii_art_parser(command_parser):
     render_ascii_art_file_parser = command_parser.add_parser('render_ascii_art',
                                                              formatter_class=RawTextHelpFormatter,
@@ -77,35 +76,40 @@ def print_ascii_art(args):
     strategy_string = args.strategy
     file_path = args.file
 
-    strategies = {
-        'LineByLine': LineByLineErikaImageRenderingStrategy,
-        'Interlaced': InterlacedErikaImageRenderingStrategy,
-        'PerpendicularSpiralInward': PerpendicularSpiralInwardErikaImageRenderingStrategy,
-        'RandomDotFill': RandomDotFillErikaImageRenderingStrategy,
-        'ArchimedeanSpiralOutward': ArchimedeanSpiralOutwardErikaImageRenderingStrategy
-    }
-
-    strategy = strategies[strategy_string]()
-
-    erika = get_erika_for_given_args(args)
-    renderer = ErikaImageRenderer(erika, strategy)
     if file_path == '-':
+        erika = get_erika_for_given_args(args, is_character_based=True)
+        renderer = ErikaImageRenderer(erika, strategy_string)
         lines = read_lines_from_stdin_non_blocking()
-        renderer.render_ascii_art_lines(lines)
+        renderer.render_lines(lines)
     else:
-        renderer.render_ascii_art_file(file_path)
+        erika = get_erika_for_given_args(args)
+        renderer = ErikaImageRenderer(erika, strategy_string)
+        renderer.render_file(file_path)
 
 
-def get_erika_for_given_args(args):
+def get_erika_for_given_args(args, is_character_based=False):
     is_dry_run = args.dry_run
     com_port = args.serial_port
 
     if is_dry_run:
-        # using low size just so it fits on the screen well - does not reflect the paper dimensions that Erika supports
-        erika = ErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True, delay_after_each_step=0.005)
+        if is_character_based:
+            # using low size just so it fits on the screen well - does not reflect the paper dimensions that Erika supports
+            # erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True, delay_after_each_step=0.005)
+            erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True,
+                                            delay_after_each_step=0.005)
+            # slower, but output will not flicker as much
+            # erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True, delay_after_each_step=0.05)
+        else:
+            # a bit hacky, as I'm mirroring behavior from ErikaImageRenderer - this kindof goes against the now-beautiful architecture :(
+            try:
+                # hacky: use exception to determine image type
+                image = WrappedImage(args.file)
+                erika = MicrostepBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True,
+                                                delay_after_each_step=0.005)
+            except NotAnImageException:
+                erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True,
+                                                delay_after_each_step=0.005)
 
-        # slower, but output will not flicker as much
-        # erika = ErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True, delay_after_each_step=0.05)
     else:
         erika = Erika(com_port)
 
@@ -132,8 +136,6 @@ def read_lines_from_stdin_non_blocking():
         print("no output to generate - provide ASCII art as a file  parameter or on stdin")
         worker_process.terminate()
         sys.exit(1)
-
-    return lines
 
 
 def function_for_reading_lines_from_stdin_process(queue_to_pass_lines_through, input_stream_fileno):
