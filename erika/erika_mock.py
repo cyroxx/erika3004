@@ -129,13 +129,16 @@ class CharacterBasedErikaMock(AbstractErikaMock):
                  height=ERIKA_PAGE_HEIGHT_CHARACTERS,
                  exception_if_overprinted=True,
                  output_after_each_step=False,
-                 delay_after_each_step=0):
+                 delay_after_each_step=0,
+                 inside_unit_test=False):
+        self.inside_unit_test = inside_unit_test
 
         self.stdscr = curses.initscr()
 
         # disable input buffer
-        # TODO caused error when running tests
-        # curses.cbreak()
+        # caused error when running tests
+        if not self.inside_unit_test:
+            curses.cbreak()
         curses.nl()
         # wrap special keys
         self.stdscr.keypad(True)
@@ -158,12 +161,14 @@ class CharacterBasedErikaMock(AbstractErikaMock):
         return self
 
     def __exit__(self, *args):
-        # TODO caused error when running tests
-        # curses.nocbreak()
+        # caused error when running tests
+        if not self.inside_unit_test:
+            curses.nocbreak()
         self.stdscr.keypad(False)
         curses.echo()
-        # TODO caused error when running tests
-        # curses.endwin()
+        # caused error when running tests
+        if not self.inside_unit_test:
+            curses.endwin()
 
     def set_keyboard_echo(self, value):
         if value:
