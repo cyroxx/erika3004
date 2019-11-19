@@ -1,8 +1,16 @@
+import sys
+
+sys.path.append('./')
+sys.path.append('../')
+sys.path.append('./erika')
+import os
+
+print(os.getcwd())
+print(sys.path)
 from enum import Enum
 from math import ceil
 
 import numpy as np
-
 from erika import Erika
 from erika_mock import ErikaMock
 
@@ -12,8 +20,11 @@ class Players(Enum):
     Player1 = 2
     N0NE = 0
 
+    player_chars = [" ", "o", "x"]
 
-player_chars = [" ", "o", "x"]
+    @property
+    def char(self):
+        return self.player_chars.value[self.value]
 
 
 def create_field(field_size=3, cell_width=3, cell_height=1, vertical_sep="#", horizontal_sep="#"):
@@ -34,7 +45,7 @@ class TicTacToe:
         self.vertical_sep = "|"
         self.horizontal_sep = "-"
         assert self.field_size % 2 == 1
-        self.game_field = np.zeros((self.field_size, self.field_size), dtype=np.uint8)
+        self.board = np.zeros((self.field_size, self.field_size), dtype=np.uint8)
 
         # setup initial cursor position
         self.pos_y = self.pos_x = self.field_size - 1
@@ -98,25 +109,26 @@ class TicTacToe:
     def check_row(game_field, last):
         return (last == game_field).all()
 
+
     def check_winner(self):
         if self.game_over:
             return
 
-        last = self.game_field[self.last_move_y, self.last_move_x]
+        last = self.board[self.last_move_y, self.last_move_x]
 
         if last == Players.N0NE.value:
             return
 
-        if self.check_row(self.game_field[self.last_move_y], last):
+        if self.check_row(self.board[self.last_move_y], last):
             self.won(last)
-        elif self.check_row(self.game_field.T[self.last_move_x], last):
+        elif self.check_row(self.board.T[self.last_move_x], last):
             self.won(last)
-        elif self.check_row(np.diag(self.game_field), last):
+        elif self.check_row(np.diag(self.board), last):
             self.won(last)
-        elif self.check_row(np.diag(np.fliplr(self.game_field)), last):
+        elif self.check_row(np.diag(np.fliplr(self.board)), last):
             self.won(last)
         else:
-            candidates = np.argwhere(self.game_field == Players.N0NE.value)
+            candidates = np.argwhere(self.board == Players.N0NE.value)
             if not len(candidates):
                 self.tie()
                 return
@@ -175,20 +187,54 @@ class TicTacToe:
         self.last_move_y = self.pos_y
 
     def player_select(self, _):
-        if self.game_field[self.pos_y][self.pos_x] == Players.N0NE.value:
+        if self.board[self.pos_y][self.pos_x] == Players.N0NE.value:
             self.make_move(Players.Player1)
             self.turn = Players.Erika.value
 
+    def _check_winner(self, board, last_move):
+        player = board[last_move[0], last_move[1]]
+
+        if self.check_row(board[last_move[0]], player):
+            return True
+        elif self.check_row(board.T[last_move[1]], player):
+            return True
+        elif self.check_row(np.diag(board), player):
+            return True
+        elif self.check_row(np.diag(np.fliplr(board)), player):
+            return True
+
+        return False
+
+    def min_max(self, board, player, last_move=None):
+        candidates = np.argwhere(board == Players.N0NE.value)
+        # erikas_choice = candidates[np.random.choice(candidates.shape[0])]
+        best_score = -2
+        best_move = None
+        for move in candidates:
+            board_cp = board.copy()
+            board_cp[move[0], move[1]] = player.value
+            if self._check_winner(board_cp, move):
+                return 1, best_move
+            score = -self.min_max(board_cp, Players.Erika if player == Players.Player1 else Players.Player1, move)[0]
+            if score > best_score:
+                best_move = move
+                best_score = score
+        if best_move is None:
+            return 0, best_move
+
+        return 1, best_move
+
     def make_move(self, player):
-        self.game_field[self.pos_y, self.pos_x] = player.value
-        self.erika.print_ascii(player_chars[player.value])
+        self.board[self.pos_y, self.pos_x] = player.value
+        self.erika.print_ascii(player.char)
         self.erika._cursor_back(1)
         self.update_last_move()
 
     def ai_select(self):
         # TODO: implement different strategies
-        candidates = np.argwhere(self.game_field == Players.N0NE.value)
+        candidates = np.argwhere(self.board == Players.N0NE.value)
         erikas_choice = candidates[np.random.choice(candidates.shape[0])]
+        #erikas_choice = self.min_max(self.board, Players.Erika)[1]
 
         self.move_abs(erikas_choice[1], erikas_choice[0])
         self.make_move(Players.Erika)
@@ -197,5 +243,8 @@ class TicTacToe:
 
 if __name__ == "__main__":
     # Erika("/dev/ttyAMA0")
+    import os
+
+    print(os.getcwd())
     with ErikaMock() as erika:
         game = TicTacToe(erika)
