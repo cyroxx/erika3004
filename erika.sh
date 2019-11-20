@@ -18,6 +18,10 @@
 # ./erika.sh render_ascii_art -d -f ./tests/test_resources/test_ascii_art.txt -s ArchimedeanSpiralOutward  -p 'fake_port'
 # ./erika.sh render_ascii_art -d -f ./tests/test_resources/test_ascii_art.txt -s RandomDotFill  -p 'fake_port'
 #
+# * tic tac toe game
+# ./erika.sh tictactoe -p "/dev/ttyACM0"
+# ./erika.sh tictactoe -d -p 'fake_port_because_dry_run'
+#
 # * real output
 # ./erika.sh render_ascii_art -p "COM3" -f ./tests/test_resources/test_ascii_art_small.txt
 # ./erika.sh render_ascii_art -p "/dev/ttyACM0" -f ./tests/test_resources/test_ascii_art_small.txt -s PerpendicularSpiralInward

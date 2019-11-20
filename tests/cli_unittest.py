@@ -45,6 +45,27 @@ class CliTest(unittest.TestCase):
         self.assertTrue(args.dry_run)
         self.assertEqual(args.serial_port, "COM3")
 
+    def test_argument_parser_parses_arguments_for_tictactoe(self):
+        """simple test that ArgumentParser will parse the given command line"""
+        # arrange
+        parser = create_argument_parser()
+        self.assertIsNotNone(parser)
+
+        #  act / assert - long form of parameters, dry run
+        args = parser.parse_args(
+            ["tictactoe", "--dry-run", "--serial-port", "/dev/ttyACM0"])
+        self.assertEqual(args.func, run_tic_tac_toe)
+        self.assertTrue(args.dry_run)
+        self.assertEqual(args.serial_port, "/dev/ttyACM0")
+
+        #  act / assert - short form of parameters, real Erika
+        args = parser.parse_args(
+            ["tictactoe", "-p", "/dev/ttyACM0"])
+        self.assertEqual(args.func, run_tic_tac_toe)
+        self.assertFalse(args.dry_run)
+        self.assertEqual(args.serial_port, "/dev/ttyACM0")
+
+
     def test_argument_parser_prints_help(self):
         """simple test that ArgumentParser will print help text and exit"""
         # arrange
@@ -58,6 +79,7 @@ class CliTest(unittest.TestCase):
         self.assertTrue("--help" in actual_stdout)
         self.assertTrue("erika.sh" in actual_stdout)
         self.assertTrue("render_ascii_art" in actual_stdout)
+        self.assertTrue("tictactoe" in actual_stdout)
         self.assertTrue("demo" in actual_stdout)
 
         # act / assert
@@ -66,6 +88,7 @@ class CliTest(unittest.TestCase):
         self.assertTrue("--help" in actual_stdout)
         self.assertTrue("erika.sh" in actual_stdout)
         self.assertTrue("render_ascii_art" in actual_stdout)
+        self.assertTrue("tictactoe" in actual_stdout)
         self.assertTrue("demo" in actual_stdout)
 
         # act / assert
@@ -111,6 +134,14 @@ class CliTest(unittest.TestCase):
         self.assertTrue("-h" in actual_stdout)
         self.assertTrue("--help" in actual_stdout)
         self.assertTrue("erika.sh demo" in actual_stdout)
+        self.assertTrue("--dry-run, -d" in actual_stdout)
+        self.assertTrue("--serial-port SERIAL_PORT, -p SERIAL_PORT" in actual_stdout)
+
+        # act / assert
+        actual_stdout = self.call_parse_args_and_capture_stdout(parser, ["tictactoe", "-h"])
+        self.assertTrue("-h" in actual_stdout)
+        self.assertTrue("--help" in actual_stdout)
+        self.assertTrue("erika.sh tictactoe" in actual_stdout)
         self.assertTrue("--dry-run, -d" in actual_stdout)
         self.assertTrue("--serial-port SERIAL_PORT, -p SERIAL_PORT" in actual_stdout)
 

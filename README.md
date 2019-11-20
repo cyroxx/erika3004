@@ -133,11 +133,13 @@ specified rendering strategy, like before for ASCII art images.
 To run the Tic Tac Toe game in a simulated environment, call this in your shell:
 
 ```
-python3 -m erika.TicTacToe
+ ./erika.sh tictactoe -d -p "fake_port_because_dry_run"
 ```
 
-**Work in Progress** : Play against the real Erika machine.
-
+Play against the real Erika machine (use the right port as parameter):
+```
+./erika.sh tictactoe -p "/dev/ttyACM0"
+```
 
 ## Testing
 

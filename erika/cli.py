@@ -1,7 +1,6 @@
 # PYTHON_ARGCOMPLETE_OK
 # ^ is about auto-completion, see https://argcomplete.readthedocs.io/en/latest/#global-completion
 
-import argcomplete
 import os
 import sys
 from argparse import ArgumentParser
@@ -10,6 +9,9 @@ from multiprocessing import Process
 from multiprocessing import Queue
 from queue import Empty
 
+import argcomplete
+
+from erika.TicTacToe import TicTacToe
 from erika.erika import Erika
 from erika.erika_image_renderer import *
 from erika.erika_mock import *
@@ -23,6 +25,7 @@ def create_argument_parser():
     command_parser = parser.add_subparsers(help='Available commands')
     add_render_demo_parser(command_parser)
     add_render_ascii_art_parser(command_parser)
+    add_run_tic_tac_toe_parser(command_parser)
     argcomplete.autocomplete(parser, always_complete_options=True)
     return parser
 
@@ -30,6 +33,12 @@ def create_argument_parser():
 def add_render_demo_parser(command_parser):
     demo_argument_parser = command_parser.add_parser('demo', help='Do a simple demo')
     demo_argument_parser.set_defaults(func=print_demo)
+    add_basic_erika_params(demo_argument_parser)
+
+
+def add_run_tic_tac_toe_parser(command_parser):
+    demo_argument_parser = command_parser.add_parser('tictactoe', help='Run the tic tac toe game')
+    demo_argument_parser.set_defaults(func=run_tic_tac_toe)
     add_basic_erika_params(demo_argument_parser)
 
 
@@ -85,6 +94,12 @@ def print_ascii_art(args):
         erika = get_erika_for_given_args(args)
         renderer = ErikaImageRenderer(erika, strategy_string)
         renderer.render_file(file_path)
+
+
+def run_tic_tac_toe(args):
+    erika = get_erika_for_given_args(args, is_character_based=True)
+    game = TicTacToe(erika)
+    game.start_game()
 
 
 def get_erika_for_given_args(args, is_character_based=False):
