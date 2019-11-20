@@ -276,7 +276,7 @@ class CharacterBasedErikaMock(AbstractErikaMock):
                 # if self.delay_after_each_step > 0:
                 #     sleep(self.delay_after_each_step)
                 pass
-                # self.stdscr.addstr(text)
+        self.stdscr.addstr(text)
 
     def _test_debug_helper_print_canvas(self):
         """for debugging: print the current canvas to stdout"""
