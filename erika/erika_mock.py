@@ -188,16 +188,40 @@ class CharacterBasedErikaMock(AbstractErikaMock):
     # character-based
 
     def move_up(self):
-        self._cursor_up()
+        if not self.inside_unit_test:
+            self._cursor_up()
+        self.canvas_y -= 1
 
     def move_down(self):
-        self._cursor_down()
+        if not self.inside_unit_test:
+            self._cursor_down()
+        self.canvas_y += 1
 
     def move_left(self):
-        self._cursor_back()
+        if not self.inside_unit_test:
+            self._cursor_back()
+        self.canvas_x -= 1
 
     def move_right(self):
-        self._cursor_forward()
+        if not self.inside_unit_test:
+            self._cursor_forward()
+        self.canvas_x += 1
+
+    def _cursor_up(self, n=1):
+        y, x = self.stdscr.getyx()
+        self.stdscr.move(y - n, x)
+
+    def _cursor_down(self, n=1):
+        y, x = self.stdscr.getyx()
+        self.stdscr.move(y + n, x)
+
+    def _cursor_forward(self, n=1):
+        y, x = self.stdscr.getyx()
+        self.stdscr.move(y, x + n)
+
+    def _cursor_back(self, n=1):
+        y, x = self.stdscr.getyx()
+        self.stdscr.move(y, x - n)
 
     def _cursor_up(self, n=1):
         y, x = self.stdscr.getyx()
@@ -247,6 +271,7 @@ class CharacterBasedErikaMock(AbstractErikaMock):
 
             self.canvas_x += 1
             if self.output_after_each_step:
+                # TODO Robert
                 # self._test_debug_helper_print_canvas()
                 # if self.delay_after_each_step > 0:
                 #     sleep(self.delay_after_each_step)
