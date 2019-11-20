@@ -3,12 +3,12 @@ Record any printing and movement calls to Erika in a 2D array for testing purpos
 
 This way, rendering algorithms can be tested.
 """
-import curses
 #     x
 #     ===>
 # y ||
 #   ||
 #   \/
+import curses
 import sys
 from time import sleep
 
@@ -32,24 +32,12 @@ ERIKA_PAGE_HEIGHT_MICROSTEPS = ERIKA_PAGE_HEIGHT_CHARACTERS * MICROSTEPS_PER_CHA
 
 class AbstractErikaMock(AbstractErika):
 
+    # TODO are all these methods used?
+    # To keep things testable: If the methods make sense for the AbstractErikaMock implementations,
+    # add useful test behavior so Erika and AbstractErikaMock are always close!
+
     def _decode_character(self, char):
         pass
-
-    def _cursor_up(self, n=1):
-        y, x = self.stdscr.getyx()
-        self.stdscr.move(y - n, x)
-
-    def _cursor_down(self, n=1):
-        y, x = self.stdscr.getyx()
-        self.stdscr.move(y + n, x)
-
-    def _cursor_forward(self, n=1):
-        y, x = self.stdscr.getyx()
-        self.stdscr.move(y, x + n)
-
-    def _cursor_back(self, n=1):
-        y, x = self.stdscr.getyx()
-        self.stdscr.move(y, x - n)
 
     def _cursor_next_line(self, n=1):
         pass
@@ -210,6 +198,22 @@ class CharacterBasedErikaMock(AbstractErikaMock):
 
     def move_right(self):
         self._cursor_forward()
+
+    def _cursor_up(self, n=1):
+        y, x = self.stdscr.getyx()
+        self.stdscr.move(y - n, x)
+
+    def _cursor_down(self, n=1):
+        y, x = self.stdscr.getyx()
+        self.stdscr.move(y + n, x)
+
+    def _cursor_forward(self, n=1):
+        y, x = self.stdscr.getyx()
+        self.stdscr.move(y, x + n)
+
+    def _cursor_back(self, n=1):
+        y, x = self.stdscr.getyx()
+        self.stdscr.move(y, x - n)
 
     def crlf(self):
         self.stdscr.addstr("\n")
