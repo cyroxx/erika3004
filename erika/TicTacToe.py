@@ -1,18 +1,9 @@
-import sys
-
-sys.path.append('./')
-sys.path.append('../')
-sys.path.append('./erika')
-import os
-
-print(os.getcwd())
-print(sys.path)
 from enum import Enum
 from math import ceil
 
 import numpy as np
-from erika import Erika
-from erika_mock import ErikaMock
+
+from erika.erika_mock import CharacterBasedErikaMock
 
 
 class Players(Enum):
@@ -57,8 +48,6 @@ class TicTacToe:
 
         # setup erika
         self.erika = erika
-
-        self.start_game()
 
     def __enter__(self):
         return self
@@ -243,8 +232,7 @@ class TicTacToe:
 
 if __name__ == "__main__":
     # Erika("/dev/ttyAMA0")
-    import os
 
-    print(os.getcwd())
-    with ErikaMock() as erika:
+    with CharacterBasedErikaMock() as erika:
         game = TicTacToe(erika)
+        game.start_game()
