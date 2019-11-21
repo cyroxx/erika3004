@@ -21,7 +21,9 @@ DRY_RUN_HEIGHT = 40
 
 
 def create_argument_parser():
-    parser = ArgumentParser(prog='erika.sh', description='Erika type writer connector CLI')
+    parser = ArgumentParser(prog='erika.sh',
+                            formatter_class=RawTextHelpFormatter,
+                            description='Erika type writer connector CLI')
     command_parser = parser.add_subparsers(help='Available commands')
     add_render_demo_parser(command_parser)
     add_render_ascii_art_parser(command_parser)
@@ -37,9 +39,15 @@ def add_render_demo_parser(command_parser):
 
 
 def add_run_tic_tac_toe_parser(command_parser):
-    demo_argument_parser = command_parser.add_parser('tictactoe', help='Run the tic tac toe game')
-    demo_argument_parser.set_defaults(func=run_tic_tac_toe)
-    add_basic_erika_params(demo_argument_parser)
+    argument_parser = command_parser.add_parser('tictactoe',
+                                                     formatter_class=RawTextHelpFormatter,
+                                                     help="""Run the tic tac toe game
+To control the game: 
+    * use the WASD keys to move
+    * use the space bar to make your mark at the current position
+""")
+    argument_parser.set_defaults(func=run_tic_tac_toe)
+    add_basic_erika_params(argument_parser)
 
 
 def add_basic_erika_params(argument_parser):

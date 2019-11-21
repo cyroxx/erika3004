@@ -141,6 +141,10 @@ Play against the real Erika machine (use the right port as parameter):
 ./erika.sh tictactoe -p "/dev/ttyACM0"
 ```
 
+To control the game: 
+* use the WASD keys to move
+* use the space bar to make your mark at the current position
+
 ## Testing
 
 ### Run unit tests
