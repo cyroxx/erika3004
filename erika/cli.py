@@ -40,12 +40,14 @@ def add_render_demo_parser(command_parser):
 
 def add_run_tic_tac_toe_parser(command_parser):
     argument_parser = command_parser.add_parser('tictactoe',
-                                                     formatter_class=RawTextHelpFormatter,
-                                                     help="""Run the tic tac toe game
+                                                description="""Run the tic tac toe game
+                                                
 To control the game: 
     * use the WASD keys to move
     * use the space bar to make your mark at the current position
-""")
+""",
+                                                formatter_class=RawTextHelpFormatter,
+                                                help='Run the tic tac toe game')
     argument_parser.set_defaults(func=run_tic_tac_toe)
     add_basic_erika_params(argument_parser)
 
@@ -65,12 +67,18 @@ def print_demo(args):
 
 def add_render_ascii_art_parser(command_parser):
     render_ascii_art_file_parser = command_parser.add_parser('render_ascii_art',
+                                                             aliases=['render_image'],
                                                              formatter_class=RawTextHelpFormatter,
-                                                             help='Rendering ASCII art in a specified pattern (rendering strategy)')
+                                                             help='Rendering ASCII art (or a normal image file) in a specified pattern (rendering strategy)',
+                                                             description='Rendering ASCII art (or a normal image file) in a specified pattern (rendering strategy)')
+
     render_ascii_art_file_parser.set_defaults(func=print_ascii_art)
     add_basic_erika_params(render_ascii_art_file_parser)
     render_ascii_art_file_parser.add_argument('--file', '-f', required=False, metavar='FILEPATH', default='-',
-                                              help='File path to the file to print out, containing a pre-rendered ASCII art image.')
+                                              help="""File path to the file to print out, containing a pre-rendered ASCII art image.
+
+New: If an image file is referenced instead, will do a monochrome print using "." character and microsteps.
+""")
     render_ascii_art_file_parser.add_argument('--strategy', '-s',
                                               choices=['LineByLine', 'Interlaced', 'PerpendicularSpiralInward',
                                                        'RandomDotFill', 'ArchimedeanSpiralOutward'],

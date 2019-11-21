@@ -88,6 +88,7 @@ class CliTest(unittest.TestCase):
         self.assertTrue("--help" in actual_stdout)
         self.assertTrue("erika.sh" in actual_stdout)
         self.assertTrue("render_ascii_art" in actual_stdout)
+        self.assertTrue("render_image" in actual_stdout)
         self.assertTrue("tictactoe" in actual_stdout)
         self.assertTrue("demo" in actual_stdout)
 
@@ -107,7 +108,7 @@ class CliTest(unittest.TestCase):
         self.assertTrue("ArchimedeanSpiralOutward" in actual_stdout)
 
         # act / assert
-        actual_stdout = self.call_parse_args_and_capture_stdout(parser, ["render_ascii_art", "-h"])
+        actual_stdout = self.call_parse_args_and_capture_stdout(parser, ["render_image", "-h"])
         self.assertTrue("-h" in actual_stdout)
         self.assertTrue("--help" in actual_stdout)
         self.assertTrue("erika.sh render_ascii_art" in actual_stdout)
