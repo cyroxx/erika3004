@@ -24,7 +24,7 @@ def create_field(field_size=3, cell_width=3, cell_height=1, vertical_sep="#", ho
     row = vertical_sep.join([cell] * field_size)
     horizontal_line = (horizontal_sep * len(row))
 
-    for i in range (0, field_size - 1):
+    for i in range(0, field_size - 1):
         result.extend([row] * cell_height)
         result.append(horizontal_line)
 
@@ -65,21 +65,15 @@ class TicTacToe:
         # disable keyboard echo
         self.erika.set_keyboard_echo(False)
 
-        # print field
-        self.print_initial_field()
+        self._print_initial_field()
 
-        # move to center / init position
-        self.erika._cursor_back(ceil(self.cell_width / 2))
-        self.move_left(self.pos_x // 2)
-
-        self.erika._cursor_up(self.cell_height // 2)
-        self.move_up(self.pos_y // 2)
+        self._cursor_to_start_position()
 
         self.turn = np.random.randint(1, 3)
         self.game_over = False
         self.game_loop()
 
-    def print_initial_field(self):
+    def _print_initial_field(self):
         ascii_field = create_field(self.field_size, cell_height=self.cell_height
                                    , cell_width=self.cell_width, vertical_sep=self.vertical_sep
                                    , horizontal_sep=self.horizontal_sep)
@@ -87,6 +81,19 @@ class TicTacToe:
             self.erika.print_ascii(ascii_field[i])
             self.erika.crlf()
         self.erika.print_ascii(ascii_field[-1])
+
+    def _cursor_to_start_position(self):
+        # move to center / init position
+
+        steps_to_move_back = ceil(self.cell_width / 2)
+        for i in range(steps_to_move_back):
+            self.erika.move_left()
+        self.move_left(self.pos_x // 2)
+
+        steps_to_move_up = self.cell_height // 2
+        for i in range(steps_to_move_up):
+            self.erika.move_up()
+        self.move_up(self.pos_y // 2)
 
     def game_loop(self):
         while not self.game_over:
@@ -109,7 +116,6 @@ class TicTacToe:
     @staticmethod
     def check_row(game_field, last):
         return (last == game_field).all()
-
 
     def check_winner(self):
         if self.game_over:
@@ -166,22 +172,30 @@ class TicTacToe:
     def move_up(self, n):
         if self.pos_y - n >= 0:
             self.pos_y -= n
-            self.erika._cursor_up((self.cell_height + len(self.horizontal_sep)) * n)
+            steps_to_move = (self.cell_height + len(self.horizontal_sep)) * n
+            for i in range(steps_to_move):
+                self.erika.move_up()
 
     def move_down(self, n):
         if self.pos_y + n < self.field_size:
             self.pos_y += n
-            self.erika._cursor_down((self.cell_height + len(self.horizontal_sep)) * n)
+            steps_to_move = (self.cell_height + len(self.horizontal_sep)) * n
+            for i in range(steps_to_move):
+                self.erika.move_down()
 
     def move_left(self, n):
         if self.pos_x - n >= 0:
             self.pos_x -= n
-            self.erika._cursor_back((self.cell_width + len(self.vertical_sep)) * n)
+            steps_to_move = (self.cell_width + len(self.vertical_sep)) * n
+            for i in range(steps_to_move):
+                self.erika.move_left()
 
     def move_right(self, n):
         if self.pos_x + n < self.field_size:
             self.pos_x += n
-            self.erika._cursor_forward((self.cell_width + len(self.vertical_sep)) * n)
+            steps_to_move = (self.cell_width + len(self.vertical_sep)) * n
+            for i in range(steps_to_move):
+                self.erika.move_right()
 
     def update_last_move(self):
         self.last_move_x = self.pos_x
@@ -228,14 +242,14 @@ class TicTacToe:
     def make_move(self, player):
         self.board[self.pos_y, self.pos_x] = player.value
         self.erika.print_ascii(player.char)
-        self.erika._cursor_back(1)
+        self.erika.move_left()
         self.update_last_move()
 
     def ai_select(self):
         # TODO: implement different strategies
         candidates = np.argwhere(self.board == Players.N0NE.value)
         erikas_choice = candidates[np.random.choice(candidates.shape[0])]
-        #erikas_choice = self.min_max(self.board, Players.Erika)[1]
+        # erikas_choice = self.min_max(self.board, Players.Erika)[1]
 
         self.move_abs(erikas_choice[1], erikas_choice[0])
         self.make_move(Players.Erika)
