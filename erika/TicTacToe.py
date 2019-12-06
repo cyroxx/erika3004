@@ -19,10 +19,16 @@ class Players(Enum):
 
 
 def create_field(field_size=3, cell_width=3, cell_height=1, vertical_sep="#", horizontal_sep="#"):
+    result = []
     cell = " " * cell_width
     row = vertical_sep.join([cell] * field_size)
-    horizontal_line = "\n" + (horizontal_sep * len(row)) + "\n"
-    result = horizontal_line.join(["\n".join([row] * cell_height)] * field_size)
+    horizontal_line = (horizontal_sep * len(row))
+
+    for i in range (0, field_size - 1):
+        result.extend([row] * cell_height)
+        result.append(horizontal_line)
+
+    result.extend([row] * cell_height)
     return result
 
 
@@ -60,10 +66,7 @@ class TicTacToe:
         self.erika.set_keyboard_echo(False)
 
         # print field
-        ascii_field = create_field(self.field_size, cell_height=self.cell_height
-                                   , cell_width=self.cell_width, vertical_sep=self.vertical_sep
-                                   , horizontal_sep=self.horizontal_sep)
-        self.erika.print_ascii(ascii_field)
+        self.print_initial_field()
 
         # move to center / init position
         self.erika._cursor_back(ceil(self.cell_width / 2))
@@ -75,6 +78,15 @@ class TicTacToe:
         self.turn = np.random.randint(1, 3)
         self.game_over = False
         self.game_loop()
+
+    def print_initial_field(self):
+        ascii_field = create_field(self.field_size, cell_height=self.cell_height
+                                   , cell_width=self.cell_width, vertical_sep=self.vertical_sep
+                                   , horizontal_sep=self.horizontal_sep)
+        for i in range(0, len(ascii_field) - 1):
+            self.erika.print_ascii(ascii_field[i])
+            self.erika.crlf()
+        self.erika.print_ascii(ascii_field[-1])
 
     def game_loop(self):
         while not self.game_over:
