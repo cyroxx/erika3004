@@ -111,13 +111,13 @@ class TicTacToe:
                 }
                 input_mapping.get(inp, lambda _: "")(1)
 
-            self.check_winner()
+            self._check_winner()
 
     @staticmethod
     def check_row(game_field, last):
         return (last == game_field).all()
 
-    def check_winner(self):
+    def _check_winner(self):
         if self.game_over:
             return
 
@@ -127,20 +127,20 @@ class TicTacToe:
             return
 
         if self.check_row(self.board[self.last_move_y], last):
-            self.won(last)
+            self._won(last)
         elif self.check_row(self.board.T[self.last_move_x], last):
-            self.won(last)
+            self._won(last)
         elif self.check_row(np.diag(self.board), last):
-            self.won(last)
+            self._won(last)
         elif self.check_row(np.diag(np.fliplr(self.board)), last):
-            self.won(last)
+            self._won(last)
         else:
             candidates = np.argwhere(self.board == Players.N0NE.value)
             if not len(candidates):
-                self.tie()
+                self._tie()
                 return
 
-    def tie(self):
+    def _tie(self):
         self.game_over = True
         self.move_abs(0, self.field_size - 1)
         self.erika._cursor_back(1)
@@ -149,7 +149,7 @@ class TicTacToe:
         self.erika.print_ascii("Press any key to exit.")
         self.erika.read()
 
-    def won(self, winner):
+    def _won(self, winner):
         self.game_over = True
         self.move_abs(0, self.field_size - 1)
         self.erika._cursor_back(1)
@@ -206,7 +206,26 @@ class TicTacToe:
             self.make_move(Players.Player1)
             self.turn = Players.Erika.value
 
-    def _check_winner(self, board, last_move):
+    def min_max(self, board, player, last_move=None):
+        candidates = np.argwhere(board == Players.N0NE.value)
+        # erikas_choice = candidates[np.random.choice(candidates.shape[0])]
+        best_score = -2
+        best_move = None
+        for move in candidates:
+            board_cp = board.copy()
+            board_cp[move[0], move[1]] = player.value
+            if self._check_winner_for_min_max(board_cp, move):
+                return 1, best_move
+            score = -self.min_max(board_cp, Players.Erika if player == Players.Player1 else Players.Player1, move)[0]
+            if score > best_score:
+                best_move = move
+                best_score = score
+        if best_move is None:
+            return 0, best_move
+
+        return 1, best_move
+
+    def _check_winner_for_min_max(self, board, last_move):
         player = board[last_move[0], last_move[1]]
 
         if self.check_row(board[last_move[0]], player):
@@ -219,25 +238,6 @@ class TicTacToe:
             return True
 
         return False
-
-    def min_max(self, board, player, last_move=None):
-        candidates = np.argwhere(board == Players.N0NE.value)
-        # erikas_choice = candidates[np.random.choice(candidates.shape[0])]
-        best_score = -2
-        best_move = None
-        for move in candidates:
-            board_cp = board.copy()
-            board_cp[move[0], move[1]] = player.value
-            if self._check_winner(board_cp, move):
-                return 1, best_move
-            score = -self.min_max(board_cp, Players.Erika if player == Players.Player1 else Players.Player1, move)[0]
-            if score > best_score:
-                best_move = move
-                best_score = score
-        if best_move is None:
-            return 0, best_move
-
-        return 1, best_move
 
     def make_move(self, player):
         self.board[self.pos_y, self.pos_x] = player.value
