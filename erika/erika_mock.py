@@ -121,6 +121,7 @@ class CharacterBasedErikaMock(AbstractErikaMock):
                  inside_unit_test=False):
         self.inside_unit_test = inside_unit_test
 
+        # if your program fails here, add environment variable TERM=linux
         self.stdscr = curses.initscr()
 
         # disable input buffer
