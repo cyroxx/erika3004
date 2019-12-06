@@ -5,6 +5,9 @@ from erika.TicTacToe import TicTacToe
 from erika.erika_mock import CharacterBasedErikaMock
 from tests.erika_mock_unittest import assert_print_output
 
+import pytest
+from pytest_mock import mocker
+
 
 # pytest-based tests must be functions on top level
 def test_check_winner_beginning(mocker):
