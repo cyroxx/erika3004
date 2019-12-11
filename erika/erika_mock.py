@@ -131,6 +131,7 @@ class CharacterBasedErikaMock(AbstractErikaMock):
         curses.nl()
         # wrap special keys
         self.stdscr.keypad(True)
+        self.stdscr.move(0, 0)
 
         self.width = width
         self.height = height
