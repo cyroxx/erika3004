@@ -133,7 +133,7 @@ specified rendering strategy, like before for ASCII art images.
 To run the Tic Tac Toe game in a simulated environment, call this in your shell:
 
 ```
- ./erika.sh tictactoe -d -p "fake_port_because_dry_run"
+ ./erika.sh tictactoe -d
 ```
 
 Play against the real Erika machine (use the right port as parameter):
@@ -143,7 +143,7 @@ Play against the real Erika machine (use the right port as parameter):
 
 To control the game: 
 * use the WASD keys to move
-* use the space bar to make your mark at the current position
+* use the space bar or enter key to make your mark at the current position
 
 ## Testing
 

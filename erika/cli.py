@@ -53,10 +53,11 @@ To control the game:
 
 
 def add_basic_erika_params(argument_parser):
-    argument_parser.add_argument('--dry-run', '-d',
+    argument_group = argument_parser.add_mutually_exclusive_group(required=True)
+    argument_group.add_argument('--dry-run', '-d',
                                  action='store_true',
                                  help='If set, will print to standard out instead of connecting to Erika')
-    argument_parser.add_argument('--serial-port', '-p', required=True, metavar='SERIAL_PORT',
+    argument_group.add_argument('--serial-port', '-p', metavar='SERIAL_PORT',
                                  help='Serial communications port for communicating with the Erika machine.')
 
 
