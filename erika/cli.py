@@ -18,7 +18,7 @@ from erika.erika_mock import *
 
 DRY_RUN_WIDTH = 60
 DRY_RUN_HEIGHT = 40
-
+DRY_RUN_DELAY = 0.005
 
 def create_argument_parser():
     parser = ArgumentParser(prog='erika.sh',
@@ -126,9 +126,9 @@ def get_erika_for_given_args(args, is_character_based=False):
     if is_dry_run:
         if is_character_based:
             # using low size just so it fits on the screen well - does not reflect the paper dimensions that Erika supports
-            # erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True, delay_after_each_step=0.005)
+            # erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True, delay_after_each_step=DRY_RUN_DELAY)
             erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True,
-                                            delay_after_each_step=0.005)
+                                            delay_after_each_step=DRY_RUN_DELAY, exception_if_overprinted=False)
             # slower, but output will not flicker as much
             # erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True, delay_after_each_step=0.05)
         else:
@@ -137,10 +137,10 @@ def get_erika_for_given_args(args, is_character_based=False):
                 # hacky: use exception to determine image type
                 image = WrappedImage(args.file)
                 erika = MicrostepBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True,
-                                                delay_after_each_step=0.005)
+                                                delay_after_each_step=DRY_RUN_DELAY)
             except NotAnImageException:
                 erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True,
-                                                delay_after_each_step=0.005)
+                                                delay_after_each_step=DRY_RUN_DELAY, exception_if_overprinted=False)
 
     else:
         erika = Erika(com_port)
