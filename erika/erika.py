@@ -5,8 +5,8 @@ import serial
 from erika.erica_encoder_decoder import DDR_ASCII
 from erika.util import twos_complement_hex_string
 
-DEFAULT_DELAY = 0.3
-LINE_BREAK_DELAY = 2.0
+DEFAULT_DELAY = 0.0
+LINE_BREAK_DELAY = 0.0
 
 # confirmed experimentally
 MICROSTEPS_PER_CHARACTER_WIDTH = 10
@@ -132,7 +132,7 @@ class Erika(AbstractErika):
     def __init__(self, com_port, *args, **kwargs):
         """Set comport to serial device that connects to Erika typewriter."""
         self.com_port = com_port
-        self.connection = serial.Serial(com_port, 1200)  # , timeout=0, parity=serial.PARITY_EVEN, rtscts=1)
+        self.connection = serial.Serial(com_port, 1200, rtscts=True)  # , timeout=0, parity=serial.PARITY_EVEN, rtscts=1)
         self.ddr_ascii = DDR_ASCII()
 
     ## resource manager stuff
@@ -166,28 +166,20 @@ class Erika(AbstractErika):
             self._write_byte_delay(key_id)
 
     def move_up(self):
-        self._print_raw("76")
-        time.sleep(DEFAULT_DELAY)
-        self._print_raw("76")
-        time.sleep(DEFAULT_DELAY)
+        self._write_byte_delay("76")
+        self._write_byte_delay("76")
 
     def move_down(self):
-        self._print_raw("75")
-        time.sleep(DEFAULT_DELAY)
-        self._print_raw("75")
-        time.sleep(DEFAULT_DELAY)
+        self._write_byte_delay("75")
+        self._write_byte_delay("75")
 
     def move_left(self):
-        self._print_raw("74")
-        time.sleep(DEFAULT_DELAY)
-        self._print_raw("74")
-        time.sleep(DEFAULT_DELAY)
+        self._write_byte_delay("74")
+        self._write_byte_delay("74")
 
     def move_right(self):
-        self._print_raw("73")
-        time.sleep(DEFAULT_DELAY)
-        self._print_raw("73")
-        time.sleep(DEFAULT_DELAY)
+        self._write_byte_delay("73")
+        self._write_byte_delay("73")
 
     def move_down_microstep(self):
         self._write_byte_delay("81")
@@ -223,8 +215,7 @@ class Erika(AbstractErika):
         self.move_left_microsteps(MICROSTEPS_PER_CHARACTER_WIDTH - 1)
 
     def crlf(self):
-        self._print_raw("77")
-        time.sleep(LINE_BREAK_DELAY)
+        self._write_byte_delay("77")
 
     def set_keyboard_echo(self, value):
         if value:
