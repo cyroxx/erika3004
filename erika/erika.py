@@ -65,6 +65,7 @@ class AbstractErika(MetaclassForEnforcingMethods):
         else:
             return super(AbstractErika, cls).__new__(cls)
 
+
     @enforcedmethod
     def alarm(self, duration):
         pass
@@ -127,7 +128,6 @@ class AbstractErika(MetaclassForEnforcingMethods):
 
 
 class Erika(AbstractErika):
-    conversion_table_path = "erika/charTranslation.json"
 
     def __init__(self, com_port, *args, **kwargs):
         """Set comport to serial device that connects to Erika typewriter."""
