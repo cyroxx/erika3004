@@ -85,7 +85,11 @@ class TicTacToe:
             self.erika.move_up()
 
     def _cursor_to_start_position(self):
-        # move to center / init position
+        # move to center of block
+        for i in range(self.field_size // 2):
+            self.erika.move_right()
+
+        # move to initial position (middle)
         self.move_abs(self.field_size // 2, self.field_size // 2)
 
     def game_loop(self):
