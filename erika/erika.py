@@ -18,6 +18,7 @@ MICROSTEPS_PER_CHARACTER_WIDTH = 10
 # confirmed experimentally
 MICROSTEPS_PER_CHARACTER_HEIGHT = 20
 
+
 class Direction(Enum):
     RIGHT = "73"
     LEFT = "74"
@@ -104,15 +105,15 @@ class AbstractErika(EscapeSequenceDecoder):
     def print_pixel(self):
         pass
 
-    @enforcedmethod
+    # TODO discuss if we need this everywhere
+    # @enforcedmethod
     def decode(self, string):
         pass
 
 
 class Erika(AbstractErika):
-    conversion_table_path = "erika/charTranslation.json"
 
-    def __init__(self, com_port, rts_cts, *args, **kwargs):
+    def __init__(self, com_port, rts_cts=False, *args, **kwargs):
         """Set comport to serial device that connects to Erika typewriter."""
         self.com_port = com_port
         self.connection = serial.Serial(com_port, ERIKA_BAUDRATE)  # , timeout=0, parity=serial.PARITY_EVEN, rtscts=1)

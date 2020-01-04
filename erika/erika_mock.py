@@ -110,6 +110,7 @@ class AbstractErikaMock(AbstractErika):
         raise Exception('Not supported yet')
 
 
+# to get exception-safe behavior, make sure __exit__ is always called (by using with-statements)
 class CharacterBasedErikaMock(AbstractErikaMock):
 
     def __init__(self,
@@ -124,11 +125,12 @@ class CharacterBasedErikaMock(AbstractErikaMock):
         # if your program fails here, add environment variable TERM=linux
         self.stdscr = curses.initscr()
 
-        # disable input buffer
-        # caused error when running tests
+        # no enter key needed to post input;
+        # can be disabled, it caused error when running print-out-only tests
         if not self.inside_unit_test:
             curses.cbreak()
         curses.nl()
+
         # wrap special keys
         self.stdscr.keypad(True)
         self.stdscr.move(0, 0)
@@ -241,9 +243,6 @@ class CharacterBasedErikaMock(AbstractErikaMock):
         y, x = self.stdscr.getyx()
         self.stdscr.move(y, x - n)
 
-    def crlf(self):
-        self.stdscr.addstr("\n")
-
     def demo(self):
         for i in range(0, 10):
             self.move_down()
@@ -254,6 +253,8 @@ class CharacterBasedErikaMock(AbstractErikaMock):
     def crlf(self):
         self.canvas_x = 0
         self.canvas_y += 1
+        y, x = self.stdscr.getyx()
+        self.stdscr.move(y + 1, 0)
 
     def print_ascii(self, text):
         for c in text:
