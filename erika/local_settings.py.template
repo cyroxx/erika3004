@@ -3,7 +3,7 @@
 ### DEFAULTS - feel free to change! ###
 #######################################
 
-ERIKA_MAX_LINE_LENGTH = 60
+ERIKA_MAX_LINE_LENGTH = 78
 
 COMMA_SEPARATED_HASH_TAGS_TO_LISTEN_FOR= "cccp,nowbb,makerfair"
 
