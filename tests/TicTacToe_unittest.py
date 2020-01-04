@@ -18,7 +18,7 @@ def test_check_winner_beginning(mocker):
         mocker.patch.object(game, '_won')
         mocker.patch.object(game, '_tie')
 
-        game._check_winner()
+        game._check_winner_for_last_move()
 
         assert not game._tie.called
         assert not game._won.called
@@ -38,7 +38,7 @@ def test_check_winner_win_erika(mocker):
         game.board[1][1] = Players.Erika.value
         game.board[2][2] = Players.Erika.value
 
-        game._check_winner()
+        game._check_winner_for_last_move()
 
         assert not game._tie.called
         assert game._won.called
@@ -59,8 +59,13 @@ def test_check_winner_win_player(mocker):
         game.board[0][0] = Players.Erika.value
         game.board[1][1] = Players.Erika.value
 
-        game._check_winner()
+        game.last_move_y = game.last_move_x = 1
+        game._check_winner_for_last_move()
+        assert not game._tie.called
+        assert not game._won.called
 
+        game.last_move_y = game.last_move_x = 2
+        game._check_winner_for_last_move()
         assert not game._tie.called
         assert game._won.called
         game._won.assert_called_with(Players.Player1.value)
@@ -89,7 +94,7 @@ def test_check_winner_game_tied(mocker):
         game.board[2][1] = Players.Player1.value
         game.board[2][2] = Players.Player1.value
 
-        game._check_winner()
+        game._check_winner_for_last_move()
 
         assert game._tie.called
         assert not game._won.called

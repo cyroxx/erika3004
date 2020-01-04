@@ -1,9 +1,6 @@
 from enum import Enum
-from math import ceil
 
 import numpy as np
-
-from erika.erika_mock import CharacterBasedErikaMock
 
 
 class Players(Enum):
@@ -45,7 +42,7 @@ class TicTacToe:
         self.board = np.zeros((self.field_size, self.field_size), dtype=np.uint8)
 
         # setup initial cursor position
-        self.pos_y = self.pos_x = self.field_size - 1
+        self.pos_y = self.pos_x = 0
         self.last_move_x = self.pos_x
         self.last_move_y = self.pos_y
 
@@ -82,18 +79,14 @@ class TicTacToe:
             self.erika.crlf()
         self.erika.print_ascii(ascii_field[-1])
 
+        for i in range(0, len(ascii_field[0])):
+            self.erika.move_left()
+        for i in range(0, len(ascii_field) - 1):
+            self.erika.move_up()
+
     def _cursor_to_start_position(self):
         # move to center / init position
-
-        steps_to_move_back = ceil(self.cell_width / 2)
-        for i in range(steps_to_move_back):
-            self.erika.move_left()
-        self.move_left(self.pos_x // 2)
-
-        steps_to_move_up = self.cell_height // 2
-        for i in range(steps_to_move_up):
-            self.erika.move_up()
-        self.move_up(self.pos_y // 2)
+        self.move_abs(self.field_size // 2, self.field_size // 2)
 
     def game_loop(self):
         while not self.game_over:
@@ -111,13 +104,13 @@ class TicTacToe:
                 }
                 input_mapping.get(inp, lambda _: "")(1)
 
-            self._check_winner()
+            self._check_winner_for_last_move()
 
     @staticmethod
     def check_row(game_field, last):
         return (last == game_field).all()
 
-    def _check_winner(self):
+    def _check_winner_for_last_move(self):
         if self.game_over:
             return
 
@@ -135,8 +128,9 @@ class TicTacToe:
         elif self.check_row(np.diag(np.fliplr(self.board)), last):
             self._won(last)
         else:
-            candidates = np.argwhere(self.board == Players.N0NE.value)
-            if not len(candidates):
+            next_move_candidates = np.argwhere(self.board == Players.N0NE.value)
+            # no more move options
+            if not len(next_move_candidates):
                 self._tie()
                 return
 
@@ -257,8 +251,10 @@ class TicTacToe:
 
 
 if __name__ == "__main__":
-    # Erika("/dev/ttyAMA0")
-
-    with CharacterBasedErikaMock() as erika:
+    # should rather
+    # a) not be called as main module, but through CLI (this solves all problems here)
+    # or b) at least (re)use something like erika.cli.get_erika_for_given_args_internal to allow for a real Erika to be used
+    with CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True,
+                                 delay_after_each_step=DRY_RUN_DELAY, exception_if_overprinted=False) as erika:
         game = TicTacToe(erika)
         game.start_game()
