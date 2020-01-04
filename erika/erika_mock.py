@@ -125,6 +125,8 @@ class CharacterBasedErikaMock(AbstractErikaMock):
         # if your program fails here, add environment variable TERM=linux
         self.stdscr = curses.initscr()
 
+        self._resize_if_more_space_is_needed(height, width)
+
         # no enter key needed to post input;
         # can be disabled, it caused error when running print-out-only tests
         if not self.inside_unit_test:
@@ -161,6 +163,11 @@ class CharacterBasedErikaMock(AbstractErikaMock):
         # caused error when running tests
         if not self.inside_unit_test:
             curses.endwin()
+
+    def _resize_if_more_space_is_needed(self, height, width):
+        window_max_y, window_max_x = self.stdscr.getmaxyx()
+        if window_max_x <= (width + 2) or window_max_y <= (height + 2):
+            self.stdscr.resize(max(window_max_y, height + 2), max(window_max_x, width + 2))
 
     def set_keyboard_echo(self, value):
         if value:
