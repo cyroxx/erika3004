@@ -2,7 +2,10 @@ import io
 import unittest
 import unittest.mock
 
-from erika.cli import *
+from erika.cli import create_argument_parser
+from erika.cli import print_ascii_art
+from erika.cli import print_demo
+from erika.cli import run_tic_tac_toe
 
 
 class CliTest(unittest.TestCase):

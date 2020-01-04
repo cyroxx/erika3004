@@ -20,6 +20,7 @@ DRY_RUN_WIDTH = 60
 DRY_RUN_HEIGHT = 40
 DRY_RUN_DELAY = 0.005
 
+
 def create_argument_parser():
     parser = ArgumentParser(prog='erika.sh',
                             formatter_class=RawTextHelpFormatter,
@@ -55,10 +56,10 @@ To control the game:
 def add_basic_erika_params(argument_parser):
     argument_group = argument_parser.add_mutually_exclusive_group(required=True)
     argument_group.add_argument('--dry-run', '-d',
-                                 action='store_true',
-                                 help='If set, will print to standard out instead of connecting to Erika')
+                                action='store_true',
+                                help='If set, will print to standard out instead of connecting to Erika')
     argument_group.add_argument('--serial-port', '-p', metavar='SERIAL_PORT',
-                                 help='Serial communications port for communicating with the Erika machine.')
+                                help='Serial communications port for communicating with the Erika machine.')
 
 
 def print_demo(args):
@@ -135,9 +136,9 @@ def get_erika_for_given_args(args, is_character_based=False):
             # a bit hacky, as I'm mirroring behavior from ErikaImageRenderer - this kindof goes against the now-beautiful architecture :(
             try:
                 # hacky: use exception to determine image type
-                image = WrappedImage(args.file)
+                image_for_provoking_exception = WrappedImage(args.file)
                 erika = MicrostepBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True,
-                                                delay_after_each_step=DRY_RUN_DELAY)
+                                                delay_after_each_step=DRY_RUN_DELAY, exception_if_overprinted=False)
             except NotAnImageException:
                 erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True,
                                                 delay_after_each_step=DRY_RUN_DELAY, exception_if_overprinted=False)
