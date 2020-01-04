@@ -234,22 +234,6 @@ class CharacterBasedErikaMock(AbstractErikaMock):
         y, x = self.stdscr.getyx()
         self.stdscr.move(y, x - n)
 
-    def _cursor_up(self, n=1):
-        y, x = self.stdscr.getyx()
-        self.stdscr.move(y - n, x)
-
-    def _cursor_down(self, n=1):
-        y, x = self.stdscr.getyx()
-        self.stdscr.move(y + n, x)
-
-    def _cursor_forward(self, n=1):
-        y, x = self.stdscr.getyx()
-        self.stdscr.move(y, x + n)
-
-    def _cursor_back(self, n=1):
-        y, x = self.stdscr.getyx()
-        self.stdscr.move(y, x - n)
-
     def demo(self):
         for i in range(0, 10):
             self.move_down()
