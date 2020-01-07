@@ -130,11 +130,8 @@ def get_erika_for_given_args(args, is_character_based=False):
     if is_dry_run:
         if is_character_based:
             # using low size just so it fits on the screen well - does not reflect the paper dimensions that Erika supports
-            # erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True, delay_after_each_step=DRY_RUN_DELAY)
-            erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True,
-                                            delay_after_each_step=DRY_RUN_DELAY, exception_if_overprinted=False)
-            # slower, but output will not flicker as much
-            # erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True, delay_after_each_step=0.05)
+            erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, delay_after_each_step=DRY_RUN_DELAY,
+                                            exception_if_overprinted=False)
         else:
             # a bit hacky, as I'm mirroring behavior from ErikaImageRenderer - this kindof goes against the now-beautiful architecture :(
             try:
@@ -143,8 +140,8 @@ def get_erika_for_given_args(args, is_character_based=False):
                 erika = MicrostepBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True,
                                                 delay_after_each_step=DRY_RUN_DELAY, exception_if_overprinted=False)
             except NotAnImageException:
-                erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True,
-                                                delay_after_each_step=DRY_RUN_DELAY, exception_if_overprinted=False)
+                erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, delay_after_each_step=DRY_RUN_DELAY,
+                                                exception_if_overprinted=False)
 
     else:
         erika = Erika(com_port)

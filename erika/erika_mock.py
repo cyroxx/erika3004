@@ -148,7 +148,6 @@ class CharacterBasedErikaMock(AbstractErikaMock):
         self.canvas_x = 0
         self.canvas_y = 0
         self.exception_if_overprinted = exception_if_overprinted
-        self.output_after_each_step = output_after_each_step
         self.delay_after_each_step = delay_after_each_step
 
     def __enter__(self):
@@ -267,13 +266,10 @@ class CharacterBasedErikaMock(AbstractErikaMock):
                 sys.exit(1)
 
             self.canvas_x += 1
-            if self.output_after_each_step:
-                # TODO Robert
-                # self._test_debug_helper_print_canvas()
-                # if self.delay_after_each_step > 0:
-                #     sleep(self.delay_after_each_step)
-                pass
         self.stdscr.addstr(text)
+        if self.delay_after_each_step > 0:
+            sleep(self.delay_after_each_step)
+        sys.stdout.flush()
 
     def _test_debug_helper_print_canvas(self):
         """for debugging: print the current canvas to stdout"""
@@ -290,7 +286,6 @@ class MicrostepBasedErikaMock(AbstractErikaMock):
                  width=ERIKA_PAGE_WIDTH_MICROSTEPS_HARD_LIMIT_AT_12_CHARS_PER_INCH,
                  height=ERIKA_PAGE_HEIGHT_MICROSTEPS,
                  exception_if_overprinted=True,
-                 output_after_each_step=False,
                  delay_after_each_step=0):
         self.width = width
         self.height = height
@@ -303,7 +298,6 @@ class MicrostepBasedErikaMock(AbstractErikaMock):
         self.canvas_x = 0
         self.canvas_y = 0
         self.exception_if_overprinted = exception_if_overprinted
-        self.output_after_each_step = output_after_each_step
         self.delay_after_each_step = delay_after_each_step
 
     # microstep-based
@@ -332,10 +326,8 @@ class MicrostepBasedErikaMock(AbstractErikaMock):
                   "if you need more space".format(self.canvas_x, self.canvas_y, self.width, self.height))
             sys.exit(1)
         self.canvas_x += 1
-        if self.output_after_each_step:
-            self._test_debug_helper_print_canvas()
-            if self.delay_after_each_step > 0:
-                sleep(self.delay_after_each_step)
+        if self.delay_after_each_step > 0:
+            sleep(self.delay_after_each_step)
 
     def wait_for_user_if_simulated(self):
         pass
