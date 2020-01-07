@@ -82,6 +82,19 @@ sudo apt-get install python3-pip
 pip3 install -r requirements.txt
 ```
 
+### Install tab autocompletion for erika.sh
+
+If you want to use the command-line interface (CLI) of `erika.sh` with automated completion if you press the <Tab> character, 
+run the install script:  
+```
+./activate_autocomplete_for_erika_sh.sh
+```
+
+The script may fail under certain circumstances - requiring SUDO permissions. In this case, try again like this: 
+```
+sudo ./activate_autocomplete_for_erika_sh.sh
+```
+
 
 ## ASCII art
 
