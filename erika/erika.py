@@ -110,6 +110,11 @@ class AbstractErika(EscapeSequenceDecoder):
     def decode(self, string):
         pass
 
+    @enforcedmethod
+    def wait_for_user_if_simulated(self):
+        pass
+
+
 
 class Erika(AbstractErika):
 
@@ -344,3 +349,7 @@ class Erika(AbstractErika):
 
     def _restore_cursor_position(self):
         pass
+
+    def wait_for_user_if_simulated(self):
+        pass
+

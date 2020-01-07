@@ -112,6 +112,9 @@ def print_ascii_art(args):
         erika = get_erika_for_given_args(args)
         renderer = ErikaImageRenderer(erika, strategy_string)
         renderer.render_file(file_path)
+    erika.wait_for_user_if_simulated()
+    # I googled - it's okay to call __exit__ directly ( https://stackoverflow.com/a/26635947/1143126 )
+    erika.__exit__()
 
 
 def run_tic_tac_toe(args):

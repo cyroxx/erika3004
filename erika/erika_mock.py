@@ -179,6 +179,9 @@ class CharacterBasedErikaMock(AbstractErikaMock):
         c = chr(self.stdscr.getch())
         return c
 
+    def wait_for_user_if_simulated(self):
+        self.stdscr.getch()
+
     # microstep-based
 
     def move_down_microstep(self):
@@ -333,6 +336,9 @@ class MicrostepBasedErikaMock(AbstractErikaMock):
             self._test_debug_helper_print_canvas()
             if self.delay_after_each_step > 0:
                 sleep(self.delay_after_each_step)
+
+    def wait_for_user_if_simulated(self):
+        pass
 
     def _test_debug_helper_print_canvas(self):
         """for debugging: print the current canvas to stdout"""
