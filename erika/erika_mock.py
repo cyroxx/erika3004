@@ -133,8 +133,9 @@ class CharacterBasedErikaMock(AbstractErikaMock):
             curses.cbreak()
         curses.nl()
 
-        # wrap special keys
+        # escape sequences (numpad, function keys, ...) will be interpreted
         self.stdscr.keypad(True)
+
         self.stdscr.move(0, 0)
 
         self.width = width
