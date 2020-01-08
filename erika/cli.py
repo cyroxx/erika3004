@@ -64,7 +64,11 @@ def add_basic_erika_params(argument_parser):
 
 def print_demo(args):
     erika = get_erika_for_given_args(args)
-    erika.demo()
+    try:
+        erika.demo()
+    finally:
+        erika.wait_for_user_if_simulated()
+        erika.__exit__()
 
 
 def add_render_ascii_art_parser(command_parser):
