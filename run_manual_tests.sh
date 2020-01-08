@@ -10,10 +10,6 @@
 # Thus, here's the attempt to provide a set of simple tests, to be run as a bash script, to help a reviewer
 # perform at least some checks on the software.
 
-# fail on error
-set -e
-
-
 echo """
 ###########################################
 ### Erika 3004 tool suite: manual tests ###
@@ -28,6 +24,11 @@ come up.
 Afterward, you can be fairly sure everything
 is still working!
 "
+
+# fail on error
+set -e
+# print evvery executed command
+set -x
 
 ./erika.sh -h
 
