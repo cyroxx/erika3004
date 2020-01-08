@@ -253,12 +253,3 @@ class TicTacToe:
         self.make_move(Players.Erika)
         self.turn = Players.Player1.value
 
-
-if __name__ == "__main__":
-    # should rather
-    # a) not be called as main module, but through CLI (this solves all problems here)
-    # or b) at least (re)use something like erika.cli.get_erika_for_given_args_internal to allow for a real Erika to be used
-    with CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True,
-                                 delay_after_each_step=DRY_RUN_DELAY, exception_if_overprinted=False) as erika:
-        game = TicTacToe(erika)
-        game.start_game()
