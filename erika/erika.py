@@ -173,29 +173,29 @@ class Erika(AbstractErika):
         self._cursor_forward()
 
     def move_down_microstep(self):
-        self._write_byte_delay("81")
+        self._write_byte("81")
 
     def move_up_microstep(self):
-        self._write_byte_delay("82")
+        self._write_byte("82")
 
     def move_right_microsteps(self, num_steps=1):
         while num_steps > 127:
-            self._write_byte_delay("A5")
-            self._write_byte_delay(twos_complement_hex_string(127))
+            self._write_byte("A5")
+            self._write_byte(twos_complement_hex_string(127))
             num_steps = num_steps - 127
 
-        self._write_byte_delay("A5")
-        self._write_byte_delay(twos_complement_hex_string(num_steps))
+        self._write_byte("A5")
+        self._write_byte(twos_complement_hex_string(num_steps))
 
     def move_left_microsteps(self, num_steps=1):
         # two's complement numbers: negative value range is 1 bigger than positive (because 0 positive)
         while num_steps > 128:
-            self._write_byte_delay("A5")
-            self._write_byte_delay(twos_complement_hex_string(-128))
+            self._write_byte("A5")
+            self._write_byte(twos_complement_hex_string(-128))
             num_steps = num_steps - 128
 
-        self._write_byte_delay("A5")
-        self._write_byte_delay(twos_complement_hex_string(-1 * num_steps))
+        self._write_byte("A5")
+        self._write_byte(twos_complement_hex_string(-1 * num_steps))
 
     def print_pixel(self):
         """
@@ -206,7 +206,7 @@ class Erika(AbstractErika):
         self.move_left_microsteps(MICROSTEPS_PER_CHARACTER_WIDTH - 1)
 
     def crlf(self):
-        self._write_byte_delay("77")
+        self._write_byte("77")
 
     def set_keyboard_echo(self, value):
         if value:

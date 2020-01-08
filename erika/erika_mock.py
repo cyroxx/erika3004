@@ -100,7 +100,7 @@ class AbstractErikaMock(AbstractErika):
     def _advance_paper(self):
         raise Exception('User is not supposed to call this function directly')
 
-    def _write_byte_delay(self, data, delay=0.5):
+    def _write_byte(self, data, delay=0.5):
         raise Exception('User is not supposed to call this function directly')
 
     def set_keyboard_echo(self, value):
