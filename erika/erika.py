@@ -19,6 +19,7 @@ MICROSTEPS_PER_CHARACTER_WIDTH = 10
 MICROSTEPS_PER_CHARACTER_HEIGHT = 20
 
 
+# command characters should be mapped to enum constants like directions in this case
 class Direction(Enum):
     RIGHT = "73"
     LEFT = "74"
@@ -119,10 +120,10 @@ class AbstractErika(EscapeSequenceDecoder):
 
 class Erika(AbstractErika):
 
-    def __init__(self, com_port, rts_cts=False, *args, **kwargs):
+    def __init__(self, com_port, rts_cts=True, *args, **kwargs):
         """Set comport to serial device that connects to Erika typewriter."""
         self.com_port = com_port
-        self.connection = serial.Serial(com_port, ERIKA_BAUDRATE, rtscts=True)  # , timeout=0, parity=serial.PARITY_EVEN, rtscts=1)
+        self.connection = serial.Serial(com_port, ERIKA_BAUDRATE, rtscts=rts_cts)  # , timeout=0, parity=serial.PARITY_EVEN, rtscts=1)
         self.ddr_ascii = DDR_ASCII()
         self.use_rts_cts = rts_cts
 
