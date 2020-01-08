@@ -117,7 +117,6 @@ class CharacterBasedErikaMock(AbstractErikaMock):
                  width=ERIKA_PAGE_WIDTH_CHARACTERS_SOFT_LIMIT_AT_12_CHARS_PER_INCH,
                  height=ERIKA_PAGE_HEIGHT_CHARACTERS,
                  exception_if_overprinted=True,
-                 output_after_each_step=False,
                  delay_after_each_step=0,
                  inside_unit_test=False):
         self.inside_unit_test = inside_unit_test
@@ -281,12 +280,14 @@ class CharacterBasedErikaMock(AbstractErikaMock):
         print()
 
 
+# TODO in another ticket: switch MicrostepBasedErikaMock over to using curses
 class MicrostepBasedErikaMock(AbstractErikaMock):
 
     def __init__(self,
                  width=ERIKA_PAGE_WIDTH_MICROSTEPS_HARD_LIMIT_AT_12_CHARS_PER_INCH,
                  height=ERIKA_PAGE_HEIGHT_MICROSTEPS,
                  exception_if_overprinted=True,
+                 output_after_each_step=False,
                  delay_after_each_step=0):
         self.width = width
         self.height = height
@@ -300,6 +301,7 @@ class MicrostepBasedErikaMock(AbstractErikaMock):
         self.canvas_y = 0
         self.exception_if_overprinted = exception_if_overprinted
         self.delay_after_each_step = delay_after_each_step
+        self.output_after_each_step = output_after_each_step
 
     # microstep-based
     def move_down_microstep(self):
@@ -327,6 +329,9 @@ class MicrostepBasedErikaMock(AbstractErikaMock):
                   "if you need more space".format(self.canvas_x, self.canvas_y, self.width, self.height))
             sys.exit(1)
         self.canvas_x += 1
+
+        if self.output_after_each_step:
+            self._test_debug_helper_print_canvas()
         if self.delay_after_each_step > 0:
             sleep(self.delay_after_each_step)
 
