@@ -43,6 +43,22 @@ set -x
 ./erika.sh render_ascii_art -d -f ./tests/test_resources/test_ascii_art.txt -s PerpendicularSpiralInward
 ./erika.sh render_ascii_art -d -f ./tests/test_resources/test_ascii_art.txt -s ArchimedeanSpiralOutward
 
+./erika.sh render_image -h
+./erika.sh render_image -d -f ./tests/test_resources/test_image_color.bmp
+./erika.sh render_image -d -f ./tests/test_resources/test_image_grayscale_1.bmp -s LineByLine
+./erika.sh render_image -d -f ./tests/test_resources/test_image_color.bmp -s Interlaced
+./erika.sh render_image -d -f ./tests/test_resources/test_image_color.bmp -s RandomDotFill
+./erika.sh render_image -d -f ./tests/test_resources/test_image_color.bmp -s PerpendicularSpiralInward
+./erika.sh render_image -d -f ./tests/test_resources/test_image_color.bmp -s ArchimedeanSpiralOutward
+
+./erika.sh render_image -h
+./erika.sh render_image -d -f ./tests/test_resources/test_image_color.bmp
+./erika.sh render_image -d -f ./tests/test_resources/test_image_color.bmp -s LineByLine
+./erika.sh render_image -d -f ./tests/test_resources/test_image_color.bmp -s Interlaced
+./erika.sh render_image -d -f ./tests/test_resources/test_image_color.bmp -s RandomDotFill
+./erika.sh render_image -d -f ./tests/test_resources/test_image_color.bmp -s PerpendicularSpiralInward
+./erika.sh render_image -d -f ./tests/test_resources/test_image_color.bmp -s ArchimedeanSpiralOutward
+
 ./erika.sh tictactoe -d
 
 echo """
