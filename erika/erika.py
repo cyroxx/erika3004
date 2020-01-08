@@ -165,6 +165,27 @@ class Erika(AbstractErika):
             key_id = self.ddr_ascii.encode(c)
             self._write_byte_delay(key_id)
     
+    def fast_print(self, text):
+        """uses reverse printing mode to print even faster"""
+        lines = text.split("\n")
+        even = True
+        for line in lines:
+            if even:
+                self._set_reverse_printing_mode(False)
+            else:
+                self._set_reverse_printing_mode(True)
+                #reverse string
+                line = "".join(reversed(line))
+
+            for c in line:
+                key_id = self.ddr_ascii.encode(c)
+                self._write_byte_delay(key_id)
+            
+            self.move_down()
+            even = not even
+        # reset to normal printing mode
+        self._set_reverse_printing_mode(False)
+
     def _set_reverse_printing_mode(self, value):
         if value:
             self._print_raw("8E")
