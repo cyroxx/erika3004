@@ -1,5 +1,9 @@
 #! /bin/bash
 
+# simple script to setup a Raspberry PI
+
+# TODO currently outdated
+
 serial_device="/dev/ttyAMA0"
 erika_speed="1200"
 rpirtsrtc_repo="git://github.com/mholling/rpirtscts.git"
