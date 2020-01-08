@@ -122,8 +122,8 @@ def print_ascii_art(args):
 
 def run_tic_tac_toe(args):
     erika = get_erika_for_given_args(args, is_character_based=True)
-    game = TicTacToe(erika)
-    game.start_game()
+    with TicTacToe(erika) as game:
+        game.start_game()
 
 
 def get_erika_for_given_args(args, is_character_based=False):
