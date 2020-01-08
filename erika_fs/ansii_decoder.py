@@ -363,13 +363,3 @@ class DummyDecoder(EscapeSequenceDecoder):
     def _restore_cursor_position(self):
         print("Restore Cursor Position")
 
-#
-# if __name__ == "__main__":
-#     def test(a=5):
-#         pass
-#
-#
-#     dummy_decoder = DummyDecoder()
-#     print(get_default_args(test))
-#     dummy_decoder.decode("\033[31;1;4mHello\033[0m\033[10A", print)
-#     dummy_decoder.decode("\033[10AHallo", print)
