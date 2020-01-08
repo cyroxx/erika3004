@@ -49,7 +49,12 @@ class MyStreamer(TwythonStreamer):
     def on_success(self, data):
         if 'text' in data:
             username = data['user']['screen_name']
-            tweet = data['text']
+
+            if 'extended_tweet' in data:
+                tweet = data['extended_tweet']['full_text']
+            else:
+                tweet = data['text']
+
             tweet_as_string = "{}: {}".format(username, tweet)
             # print(tweet)
             q.put(tweet_as_string)
@@ -72,7 +77,7 @@ erika = Erika(ERIKA_PORT)
 
 
 def sanitize_tweet(tweet_as_string):
-    allowed_characters = string.digits + string.ascii_letters + "@.,;:# ()_/!\"§+%&=*-'äöüÄÖÜßéè°|$£µ^²³"
+    allowed_characters = string.digits + string.ascii_letters + "@.,;:# ()_/?!\"§+%&=*-'äöüÄÖÜßéè°|$£µ^²³"
     sanitized_tweet = tweet_as_string
     sanitized_tweet = ''.join(c for c in sanitized_tweet if c in allowed_characters)
     sanitized_tweet = sanitized_tweet.replace('@', "(at)")
