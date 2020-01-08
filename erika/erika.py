@@ -164,6 +164,32 @@ class Erika(AbstractErika):
         for c in text:
             key_id = self.ddr_ascii.encode(c)
             self._write_byte_delay(key_id)
+    
+    def _set_reverse_printing_mode(self, value):
+        if value:
+            self._print_raw("8E")
+        else:
+            self._print_raw("8D")
+
+    def _set_correction_mode(self, value):
+        if value:
+            self._print_raw("8C")
+        else:
+            self._print_raw("8B")
+    
+    def _delete_ascii(self, text):
+        """Delete given string on the Erika typewriter."""
+
+        # enable correction_mode and reverse printing
+        self._set_correction_mode(True)
+        self._set_reverse_printing_mode(True)
+        
+        # send text to be deleted
+        self.print_ascii(text)
+
+        # reset to normal operating mode
+        self._set_reverse_printing_mode(False)
+        self._set_correction_mode(False)
 
     def move_up(self):
         self._write_byte_delay("76")
