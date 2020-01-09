@@ -155,23 +155,19 @@ class CharacterBasedErikaMock(AbstractErikaMock):
     # character-based
 
     def move_up(self):
-        if not self.inside_unit_test:
-            self._cursor_up()
+        self._cursor_up()
         self.canvas_y -= 1
 
     def move_down(self):
-        if not self.inside_unit_test:
-            self._cursor_down()
+        self._cursor_down()
         self.canvas_y += 1
 
     def move_left(self):
-        if not self.inside_unit_test:
-            self._cursor_back()
+        self._cursor_back()
         self.canvas_x -= 1
 
     def move_right(self):
-        if not self.inside_unit_test:
-            self._cursor_forward()
+        self._cursor_forward()
         self.canvas_x += 1
 
     def _cursor_up(self, n=1):
