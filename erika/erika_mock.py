@@ -32,55 +32,6 @@ ERIKA_PAGE_HEIGHT_MICROSTEPS = ERIKA_PAGE_HEIGHT_CHARACTERS * MICROSTEPS_PER_CHA
 
 class AbstractErikaMock(AbstractErika):
 
-    # TODO are all these methods used?
-    # To keep things testable: If the methods make sense for the AbstractErikaMock implementations,
-    # add useful test behavior so Erika and AbstractErikaMock are always close!
-
-    def _decode_character(self, char):
-        pass
-
-    def _cursor_next_line(self, n=1):
-        pass
-
-    def _cursor_previous_line(self, n=1):
-        pass
-
-    def _cursor_horizontal_absolute(self, n=1):
-        pass
-
-    def _cursor_position(self, n=1, m=1):
-        pass
-
-    def _erase_in_display(self, n=0):
-        pass
-
-    def _erase_in_line(self, n=0):
-        pass
-
-    def _scroll_up(self, n=1):
-        pass
-
-    def _scroll_down(self, n=1):
-        pass
-
-    def _select_graphic_rendition(self, *n):
-        pass
-
-    def _aux_port_on(self):
-        pass
-
-    def _aux_port_off(self):
-        pass
-
-    def _device_status_report(self):
-        pass
-
-    def _save_cursor_position(self):
-        pass
-
-    def _restore_cursor_position(self):
-        pass
-
     def __enter__(self):
         return self
 
