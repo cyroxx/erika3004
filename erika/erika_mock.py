@@ -289,9 +289,9 @@ class CharacterBasedErikaMock(AbstractErikaMock):
                 sys.exit(1)
             self.canvas_x -= 1
 
-        self._cursor_back(n=len(reversed_text) - 1)
+        self._cursor_back(n=len(reversed_text))
         self.stdscr.addstr(" " * len(reversed_text))
-        self._cursor_back(n=len(reversed_text) - 1)
+        self._cursor_back(n=len(reversed_text))
         if self.delay_after_each_step > 0:
             sleep(self.delay_after_each_step)
         self.stdscr.refresh()
