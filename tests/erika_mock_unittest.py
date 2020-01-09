@@ -84,15 +84,25 @@ class ErikaMockTest(unittest.TestCase):
         my_erika.move_left()
         my_erika.delete_ascii("o")
         assert_print_output(self, my_erika, ["Hell "])
+        y, x = my_erika.stdscr.getyx()
+        self.assertEqual("Hell ".encode(), my_erika.stdscr.instr(0, 0, 5))
+        my_erika.stdscr.move(y, x)
 
         # test that deletion of a reversed string of characters works
         my_erika.delete_ascii("lle")
         assert_print_output(self, my_erika, ["H    "])
+        y, x = my_erika.stdscr.getyx()
+        self.assertEqual("H    ".encode(), my_erika.stdscr.instr(0, 0, 5))
+        my_erika.stdscr.move(y, x)
+
 
         # test that the cursor rests above the "H" now
         my_erika.move_right()
         my_erika.print_ascii("elp")
         assert_print_output(self, my_erika, ["Help "])
+        y, x = my_erika.stdscr.getyx()
+        self.assertEqual("Help ".encode(), my_erika.stdscr.instr(0, 0, 5))
+        my_erika.stdscr.move(y, x)
 
     def test_delete_pixel(self):
         my_erika = MicrostepBasedErikaMock(width=5, height=1, exception_if_overprinted=False)
