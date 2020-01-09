@@ -156,35 +156,35 @@ class CharacterBasedErikaMock(AbstractErikaMock):
 
     def move_up(self):
         self._cursor_up()
-        self.canvas_y -= 1
 
     def move_down(self):
         self._cursor_down()
-        self.canvas_y += 1
 
     def move_left(self):
         self._cursor_back()
-        self.canvas_x -= 1
 
     def move_right(self):
         self._cursor_forward()
-        self.canvas_x += 1
 
     def _cursor_up(self, n=1):
         y, x = self.stdscr.getyx()
         self.stdscr.move(y - n, x)
+        self.canvas_y -= n
 
     def _cursor_down(self, n=1):
         y, x = self.stdscr.getyx()
         self.stdscr.move(y + n, x)
+        self.canvas_y += n
 
     def _cursor_forward(self, n=1):
         y, x = self.stdscr.getyx()
         self.stdscr.move(y, x + n)
+        self.canvas_x += n
 
     def _cursor_back(self, n=1):
         y, x = self.stdscr.getyx()
         self.stdscr.move(y, x - n)
+        self.canvas_x -= n
 
     def demo(self):
         for i in range(0, 10):
@@ -202,7 +202,6 @@ class CharacterBasedErikaMock(AbstractErikaMock):
     def print_ascii(self, text):
         for c in text:
             try:
-                # print('Trying to print letter "{}" at ({}, {}).'.format(c, self.canvas_x, self.canvas_y))
                 if not self.canvas[self.canvas_y][self.canvas_x] == " ":
                     if self.exception_if_overprinted:
                         raise Exception(
@@ -214,9 +213,10 @@ class CharacterBasedErikaMock(AbstractErikaMock):
                       "cli.DRY_RUN_WIDTH and cli.DRY_RUN_HEIGHT "
                       "if you need more space".format(self.canvas_x, self.canvas_y, self.width, self.height))
                 sys.exit(1)
-
             self.canvas_x += 1
+
         self.stdscr.addstr(text)
+
         if self.delay_after_each_step > 0:
             sleep(self.delay_after_each_step)
         self.stdscr.refresh()
@@ -236,9 +236,18 @@ class CharacterBasedErikaMock(AbstractErikaMock):
                 sys.exit(1)
             self.canvas_x -= 1
 
-        self._cursor_back(n=len(reversed_text))
-        self.stdscr.addstr(" " * len(reversed_text))
-        self._cursor_back(n=len(reversed_text))
+        text_length = len(reversed_text)
+
+        # temporarily undo previous change of cursor
+        self.canvas_x += text_length
+
+        self._cursor_back(n=text_length)
+
+        self.stdscr.addstr(" " * text_length)
+        self.canvas_x += text_length
+
+        self._cursor_back(n=text_length)
+
         if self.delay_after_each_step > 0:
             sleep(self.delay_after_each_step)
         self.stdscr.refresh()
