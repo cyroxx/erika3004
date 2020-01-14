@@ -144,8 +144,8 @@ def get_erika_for_given_args(args, is_character_based=False):
             try:
                 # hacky: use exception to determine image type
                 image_for_provoking_exception = WrappedImage(args.file)
-                erika = MicrostepBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, output_after_each_step=True,
-                                                delay_after_each_step=DRY_RUN_DELAY, exception_if_overprinted=False)
+                erika = MicrostepBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, delay_after_each_step=DRY_RUN_DELAY,
+                                                exception_if_overprinted=False)
             except NotAnImageException:
                 erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, delay_after_each_step=DRY_RUN_DELAY,
                                                 exception_if_overprinted=False)

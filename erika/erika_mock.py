@@ -132,9 +132,6 @@ class AbstractErikaMock(AbstractErika):
     def _write_byte(self, data, delay=0.5):
         raise Exception('User is not supposed to call this function directly')
 
-    def set_keyboard_echo(self, value):
-        raise Exception('Not supported yet')
-
     def decode(self, value):
         raise Exception('Not supported yet')
 
