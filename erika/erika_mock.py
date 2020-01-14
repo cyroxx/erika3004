@@ -200,6 +200,7 @@ class CharacterBasedErikaMock(AbstractErikaMock):
         self.stdscr.move(y + 1, 0)
 
     def print_ascii(self, text):
+        y, x = self.stdscr.getyx()
         for c in text:
             try:
                 if not self.canvas[self.canvas_y][self.canvas_x] == " ":
@@ -216,12 +217,18 @@ class CharacterBasedErikaMock(AbstractErikaMock):
             self.canvas_x += 1
 
         self.stdscr.addstr(text)
+        self.stdscr.move(y, x + len(text))
 
         if self.delay_after_each_step > 0:
             sleep(self.delay_after_each_step)
         self.stdscr.refresh()
 
     def delete_ascii(self, reversed_text):
+        text_length = len(reversed_text)
+        if text_length == 0:
+            return
+
+        y, x = self.stdscr.getyx()
         for c in reversed_text:
             try:
                 if self.canvas[self.canvas_y][self.canvas_x] == c:
@@ -236,17 +243,9 @@ class CharacterBasedErikaMock(AbstractErikaMock):
                 sys.exit(1)
             self.canvas_x -= 1
 
-        text_length = len(reversed_text)
-
-        # temporarily undo previous change of cursor
-        self.canvas_x += text_length
-
-        self._cursor_back(n=text_length)
-
+        self.stdscr.move(y, x - text_length + 1)
         self.stdscr.addstr(" " * text_length)
-        self.canvas_x += text_length
-
-        self._cursor_back(n=text_length)
+        self.stdscr.move(y, x - text_length)
 
         if self.delay_after_each_step > 0:
             sleep(self.delay_after_each_step)

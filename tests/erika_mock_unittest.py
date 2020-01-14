@@ -79,6 +79,9 @@ class ErikaMockTest(unittest.TestCase):
         my_erika = CharacterBasedErikaMock(width=5, height=1, inside_unit_test=True, exception_if_overprinted=False)
         my_erika.print_ascii("Hello")
         assert_print_output(self, my_erika, ["Hello"])
+        y, x = my_erika.stdscr.getyx()
+        self.assertEqual("Hello".encode(), my_erika.stdscr.instr(0, 0, 5))
+        my_erika.stdscr.move(y, x)
 
         # test that deletion of 1 character works
         my_erika.move_left()
@@ -95,13 +98,37 @@ class ErikaMockTest(unittest.TestCase):
         self.assertEqual("H    ".encode(), my_erika.stdscr.instr(0, 0, 5))
         my_erika.stdscr.move(y, x)
 
-
         # test that the cursor rests above the "H" now
         my_erika.move_right()
         my_erika.print_ascii("elp")
         assert_print_output(self, my_erika, ["Help "])
         y, x = my_erika.stdscr.getyx()
         self.assertEqual("Help ".encode(), my_erika.stdscr.instr(0, 0, 5))
+        my_erika.stdscr.move(y, x)
+
+    def test_delete_ascii2(self):
+        my_erika = CharacterBasedErikaMock(width=5, height=1, inside_unit_test=True, exception_if_overprinted=False)
+        my_erika.print_ascii("Hello")
+        assert_print_output(self, my_erika, ["Hello"])
+        y, x = my_erika.stdscr.getyx()
+        self.assertEqual("Hello".encode(), my_erika.stdscr.instr(0, 0, 5))
+        my_erika.stdscr.move(y, x)
+
+        # test that deletion of 1 character works
+        my_erika.move_left()
+        my_erika.move_left()
+        my_erika.delete_ascii("lle")
+        assert_print_output(self, my_erika, ["H   o"])
+        y, x = my_erika.stdscr.getyx()
+        self.assertEqual("H   o".encode(), my_erika.stdscr.instr(0, 0, 5))
+        my_erika.stdscr.move(y, x)
+
+        my_erika.move_right()
+        my_erika.move_right()
+        my_erika.print_ascii("x")
+        assert_print_output(self, my_erika, ["H x o"])
+        y, x = my_erika.stdscr.getyx()
+        self.assertEqual("H x o".encode(), my_erika.stdscr.instr(0, 0, 5))
         my_erika.stdscr.move(y, x)
 
     def test_delete_pixel(self):
