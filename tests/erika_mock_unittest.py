@@ -17,8 +17,8 @@ def assert_print_output(test_case, my_erika, expected_array_of_joined_lines):
     temp_y = 0
     for line in range(len(expected_array_of_joined_lines)):
         expected_line_joined = expected_array_of_joined_lines[line]
-        expected_line_encoded = expected_line_joined.encode()
-        actual_line_encoded = my_erika.stdscr.instr(temp_y, 0, len(expected_line))
+        expected_line_encoded = expected_line_joined.encode(encoding='UTF-8')
+        actual_line_encoded = my_erika.stdscr.instr(temp_y, 0, len(expected_line_encoded))
         test_case.assertEqual(expected_line_encoded, actual_line_encoded)
         temp_y += 1
     my_erika.stdscr.move(y, x)

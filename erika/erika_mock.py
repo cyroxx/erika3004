@@ -215,7 +215,7 @@ class CharacterBasedErikaMock(AbstractErikaMock):
                 sys.exit(1)
             self.canvas_x += 1
 
-        self.stdscr.addstr(text)
+        self.stdscr.addstr(text.encode('UTF-8'))
         self.stdscr.move(y, x + len(text))
 
         if self.delay_after_each_step > 0:
@@ -243,7 +243,7 @@ class CharacterBasedErikaMock(AbstractErikaMock):
             self.canvas_x -= 1
 
         self.stdscr.move(y, x - text_length + 1)
-        self.stdscr.addstr(" " * text_length)
+        self.stdscr.addstr((" " * text_length).encode('UTF-8'))
         self.stdscr.move(y, x - text_length)
 
         if self.delay_after_each_step > 0:
@@ -289,7 +289,7 @@ class MicrostepBasedErikaMock(AbstractErikaMock):
             sys.exit(1)
         self.canvas_x += 1
 
-        self.stdscr.addstr("X")
+        self.stdscr.addstr("X".encode('UTF-8'))
 
         if self.delay_after_each_step > 0:
             sleep(self.delay_after_each_step)
@@ -308,7 +308,7 @@ class MicrostepBasedErikaMock(AbstractErikaMock):
             sys.exit(1)
         self.canvas_x -= 1
 
-        self.stdscr.addstr(" ")
+        self.stdscr.addstr(" ".encode('UTF-8'))
         self.stdscr.move(y, x - 1)
 
         if self.delay_after_each_step > 0:
