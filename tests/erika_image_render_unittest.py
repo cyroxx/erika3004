@@ -5,7 +5,6 @@ import unittest
 from erika.erika_image_renderer import *
 from erika.erika_mock import *
 from tests.erika_mock_unittest import assert_print_output
-from tests.erika_mock_unittest import assert_print_output_pixels
 
 
 # noinspection SpellCheckingInspection
@@ -35,10 +34,10 @@ class RendererTest(unittest.TestCase):
 
     def helper_test_ErikaImageRenderingStrategy_real_image(self, strategy):
         """test helper to verify rendering with the given strategy works"""
-        with MicrostepBasedErikaMock(20, 30) as my_erika:
+        with MicrostepBasedErikaMock(20, 30, inside_unit_test=True) as my_erika:
             renderer = ErikaImageRenderer(my_erika, "test: strategy will be set explicitly")
             renderer.render_file_for_fixed_strategy('tests/test_resources/test_image_grayscale_1.bmp', strategy)
-            assert_print_output_pixels(self, my_erika, [
+            assert_print_output(self, my_erika, [
                 "XXXXXXXXXXXXXXXXXXXX",
                 "XXXXXXXXXXXXXXXXXXXX",
                 "XXXXXXXXXXXXXXXXXXXX",
