@@ -39,6 +39,9 @@ class AbstractErikaMock(AbstractErika):
         # if your program fails here, add environment variable TERM=linux
         self.stdscr = curses.initscr()
 
+        if inside_unit_test:
+            self.stdscr.clear()
+
         self._resize_if_more_space_is_needed(height, width)
 
         # no enter key needed to post input;
@@ -290,6 +293,7 @@ class MicrostepBasedErikaMock(AbstractErikaMock):
 
         if self.delay_after_each_step > 0:
             sleep(self.delay_after_each_step)
+        self.stdscr.refresh()
 
     def delete_pixel(self):
         y, x = self.stdscr.getyx()
@@ -309,6 +313,7 @@ class MicrostepBasedErikaMock(AbstractErikaMock):
 
         if self.delay_after_each_step > 0:
             sleep(self.delay_after_each_step)
+        self.stdscr.refresh()
 
     # character-based
 
