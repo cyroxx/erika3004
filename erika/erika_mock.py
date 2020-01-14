@@ -64,12 +64,10 @@ class AbstractErikaMock(AbstractErika):
 # to get exception-safe behavior, make sure __exit__ is always called (by using with-statements)
 class CharacterBasedErikaMock(AbstractErikaMock):
 
-    def __init__(self,
-                 width=ERIKA_PAGE_WIDTH_CHARACTERS_SOFT_LIMIT_AT_12_CHARS_PER_INCH,
-                 height=ERIKA_PAGE_HEIGHT_CHARACTERS,
-                 exception_if_overprinted=True,
-                 delay_after_each_step=0,
+    def __init__(self, width=ERIKA_PAGE_WIDTH_CHARACTERS_SOFT_LIMIT_AT_12_CHARS_PER_INCH,
+                 height=ERIKA_PAGE_HEIGHT_CHARACTERS, exception_if_overprinted=True, delay_after_each_step=0,
                  inside_unit_test=False):
+        super().__init__()
         self.inside_unit_test = inside_unit_test
 
         # if your program fails here, add environment variable TERM=linux
@@ -263,12 +261,10 @@ class CharacterBasedErikaMock(AbstractErikaMock):
 # TODO in another ticket: switch MicrostepBasedErikaMock over to using curses
 class MicrostepBasedErikaMock(AbstractErikaMock):
 
-    def __init__(self,
-                 width=ERIKA_PAGE_WIDTH_MICROSTEPS_HARD_LIMIT_AT_12_CHARS_PER_INCH,
-                 height=ERIKA_PAGE_HEIGHT_MICROSTEPS,
-                 exception_if_overprinted=True,
-                 output_after_each_step=False,
+    def __init__(self, width=ERIKA_PAGE_WIDTH_MICROSTEPS_HARD_LIMIT_AT_12_CHARS_PER_INCH,
+                 height=ERIKA_PAGE_HEIGHT_MICROSTEPS, exception_if_overprinted=True, output_after_each_step=False,
                  delay_after_each_step=0):
+        super().__init__()
         self.width = width
         self.height = height
         self.canvas = []
@@ -303,7 +299,7 @@ class MicrostepBasedErikaMock(AbstractErikaMock):
                     raise Exception(
                         "Not supposed to print a pixel twice: at ({}, {}).".format(self.canvas_x, self.canvas_y))
             self.canvas[self.canvas_y][self.canvas_x] = True
-        except IndexError as e:
+        except IndexError:
             print("IndexError at ({}, {}) of ({}, {}) - increase values of "
                   "cli.DRY_RUN_WIDTH and cli.DRY_RUN_HEIGHT "
                   "if you need more space".format(self.canvas_x, self.canvas_y, self.width, self.height))
@@ -319,7 +315,7 @@ class MicrostepBasedErikaMock(AbstractErikaMock):
         try:
             if self.canvas[self.canvas_y][self.canvas_x]:
                 self.canvas[self.canvas_y][self.canvas_x] = False
-        except IndexError as e:
+        except IndexError:
             print("IndexError at ({}, {}) of ({}, {}) - increase values of "
                   "cli.DRY_RUN_WIDTH and cli.DRY_RUN_HEIGHT "
                   "if you need more space".format(self.canvas_x, self.canvas_y, self.width, self.height))
