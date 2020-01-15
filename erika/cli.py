@@ -117,11 +117,12 @@ def print_ascii_art(args):
             renderer = ErikaImageRenderer(erika, strategy_string)
             renderer.render_file(file_path)
     finally:
-        erika.wait_for_user_if_simulated()
+        if erika:
+            erika.wait_for_user_if_simulated()
 
-        # Do a proper shutdown even in case of exception - or curses settings may make the current terminal unusable.
-        # I googled - it's okay to call __exit__ directly ( https://stackoverflow.com/a/26635947/1143126 )
-        erika.__exit__()
+            # Do a proper shutdown even in case of exception - or curses settings may make the current terminal unusable.
+            # I googled - it's okay to call __exit__ directly ( https://stackoverflow.com/a/26635947/1143126 )
+            erika.__exit__()
 
 
 def run_tic_tac_toe(args):
@@ -190,7 +191,7 @@ def main():
     # with argcomplete used now, this shoudl be the very first call - no side-effects should happen before
     argument_parser = create_argument_parser()
     args = argument_parser.parse_args()
-    if ('func' in args):
+    if 'func' in args:
         args.func(args)
     else:
         argument_parser.parse_args('-h')
