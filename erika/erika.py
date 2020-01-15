@@ -169,16 +169,16 @@ class Erika(AbstractErika):
 
     def _set_reverse_printing_mode(self, value):
         if value:
-            self._print_raw("8E")
+            self._write_byte("8E")
         else:
-            self._print_raw("8D")
+            self._write_byte("8D")
 
     def _set_correction_mode(self, value):
         """Enable / Disable correction mode - i.e. for True, switch to correction tape, for False, switch to normal tape"""
         if value:
-            self._print_raw("8C")
+            self._write_byte("8C")
         else:
-            self._print_raw("8B")
+            self._write_byte("8B")
 
     def delete_ascii(self, reversed_text):
         """Delete given string on the Erika typewriter, going backwards."""
