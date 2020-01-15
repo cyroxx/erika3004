@@ -81,7 +81,6 @@ class ErikaMockTest(unittest.TestCase):
         assert_print_output(self, my_erika, ["Hello"])
 
         # test that deletion of 1 character works
-        my_erika.move_left()
         my_erika.delete_ascii("o")
         assert_print_output(self, my_erika, ["Hell "])
         y, x = my_erika.stdscr.getyx()
@@ -97,7 +96,6 @@ class ErikaMockTest(unittest.TestCase):
 
 
         # test that the cursor rests above the "H" now
-        my_erika.move_right()
         my_erika.print_ascii("elp")
         assert_print_output(self, my_erika, ["Help "])
         y, x = my_erika.stdscr.getyx()
@@ -113,7 +111,7 @@ class ErikaMockTest(unittest.TestCase):
         my_erika.print_pixel()
         assert_print_output_pixels(self, my_erika, ["XXXXX"])
 
-        my_erika.move_left_microsteps(2)
+        my_erika.move_left_microsteps(1)
         my_erika.delete_pixel()
         assert_print_output_pixels(self, my_erika, ["XXX X"])
 
