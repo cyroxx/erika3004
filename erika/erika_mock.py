@@ -241,7 +241,7 @@ class CharacterBasedErikaMock(AbstractErikaMock):
             self.canvas_x -= 1
         self.canvas_x += 1
 
-        self.stdscr.move(y, x - text_length + 1)
+        self.stdscr.move(y, x - text_length)
         self.stdscr.addstr((" " * text_length))
         self.stdscr.move(y, x - text_length)
 
@@ -306,8 +306,8 @@ class MicrostepBasedErikaMock(AbstractErikaMock):
                   "if you need more space".format(self.canvas_x, self.canvas_y, self.width, self.height))
             sys.exit(1)
 
-        self.stdscr.addstr(" ")
         self.stdscr.move(y, x - 1)
+        self.stdscr.addstr(" ")
 
         if self.delay_after_each_step > 0:
             sleep(self.delay_after_each_step)
