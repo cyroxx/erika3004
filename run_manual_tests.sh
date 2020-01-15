@@ -17,13 +17,15 @@ echo """
 
 Please do run the unit tests first!
 
-Then, just play along: press any key once the
+Then, just play along: PRESS ANY KEY once the
 program seems to stop, finish any games that
 come up.
 
 Afterward, you can be fairly sure everything
 is still working!
 "
+
+read
 
 # fail on error
 set -e

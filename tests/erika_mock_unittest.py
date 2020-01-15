@@ -73,8 +73,47 @@ class ErikaMockTest(unittest.TestCase):
         my_erika.print_pixel()
         my_erika.move_left_microsteps(1)
 
-        # my_erika._test_debug_helper_print_canvas()
         assert_print_output_pixels(self, my_erika, ["X X X", " XXX ", "X X X"])
+
+    def test_delete_ascii(self):
+        my_erika = CharacterBasedErikaMock(width=5, height=1, inside_unit_test=True, exception_if_overprinted=False)
+        my_erika.print_ascii("Hello")
+        assert_print_output(self, my_erika, ["Hello"])
+
+        # test that deletion of 1 character works
+        my_erika.delete_ascii("o")
+        assert_print_output(self, my_erika, ["Hell "])
+        y, x = my_erika.stdscr.getyx()
+        self.assertEqual("Hell ".encode(), my_erika.stdscr.instr(0, 0, 5))
+        my_erika.stdscr.move(y, x)
+
+        # test that deletion of a reversed string of characters works
+        my_erika.delete_ascii("lle")
+        assert_print_output(self, my_erika, ["H    "])
+        y, x = my_erika.stdscr.getyx()
+        self.assertEqual("H    ".encode(), my_erika.stdscr.instr(0, 0, 5))
+        my_erika.stdscr.move(y, x)
+
+
+        # test that the cursor rests above the "H" now
+        my_erika.print_ascii("elp")
+        assert_print_output(self, my_erika, ["Help "])
+        y, x = my_erika.stdscr.getyx()
+        self.assertEqual("Help ".encode(), my_erika.stdscr.instr(0, 0, 5))
+        my_erika.stdscr.move(y, x)
+
+    def test_delete_pixel(self):
+        my_erika = MicrostepBasedErikaMock(width=5, height=1, exception_if_overprinted=False)
+        my_erika.print_pixel()
+        my_erika.print_pixel()
+        my_erika.print_pixel()
+        my_erika.print_pixel()
+        my_erika.print_pixel()
+        assert_print_output_pixels(self, my_erika, ["XXXXX"])
+
+        my_erika.move_left_microsteps(1)
+        my_erika.delete_pixel()
+        assert_print_output_pixels(self, my_erika, ["XXX X"])
 
 
 def main():
