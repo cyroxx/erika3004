@@ -224,6 +224,7 @@ class CharacterBasedErikaMock(AbstractErikaMock):
         if text_length == 0:
             return
 
+        self.canvas_x -= 1
         y, x = self.stdscr.getyx()
         for c in reversed_text:
             try:
@@ -238,6 +239,7 @@ class CharacterBasedErikaMock(AbstractErikaMock):
                       "if you need more space".format(self.canvas_x, self.canvas_y, self.width, self.height))
                 sys.exit(1)
             self.canvas_x -= 1
+        self.canvas_x += 1
 
         self.stdscr.move(y, x - text_length + 1)
         self.stdscr.addstr((" " * text_length))
@@ -294,7 +296,7 @@ class MicrostepBasedErikaMock(AbstractErikaMock):
 
     def delete_pixel(self):
         y, x = self.stdscr.getyx()
-
+        self.canvas_x -= 1
         try:
             if self.canvas[self.canvas_y][self.canvas_x] == "X":
                 self.canvas[self.canvas_y][self.canvas_x] = " "
@@ -303,7 +305,6 @@ class MicrostepBasedErikaMock(AbstractErikaMock):
                   "cli.DRY_RUN_WIDTH and cli.DRY_RUN_HEIGHT "
                   "if you need more space".format(self.canvas_x, self.canvas_y, self.width, self.height))
             sys.exit(1)
-        self.canvas_x -= 1
 
         self.stdscr.addstr(" ")
         self.stdscr.move(y, x - 1)
