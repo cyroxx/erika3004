@@ -27,7 +27,7 @@ def assert_print_output(test_case, my_erika, expected_array_of_joined_lines):
 class ErikaMockTest(unittest.TestCase):
     def test_write_and_read_back_characters(self):
         """simple test that the CharacterBasedErikaMock records what is written to it"""
-        my_erika = CharacterBasedErikaMock(width=5, height=3, inside_unit_test=True)
+        my_erika = CharacterBasedErikaMock(width=5, height=3, inside_unit_test=True, exception_if_overprinted=True)
         my_erika.print_ascii("Hello")
         my_erika.move_down()
         my_erika.move_down()
@@ -101,17 +101,15 @@ class ErikaMockTest(unittest.TestCase):
 
         # test that deletion of 1 character works
         my_erika.move_left()
-        my_erika.move_left()
         my_erika.delete_ascii("lle")
         assert_print_output(self, my_erika, ["H   o"])
 
-        my_erika.move_right()
         my_erika.move_right()
         my_erika.print_ascii("x")
         assert_print_output(self, my_erika, ["H x o"])
 
     def test_delete_pixel(self):
-        my_erika = MicrostepBasedErikaMock(width=5, height=1, exception_if_overprinted=False, inside_unit_test=True)
+        my_erika = MicrostepBasedErikaMock(width=5, height=1, inside_unit_test=True, exception_if_overprinted=False)
         my_erika.print_pixel()
         my_erika.print_pixel()
         my_erika.print_pixel()

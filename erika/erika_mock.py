@@ -142,7 +142,7 @@ class CharacterBasedErikaMock(AbstractErikaMock):
     def __init__(self,
                  width=ERIKA_PAGE_WIDTH_CHARACTERS_SOFT_LIMIT_AT_12_CHARS_PER_INCH,
                  height=ERIKA_PAGE_HEIGHT_CHARACTERS,
-                 exception_if_overprinted=True,
+                 exception_if_overprinted=False,
                  delay_after_each_step=0,
                  inside_unit_test=False):
         super(CharacterBasedErikaMock, self).__init__(width, height, exception_if_overprinted, delay_after_each_step,
@@ -255,7 +255,7 @@ class MicrostepBasedErikaMock(AbstractErikaMock):
     def __init__(self,
                  width=ERIKA_PAGE_WIDTH_CHARACTERS_SOFT_LIMIT_AT_12_CHARS_PER_INCH,
                  height=ERIKA_PAGE_HEIGHT_CHARACTERS,
-                 exception_if_overprinted=True,
+                 exception_if_overprinted=False,
                  delay_after_each_step=0,
                  inside_unit_test=False):
         super(MicrostepBasedErikaMock, self).__init__(width, height, exception_if_overprinted, delay_after_each_step,

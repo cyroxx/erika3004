@@ -137,18 +137,15 @@ def get_erika_for_given_args(args, is_character_based=False):
     if is_dry_run:
         if is_character_based or not 'file' in args:
             # using low size just so it fits on the screen well - does not reflect the paper dimensions that Erika supports
-            erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, delay_after_each_step=DRY_RUN_DELAY,
-                                            exception_if_overprinted=False)
+            erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, delay_after_each_step=DRY_RUN_DELAY)
         else:
             # a bit hacky, as I'm mirroring behavior from ErikaImageRenderer - this kindof goes against the now-beautiful architecture :(
             try:
                 # hacky: use exception to determine image type
                 image_for_provoking_exception = WrappedImage(args.file)
-                erika = MicrostepBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, delay_after_each_step=DRY_RUN_DELAY,
-                                                exception_if_overprinted=False)
+                erika = MicrostepBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, delay_after_each_step=DRY_RUN_DELAY)
             except NotAnImageException:
-                erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, delay_after_each_step=DRY_RUN_DELAY,
-                                                exception_if_overprinted=False)
+                erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, delay_after_each_step=DRY_RUN_DELAY)
 
     else:
         erika = Erika(com_port)
