@@ -119,6 +119,10 @@ def print_ascii_art(args):
             renderer.render_file(file_path)
     finally:
         if erika:
+            # wait_for_user_if_simulated will not work if input is piped from stdin - add wait time here in any case
+            import time
+            time.sleep(.5)
+
             erika.wait_for_user_if_simulated()
 
             # Do a proper shutdown even in case of exception - or curses settings may make the current terminal unusable.
