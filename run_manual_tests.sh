@@ -39,8 +39,7 @@ set -x
 
 ./erika.sh render_ascii_art -h
 ./erika.sh render_ascii_art -d -f ./tests/test_resources/test_ascii_art.txt
-# FIXME
-#cat tests/test_resources/test_ascii_art.txt | ./erika.sh render_ascii_art -d
+cat tests/test_resources/test_ascii_art.txt | ./erika.sh render_ascii_art -d
 ./erika.sh render_ascii_art -d -f ./tests/test_resources/test_ascii_art.txt -s LineByLine
 ./erika.sh render_ascii_art -d -f ./tests/test_resources/test_ascii_art.txt -s Interlaced
 ./erika.sh render_ascii_art -d -f ./tests/test_resources/test_ascii_art.txt -s RandomDotFill
