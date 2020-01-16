@@ -15,6 +15,7 @@ from erika.TicTacToe import TicTacToe
 from erika.erika import Erika
 from erika.erika_image_renderer import *
 from erika.erika_mock import *
+from erika.util import remove_trailing_newlines
 
 DRY_RUN_WIDTH = 60
 DRY_RUN_HEIGHT = 40
@@ -106,6 +107,7 @@ New: If an image file is referenced instead, will do a monochrome print using ".
 def print_ascii_art(args):
     strategy_string = args.strategy
     file_path = args.file
+    erika = None
     try:
         if file_path == '-':
             erika = get_erika_for_given_args(args, is_character_based=True)
@@ -155,8 +157,6 @@ def get_erika_for_given_args(args, is_character_based=False):
 
 
 def read_lines_from_stdin_non_blocking():
-    lines = []
-
     queue_to_pass_lines_through = Queue(maxsize=1)
     worker_process = Process(target=function_for_reading_lines_from_stdin_process,
                              args=(queue_to_pass_lines_through, sys.stdin.fileno()))
@@ -167,7 +167,7 @@ def read_lines_from_stdin_non_blocking():
     if has_exited:
         try:
             lines = queue_to_pass_lines_through.get(block=False)
-            return lines
+            return remove_trailing_newlines(lines)
         except Empty as exception:
             raise Exception('unexpected exception') from exception
     else:
