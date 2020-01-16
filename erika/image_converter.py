@@ -1,17 +1,20 @@
+import sys
+
+from PIL import Image
+
+
 class NotAnImageException(Exception):
     pass
 
 
 class WrappedImage:
+
     def __init__(self, image_path, threshold=128):
         """
         :param image_path: path to image that should be opened
         :param threshold: threshold value - pixel is considered "set" if there is a grayscale-equivalent value
         at this coordinate that is greater or equal to the given threshold
         """
-        import sys
-        from PIL import Image
-
         try:
             self.image = Image.open(image_path)
         except FileNotFoundError:
