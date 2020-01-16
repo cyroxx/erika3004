@@ -110,9 +110,9 @@ def print_ascii_art(args):
     erika = None
     try:
         if file_path == '-':
+            lines = read_lines_from_stdin_non_blocking()
             erika = get_erika_for_given_args(args, is_character_based=True)
             renderer = ErikaImageRenderer(erika, strategy_string)
-            lines = read_lines_from_stdin_non_blocking()
             renderer.render_lines(lines)
         else:
             erika = get_erika_for_given_args(args)
@@ -171,7 +171,7 @@ def read_lines_from_stdin_non_blocking():
         except Empty as exception:
             raise Exception('unexpected exception') from exception
     else:
-        print("no output to generate - provide ASCII art as a file  parameter or on stdin")
+        print("no output to generate - provide ASCII art as a file parameter or on stdin")
         worker_process.terminate()
         sys.exit(1)
 
