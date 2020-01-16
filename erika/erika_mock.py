@@ -50,8 +50,9 @@ class AbstractErikaMock(AbstractErika):
             curses.cbreak()
         curses.nl()
 
+        # Removed: Caused problems when piping input into the CLI from stdin.
         # escape sequences (numpad, function keys, ...) will be interpreted
-        self.stdscr.keypad(True)
+        # self.stdscr.keypad(True)
 
         self.stdscr.move(0, 0)
 
