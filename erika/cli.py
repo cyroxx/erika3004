@@ -137,7 +137,7 @@ def get_erika_for_given_args(args, is_character_based=False):
     com_port = args.serial_port
 
     if is_dry_run:
-        if is_character_based or not 'file' in args:
+        if is_character_based or 'file' not in args:
             # using low size just so it fits on the screen well - does not reflect the paper dimensions that Erika supports
             erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, delay_after_each_step=DRY_RUN_DELAY)
         else:
