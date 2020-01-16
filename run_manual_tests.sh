@@ -29,6 +29,8 @@ read
 
 # fail on error
 set -e
+# fail if part of pipe fails
+set -o pipefail
 # print evvery executed command
 set -x
 
