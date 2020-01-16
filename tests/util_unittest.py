@@ -1,6 +1,6 @@
 import unittest
 
-from erika.util import twos_complement
+from erika.util import twos_complement, remove_trailing_newlines
 from erika.util import twos_complement_hex_string
 
 
@@ -56,6 +56,34 @@ class UtilTest(unittest.TestCase):
         self.assertEqual("D6", twos_complement_hex_string(-42))
         self.assertEqual("81", twos_complement_hex_string(-127))
         self.assertEqual("80", twos_complement_hex_string(-128))
+
+    def test_remove_trailing_newlines_empty_list(self):
+        lines = []
+
+        actual = remove_trailing_newlines(lines)
+
+        self.assertEqual([], actual)
+
+    def test_remove_trailing_newlines_no_trailing_newlines(self):
+        lines = ["some text",
+                 "more text",
+                 "1234567890"]
+
+        actual = remove_trailing_newlines(lines)
+
+        self.assertEqual(lines, actual)
+
+    def test_remove_trailing_newlines(self):
+        lines = ["some text\n",
+                 "more text\r",
+                 "1234567890\n\r"]
+        expected_lines = ["some text",
+                          "more text",
+                          "1234567890"]
+
+        actual = remove_trailing_newlines(lines)
+
+        self.assertEqual(expected_lines, actual)
 
 
 def main():

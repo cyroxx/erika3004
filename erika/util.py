@@ -20,12 +20,12 @@ def twos_complement(number):
 
     https://en.wikipedia.org/wiki/Two%27s_complement
     """
-    if (number < -128):
+    if number < -128:
         raise Exception("Number out of range (low)")
-    if (number > 127):
+    if number > 127:
         raise Exception("Number out of range (high)")
 
-    if (number < 0):
+    if number < 0:
         all_ones = bytes.fromhex("FF")[0]
         number_in_positive = math.floor(math.fabs(number))
         bytes_of_number = number_in_positive.to_bytes(1, 'little')[0]
@@ -33,3 +33,18 @@ def twos_complement(number):
         return xorResult + 1
     else:
         return number
+
+
+def remove_trailing_newlines(lines):
+    """
+        For a given list of Strings (lines of input), will remove all trailing CR and LF characters for each line
+        and return a new list of those lines.
+    """
+    lines_without_newlines = []
+    for line in lines:
+        lines_without_newlines.append(_remove_trailing_newline(line))
+    return lines_without_newlines
+
+
+def _remove_trailing_newline(line):
+    return line.replace('\n', "").replace('\r', "")

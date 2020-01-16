@@ -3,6 +3,7 @@ import random
 from enum import Enum
 
 from erika.image_converter import WrappedImage, NotAnImageException
+from erika.util import remove_trailing_newlines
 
 
 class Direction(Enum):
@@ -588,15 +589,4 @@ class ErikaAndImageInputFacade(ErikaAndInputFacade):
 def _read_lines_without_trailing_newlines(file_path):
     with open(file_path, "r") as open_file:
         lines = open_file.readlines()
-    return _remove_trailing_newlines(lines)
-
-
-def _remove_trailing_newlines(lines):
-    lines_without_newlines = []
-    for line in lines:
-        lines_without_newlines.append(_remove_trailing_newline(line))
-    return lines_without_newlines
-
-
-def _remove_trailing_newline(line):
-    return line.replace('\n', "").replace('\r', "")
+    return remove_trailing_newlines(lines)
