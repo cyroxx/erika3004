@@ -2,7 +2,6 @@
 # ^ is about auto-completion, see https://argcomplete.readthedocs.io/en/latest/#global-completion
 
 import os
-import sys
 from argparse import ArgumentParser
 from argparse import RawTextHelpFormatter
 from multiprocessing import Process
@@ -181,10 +180,9 @@ def function_for_reading_lines_from_stdin_process(queue_to_pass_lines_through, i
     # https://docs.python.org/3.5/library/multiprocessing.html#all-start-methods
     # Note to self: portable :)
     # https://docs.python.org/3/library/os.html#os.fdopen
-    input_stream = os.fdopen(input_stream_fileno)
-
-    lines = input_stream.readlines()
-    queue_to_pass_lines_through.put(lines)
+    with os.fdopen(input_stream_fileno) as input_stream:
+        lines = input_stream.readlines()
+        queue_to_pass_lines_through.put(lines)
 
 
 def main():
