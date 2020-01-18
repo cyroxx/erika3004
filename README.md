@@ -9,7 +9,7 @@ Therefore, software is needed to convert the RAW encoding (or DDR ASCII (GDR ASC
 into something more useful (by modern standands) like ASCII.
 
 A table of all available characters and their hexadecimal value can be found in the 
-manual ([Erika-IF2014_AnwenderHandbuch](docs/Erika-IF2014_AnwenderHandbuch.pdf)) as Appendix E on page 10.    
+manual ([Erika-IF2014_AnwenderHandbuch](https://raw.githubusercontent.com/Chaostreff-Potsdam/erika-docs/blob/master/Erika-IF2014_AnwenderHandbuch.pdf)) as Appendix E on page 10.    
 It also has a list of the most used control characters on page 11 (Appendix F).  
 A complete list can be found [here](http://hc-ddr.hucki.net/wiki/doku.php/z9001/erweiterungen/s3004).  
 
@@ -21,7 +21,7 @@ Find it in the `arduino` directory.
 
 ## Hardware
 
-> If you are a proud owner of an Erika 3004 Electronic Typewriter, you might want to check out this [`"ServiceManual"`](./docs/Felix'ServiceManual.md).
+> If you are a proud owner of an Erika 3004 Electronic Typewriter, you might want to check out this [`"ServiceManual"`](https://github.com/Chaostreff-Potsdam/erika-docs/blob/master/Felix'ServiceManual.md).
 
 Description of the Erica connector:  
 ![Erika Connector](http://hc-ddr.hucki.net/wiki/lib/exe/fetch.php/z9001/erweiterungen/s3004_anschluss.jpg?cache=)
