@@ -30,7 +30,7 @@ More information can be found here (German):
 [http://hc-ddr.hucki.net/wiki/doku.php/z9001/erweiterungen/s3004](http://hc-ddr.hucki.net/wiki/doku.php/z9001/erweiterungen/s3004)
 
 A schematic of our Raspberry Pi based interface can be found [on EasyEDA](https://easyeda.com/sirexeclp/erikaraspberrypiinterface).
-![Schematic](docs/Schematic_ErikaRaspberryPiInterface.png)
+![Schematic](https://raw.githubusercontent.com/Chaostreff-Potsdam/erika-docs/master/schematics/Schematic_ErikaRaspberryPiInterface.png)
 
 [DDR-Halbleiter - Kurzdatenblätter und Vergleichsliste](https://www-user.tu-chemnitz.de/~heha/basteln/Konsumg%C3%BCter/DDR-Halbleiter/)
 
