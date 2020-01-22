@@ -85,7 +85,7 @@ New: If an image file is referenced instead, will do a monochrome print using ".
         * default option
     Interlaced
         * render the given image, every even line first (starting count at 0), every odd line later
-    PerpendicularSpiralInward ##
+    PerpendicularSpiralInward
         * render the given image, spiralling inward to the middle while going parallel to X or Y axis all the time
     RandomDotFill
         * render the given image, printing one random letter at a time
@@ -98,11 +98,12 @@ def print_ascii_art(args):
 
     strategy_string = args.strategy
     file_path = args.file
+    erika = None
     try:
         if file_path == '-':
+            lines = read_lines_from_stdin_non_blocking()
             erika = get_erika_for_given_args(args, is_character_based=True)
             renderer = ErikaImageRenderer(erika, strategy_string)
-            lines = read_lines_from_stdin_non_blocking()
             renderer.render_lines(lines)
         else:
             erika = get_erika_for_given_args(args)
@@ -110,6 +111,10 @@ def print_ascii_art(args):
             renderer.render_file(file_path)
     finally:
         if erika:
+            # wait_for_user_if_simulated will not work if input is piped from stdin - add wait time here in any case
+            import time
+            time.sleep(.5)
+
             erika.wait_for_user_if_simulated()
 
             # Do a proper shutdown even in case of exception - or curses settings may make the current terminal unusable.
@@ -132,7 +137,7 @@ def get_erika_for_given_args(args, is_character_based=False):
     com_port = args.serial_port
 
     if is_dry_run:
-        if is_character_based or not 'file' in args:
+        if is_character_based or 'file' not in args:
             # using low size just so it fits on the screen well - does not reflect the paper dimensions that Erika supports
             erika = CharacterBasedErikaMock(DRY_RUN_WIDTH, DRY_RUN_HEIGHT, delay_after_each_step=DRY_RUN_DELAY)
         else:
@@ -159,6 +164,7 @@ def read_lines_from_stdin_non_blocking():
     from multiprocessing import Process
     from multiprocessing import Queue
     from queue import Empty
+    from erika.util import remove_trailing_newlines
 
     lines = []
 
@@ -172,11 +178,11 @@ def read_lines_from_stdin_non_blocking():
     if has_exited:
         try:
             lines = queue_to_pass_lines_through.get(block=False)
-            return lines
+            return remove_trailing_newlines(lines)
         except Empty as exception:
             raise Exception('unexpected exception') from exception
     else:
-        print("no output to generate - provide ASCII art as a file  parameter or on stdin")
+        print("no output to generate - provide ASCII art as a file parameter or on stdin")
         worker_process.terminate()
         sys.exit(1)
 
@@ -187,10 +193,9 @@ def function_for_reading_lines_from_stdin_process(queue_to_pass_lines_through, i
     # Note to self: portable :)
     # https://docs.python.org/3/library/os.html#os.fdopen
     import os
-    input_stream = os.fdopen(input_stream_fileno)
-
-    lines = input_stream.readlines()
-    queue_to_pass_lines_through.put(lines)
+    with os.fdopen(input_stream_fileno) as input_stream:
+        lines = input_stream.readlines()
+        queue_to_pass_lines_through.put(lines)
 
 
 def main():
