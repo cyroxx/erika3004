@@ -1,5 +1,4 @@
 * text eol=lf
-
 *.py    text diff=python
 *.ini   text
 *.txt   text
@@ -8,14 +7,13 @@
 *.h     text
 *.yml   text
 *.sh    text
-
 # These files are binary and should be left untouched
 # (binary is a macro for -text -diff)
-*.png binary
-*.jpg binary
-*.JPG binary
-*.jpeg binary
-*.gif binary
+*.png filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.JPG filter=lfs diff=lfs merge=lfs -text
+*.jpeg filter=lfs diff=lfs merge=lfs -text
+*.gif filter=lfs diff=lfs merge=lfs -text
 *.ico binary
 *.mov binary
 *.mp4 binary
@@ -23,11 +21,10 @@
 *.flv binary
 *.fla binary
 *.swf binary
-*.gz binary
-*.zip binary
+*.gz filter=lfs diff=lfs merge=lfs -text
+*.zip filter=lfs diff=lfs merge=lfs -text
 *.7z binary
 *.ttf binary
-
 # Documents
 *.doc  binary
 *.DOC  binary
@@ -35,7 +32,7 @@
 *.DOCX binary
 *.dot  binary
 *.DOT  binary
-*.pdf  binary
-*.PDF  binary
+*.pdf filter=lfs diff=lfs merge=lfs -text
+*.PDF filter=lfs diff=lfs merge=lfs -text
 *.rtf  binary
 *.RTF  binary
