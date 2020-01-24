@@ -24,7 +24,7 @@ Find it in the `arduino` directory.
 > If you are a proud owner of an Erika 3004 Electronic Typewriter, you might want to check out this [`"ServiceManual"`](https://github.com/Chaostreff-Potsdam/erika-docs/blob/master/Felix'ServiceManual.md).
 
 Description of the Erica connector:  
-![Erika Connector](http://hc-ddr.hucki.net/wiki/lib/exe/fetch.php/z9001/erweiterungen/s3004_anschluss.jpg?cache=)
+![Erika Connector](https://raw.githubusercontent.com/Chaostreff-Potsdam/erika-docs/master/img/erica-connector.png)
 
 More information can be found here (German):  
 [http://hc-ddr.hucki.net/wiki/doku.php/z9001/erweiterungen/s3004](http://hc-ddr.hucki.net/wiki/doku.php/z9001/erweiterungen/s3004)
